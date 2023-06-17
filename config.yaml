@@ -23,7 +23,7 @@ xgb:
   tree_method: exact
   objective: multi:softprob
 
-dataset: data/small.csv
+dataset: data/large.csv
 out: result.json
 cls: xgb
 attack: zoo

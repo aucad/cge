@@ -1,21 +1,18 @@
-import warnings
 import sys
 import json
 import os
-import time
+import yaml
 from pathlib import Path
 from collections import namedtuple
 from typing import Any
 
-import yaml
-
-warnings.filterwarnings("ignore")
-from art.attacks.evasion import ZooAttack
-from art.estimators.classification import XGBoostClassifier
-from xgboost import DMatrix, train as xg_train
-from sklearn.model_selection import KFold
 import numpy as np
 import pandas as pd
+from art.estimators.classification import XGBoostClassifier
+from sklearn.model_selection import KFold
+from xgboost import DMatrix, train as xg_train
+
+from exp import MyZooAttack as ZooAttack
 
 
 def read_dataset(dataset_path):
@@ -83,12 +80,13 @@ class Result(object):
             'labels': self.labels}
 
 
-class XgBoost:
+class XGBoostRunner:
 
     def __init__(self, out, attrs, y, masks, ranges, conf):
         self.name = 'xgboost'
         self.out_dir = out
         self.attrs = attrs[:]
+        self.n_features = len(self.attrs) - 1
         self.classes = np.unique(y)
         self.attr_ranges = ranges
         self.mask_cols = masks
@@ -121,28 +119,9 @@ class XgBoost:
         return self
 
     @property
-    def n_train(self):
-        return len(self.train_x)
-
-    @property
-    def n_test(self):
-        return len(self.test_x)
-
-    @property
-    def n_features(self):
-        return len(self.attrs) - 1
-
-    @property
-    def n_classes(self):
-        return len(self.classes)
-
-    @staticmethod
-    def text_label(i):
-        return 'malicious' if i == 1 else 'benign'
-
-    @property
     def class_names(self):
-        return [self.text_label(cn) for cn in self.classes]
+        return [('malicious' if cn == 1 else 'benign')
+                for cn in self.classes]
 
     @property
     def mutable(self):
@@ -181,18 +160,18 @@ class XgBoost:
             num_boost_round=20,
             dtrain=d_train,
             evals=[(d_train, 'eval'), (d_train, 'train')],
-            params={'num_class': self.n_classes, **self.cls_conf})
+            params={'num_class': len(self.classes), **self.cls_conf})
         sys.stdout = sys.__stdout__  # re-enable print
         self.classifier = XGBoostClassifier(
             model=self.model,
             nb_features=self.n_features,
-            nb_classes=self.n_classes,
+            nb_classes=len(self.classes),
             clip_values=(0, 1))
 
     def train(self):
         self.init_learner()
         records = (
-            (self.test_x, self.test_y) if self.n_test > 0
+            (self.test_x, self.test_y) if len(self.test_x) > 0
             else (self.train_x, self.train_y))
         predictions = self.predict(self.formatter(*records))
         self.score(records[1], predictions)
@@ -227,7 +206,7 @@ class XgBoost:
             self.precision + self.recall, 0, False)
 
 
-class Zoo:
+class ZooRunner:
 
     def __init__(self, i, conf):
         self.name = 'zoo'
@@ -259,7 +238,7 @@ class Zoo:
         return len(self.evasions)
 
     def set_cls(self, cls):
-        indices = range(cls.n_test)
+        indices = range(len(cls.test_x))
         self.cls = cls
         self.ori_x = cls.test_x.copy()[indices, :]
         self.ori_y = cls.test_y.copy()[indices]
@@ -305,10 +284,6 @@ class Experiment:
     def n_records(self) -> int:
         return len(self.X)
 
-    @property
-    def n_attr(self) -> int:
-        return len(self.attrs)
-
     def custom_config(self, key):
         return getattr(self.config, key) \
             if key and hasattr(self.config, key) else None
@@ -329,11 +304,11 @@ class Experiment:
     def run(self):
         config = self.config
         self.load_csv(config.dataset, config.folds)
-        self.cls = XgBoost(*(
+        self.cls = XGBoostRunner(*(
             config.out, self.attrs, self.y,
             self.mask_cols, self.attr_ranges,
             self.custom_config('xgb')))
-        self.attack = Zoo(*(
+        self.attack = ZooRunner(*(
             config.iter, self.custom_config('zoo')))
         self.log_experiment_setup()
         for i, fold in enumerate(self.folds):
@@ -342,8 +317,9 @@ class Experiment:
         write_result(self.config.out, self.to_dict())
 
     def exec_fold(self, fi, f_idx):
-        self.cls.reset() \
-            .load(self.X.copy(), self.y.copy(), *f_idx, fi).train()
+        self.cls.reset()\
+            .load(self.X.copy(), self.y.copy(), *f_idx, fi)\
+            .train()
         self.stats.append_cls(self.cls)
         self.log_training_result(fi)
         self.attack.reset().set_cls(self.cls).run().eval()
@@ -352,8 +328,8 @@ class Experiment:
 
     def log_experiment_setup(self):
         log('Dataset', self.config.dataset)
-        log('Record count', self.n_records)
-        log('Attributes', self.n_attr)
+        log('Record count', len(self.X))
+        log('Attributes', len(self.attrs))
         log('K-folds', self.config.folds)
         log('Classifier', self.cls.name)
         log('Classes', ", ".join(self.cls.class_names))
@@ -385,8 +361,8 @@ class Experiment:
     def to_dict(self) -> dict:
         return {
             'dataset': self.config.dataset,
-            'n_records': self.n_records,
-            'n_attributes': self.n_attr,
+            'n_records': len(self.X),
+            'n_attributes': len(self.attrs),
             'attrs': self.attrs,
             'immutable': self.mask_cols,
             'attr_mutable': self.cls.mutable,
@@ -397,7 +373,6 @@ class Experiment:
             'attack': self.config.attack,
             'attr_ranges': dict(
                 zip(self.attrs, self.attr_ranges.values())),
-            'current_utc': int(time.time_ns()),
             'max_iter': self.attack.max_iter,
             **self.stats.to_dict()
         }
