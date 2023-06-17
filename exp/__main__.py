@@ -1,0 +1,408 @@
+import warnings
+import sys
+import json
+import os
+import time
+from pathlib import Path
+from collections import namedtuple
+from typing import Any
+
+import yaml
+
+warnings.filterwarnings("ignore")
+from art.attacks.evasion import ZooAttack
+from art.estimators.classification import XGBoostClassifier
+from xgboost import DMatrix, train as xg_train
+from sklearn.model_selection import KFold
+import numpy as np
+import pandas as pd
+
+
+def read_dataset(dataset_path):
+    df = pd.read_csv(dataset_path).fillna(0)
+    attrs = [a.replace(' ', '').replace('=', '_')
+             .replace('-', '').replace('^', '_')
+             .replace('conn_state_other', 'conn_state_OTH')
+             for a in [col for col in df.columns]]
+    return attrs, np.array(df)
+
+
+def write_result(fn, json_content):
+    with open(fn, "w") as outfile:
+        json.dump(json_content, outfile, indent=4)
+    print('Wrote result to', fn, '\n')
+
+
+def sdiv(num, denom, fault: Any = '', mult=True):
+    return fault if denom == 0 else ((100 if mult else 1) * num / denom)
+
+
+def log(label: str, value):
+    print(f'{label} '.ljust(18, '-') + str(value))
+
+
+def logr(label, num, den):
+    a, b, ratio = round(num, 0), round(den, 0), sdiv(num, den)
+    return log(label, f'{a} of {b} - {ratio:.1f} %')
+
+
+class Result(object):
+    class AvgList(list):
+
+        @property
+        def avg(self):
+            return sdiv(sum(self), len(self))
+
+    def __init__(self):
+        self.accuracy = Result.AvgList()
+        self.precision = Result.AvgList()
+        self.recall = Result.AvgList()
+        self.f_score = Result.AvgList()
+        self.n_records = Result.AvgList()
+        self.n_evasions = Result.AvgList()
+        self.labels = Result.AvgList()
+
+    def append_attack(self, attack):
+        self.n_evasions.append(attack.n_evasions)
+        self.n_records.append(attack.n_records)
+
+    def append_cls(self, cls):
+        self.accuracy.append(cls.accuracy)
+        self.precision.append(cls.precision)
+        self.recall.append(cls.recall)
+        self.f_score.append(cls.f_score)
+
+    def to_dict(self):
+        return {
+            'accuracy': self.accuracy,
+            'precision': self.precision,
+            'recall': self.recall,
+            'f_score': self.f_score,
+            'n_records': self.n_records,
+            'n_evasions': self.n_evasions,
+            'labels': self.labels}
+
+
+class XgBoost:
+
+    def __init__(self, out, attrs, y, masks, ranges, conf):
+        self.name = 'xgboost'
+        self.out_dir = out
+        self.attrs = attrs[:]
+        self.classes = np.unique(y)
+        self.attr_ranges = ranges
+        self.mask_cols = masks
+        self.classifier = None
+        self.model = None
+        self.train_x = None
+        self.train_y = None
+        self.test_x = None
+        self.test_y = None
+        self.fold_n = 1
+        self.accuracy = 0
+        self.precision = 0
+        self.recall = 0
+        self.f_score = 0
+        self.reset()
+        self.cls_conf = conf or {}
+
+    def reset(self):
+        self.classifier = None
+        self.model = None
+        self.train_x = np.array([])
+        self.train_y = np.array([])
+        self.test_x = np.array([])
+        self.test_y = np.array([])
+        self.fold_n = 1
+        self.accuracy = 0
+        self.precision = 0
+        self.recall = 0
+        self.f_score = 0
+        return self
+
+    @property
+    def n_train(self):
+        return len(self.train_x)
+
+    @property
+    def n_test(self):
+        return len(self.test_x)
+
+    @property
+    def n_features(self):
+        return len(self.attrs) - 1
+
+    @property
+    def n_classes(self):
+        return len(self.classes)
+
+    @staticmethod
+    def text_label(i):
+        return 'malicious' if i == 1 else 'benign'
+
+    @property
+    def class_names(self):
+        return [self.text_label(cn) for cn in self.classes]
+
+    @property
+    def mutable(self):
+        return sorted([
+            a for i, a in enumerate(self.attrs)
+            if i not in self.mask_cols and i < self.n_features])
+
+    @property
+    def immutable(self):
+        return sorted([
+            a for i, a in enumerate(self.attrs)
+            if i in self.mask_cols and i < self.n_features])
+
+    def load(self, x, y, fold_train, fold_test, fold_n):
+        self.train_x = self.normalize(x[fold_train, :])
+        self.train_y = y[fold_train].astype(int).flatten()
+        self.test_x = self.normalize(x[fold_test, :])
+        self.test_y = y[fold_test].astype(int).flatten()
+        self.classes = np.unique(y)
+        self.fold_n = fold_n
+        return self
+
+    @staticmethod
+    def formatter(x, y):
+        return DMatrix(x, y)
+
+    def predict(self, data):
+        tmp = self.model.predict(data)
+        ax = 1 if len(tmp.shape) == 2 else 0
+        return tmp.argmax(axis=ax)
+
+    def init_learner(self) -> None:
+        d_train = self.formatter(self.train_x, self.train_y)
+        sys.stdout = open(os.devnull, 'w')
+        self.model = xg_train(
+            num_boost_round=20,
+            dtrain=d_train,
+            evals=[(d_train, 'eval'), (d_train, 'train')],
+            params={'num_class': self.n_classes, **self.cls_conf})
+        sys.stdout = sys.__stdout__  # re-enable print
+        self.classifier = XGBoostClassifier(
+            model=self.model,
+            nb_features=self.n_features,
+            nb_classes=self.n_classes,
+            clip_values=(0, 1))
+
+    def train(self):
+        self.init_learner()
+        records = (
+            (self.test_x, self.test_y) if self.n_test > 0
+            else (self.train_x, self.train_y))
+        predictions = self.predict(self.formatter(*records))
+        self.score(records[1], predictions)
+        return self
+
+    def normalize(self, data):
+        np.seterr(divide='ignore', invalid='ignore')
+        for i in range(self.n_features):
+            range_max = self.attr_ranges[i]
+            data[:, i] = (data[:, i]) / range_max
+            data[:, i] = np.nan_to_num(data[:, i])
+        return data
+
+    def score(self, true_labels, predictions, positive=0):
+        """Calculate performance metrics."""
+        tp, tp_tn, p_pred, p_actual = 0, 0, 0, 0
+        for actual, pred in zip(true_labels, predictions):
+            int_pred = int(round(pred, 0))
+            if int_pred == positive:
+                p_pred += 1
+            if actual == positive:
+                p_actual += 1
+            if int_pred == actual:
+                tp_tn += 1
+            if int_pred == actual and int_pred == positive:
+                tp += 1
+        self.accuracy = sdiv(tp_tn, len(predictions), -1, False)
+        self.precision = sdiv(tp, p_pred, 1, False)
+        self.recall = sdiv(tp, p_actual, 1, False)
+        self.f_score = sdiv(
+            2 * self.precision * self.recall,
+            self.precision + self.recall, 0, False)
+
+
+class Zoo:
+
+    def __init__(self, i, conf):
+        self.name = 'zoo'
+        self.max_iter = 10 if i < 1 else i
+        self.cls = None
+        self.ori_x = None
+        self.ori_y = None
+        self.adv_x = None
+        self.adv_y = None
+        self.evasions = None
+        self.reset()
+        self.attack_conf = conf or {}
+
+    def reset(self):
+        self.cls = None
+        self.ori_x = np.array([])
+        self.ori_y = np.array([])
+        self.adv_x = np.array([])
+        self.adv_y = np.array([])
+        self.evasions = np.array([])
+        return self
+
+    @property
+    def n_records(self):
+        return len(self.ori_x)
+
+    @property
+    def n_evasions(self):
+        return len(self.evasions)
+
+    def set_cls(self, cls):
+        indices = range(cls.n_test)
+        self.cls = cls
+        self.ori_x = cls.test_x.copy()[indices, :]
+        self.ori_y = cls.test_y.copy()[indices]
+        return self
+
+    def eval(self):
+        ori_in = self.cls.formatter(self.ori_x, self.ori_y)
+        original = self.cls.predict(ori_in).flatten().tolist()
+        correct = np.array((np.where(
+            np.array(self.ori_y) == original)[0]).flatten().tolist())
+        adv_in = self.cls.formatter(self.adv_x, self.ori_y)
+        adversarial = self.cls.predict(adv_in).flatten().tolist()
+        self.adv_y = np.array(adversarial)
+        evades = np.array(
+            (np.where(self.adv_y != original)[0])
+            .flatten().tolist())
+        self.evasions = np.intersect1d(evades, correct)
+
+    def run(self):
+        self.adv_x = ZooAttack(**{
+            'classifier': self.cls.classifier,
+            **self.attack_conf}) \
+            .generate(x=self.ori_x)
+        return self
+
+
+class Experiment:
+
+    def __init__(self, conf):
+        c_keys = ",".join(list(conf.keys()))
+        self.X = None
+        self.y = None
+        self.cls = None
+        self.folds = None
+        self.attack = None
+        self.attrs = []
+        self.mask_cols = []
+        self.attr_ranges = {}
+        self.config = (namedtuple('exp', c_keys)(**conf))
+        self.stats = Result()
+
+    @property
+    def n_records(self) -> int:
+        return len(self.X)
+
+    @property
+    def n_attr(self) -> int:
+        return len(self.attrs)
+
+    def custom_config(self, key):
+        return getattr(self.config, key) \
+            if key and hasattr(self.config, key) else None
+
+    def load_csv(self, ds_path: str, n_splits: int):
+        self.attrs, rows = read_dataset(ds_path)
+        self.X = rows[:, :-1]
+        self.y = rows[:, -1].astype(int).flatten()
+        self.mask_cols, n_feat = [], len(self.attrs) - 1
+        self.folds = [x for x in KFold(
+            n_splits=n_splits, shuffle=True).split(self.X)]
+        for col_i in range(n_feat):
+            self.attr_ranges[col_i] = max(self.X[:, col_i])
+            col_values = list(np.unique(self.X[:, col_i]))
+            if set(col_values).issubset({0, 1}):
+                self.mask_cols.append(col_i)
+
+    def run(self):
+        config = self.config
+        self.load_csv(config.dataset, config.folds)
+        self.cls = XgBoost(*(
+            config.out, self.attrs, self.y,
+            self.mask_cols, self.attr_ranges,
+            self.custom_config('xgb')))
+        self.attack = Zoo(*(
+            config.iter, self.custom_config('zoo')))
+        self.log_experiment_setup()
+        for i, fold in enumerate(self.folds):
+            self.exec_fold(i + 1, fold)
+        self.log_experiment_result()
+        write_result(self.config.out, self.to_dict())
+
+    def exec_fold(self, fi, f_idx):
+        self.cls.reset() \
+            .load(self.X.copy(), self.y.copy(), *f_idx, fi).train()
+        self.stats.append_cls(self.cls)
+        self.log_training_result(fi)
+        self.attack.reset().set_cls(self.cls).run().eval()
+        self.stats.append_attack(self.attack)
+        self.log_fold_attack()
+
+    def log_experiment_setup(self):
+        log('Dataset', self.config.dataset)
+        log('Record count', self.n_records)
+        log('Attributes', self.n_attr)
+        log('K-folds', self.config.folds)
+        log('Classifier', self.cls.name)
+        log('Classes', ", ".join(self.cls.class_names))
+        log('Mutable', len(self.cls.mutable))
+        log('Immutable', len(self.cls.immutable))
+        log('Attack', self.attack.name)
+        log('Attack max iter', self.attack.max_iter)
+
+    def log_training_result(self, fold_n: int):
+        print('=' * 52)
+        log('Fold', fold_n)
+        log('Accuracy', f'{self.cls.accuracy * 100:.2f} %')
+        log('Precision', f'{self.cls.precision * 100:.2f} %')
+        log('Recall', f'{self.cls.recall * 100:.2f} %')
+        log('F-score', f'{self.cls.f_score * 100:.2f} %')
+
+    def log_fold_attack(self):
+        logr('Evasions', self.attack.n_evasions, self.attack.n_records)
+
+    def log_experiment_result(self):
+        print('=' * 52, '', '\nAVERAGE')
+        log('Accuracy', f'{self.stats.accuracy.avg :.2f} %')
+        log('Precision', f'{self.stats.precision.avg :.2f} %')
+        log('Recall', f'{self.stats.recall.avg :.2f} %')
+        log('F-score', f'{self.stats.f_score.avg :.2f} %')
+        logr('Evasions', self.stats.n_evasions.avg / 100,
+             self.stats.n_records.avg / 100)
+
+    def to_dict(self) -> dict:
+        return {
+            'dataset': self.config.dataset,
+            'n_records': self.n_records,
+            'n_attributes': self.n_attr,
+            'attrs': self.attrs,
+            'immutable': self.mask_cols,
+            'attr_mutable': self.cls.mutable,
+            'attr_immutable': self.cls.immutable,
+            'classes': self.cls.class_names,
+            'k_folds': self.config.folds,
+            'classifier': self.config.cls,
+            'attack': self.config.attack,
+            'attr_ranges': dict(
+                zip(self.attrs, self.attr_ranges.values())),
+            'current_utc': int(time.time_ns()),
+            'max_iter': self.attack.max_iter,
+            **self.stats.to_dict()
+        }
+
+
+if __name__ == '__main__':
+    c_args = {**(yaml.safe_load(Path('config.yaml').read_text()))}
+    Experiment(c_args).run()
