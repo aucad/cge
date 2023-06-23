@@ -1,6 +1,7 @@
 import sys
 import json
 import os
+import re
 import yaml
 from pathlib import Path
 from collections import namedtuple
@@ -17,16 +18,14 @@ from exp import MyZooAttack as ZooAttack
 
 def read_dataset(dataset_path):
     df = pd.read_csv(dataset_path).fillna(0)
-    attrs = [a.replace(' ', '').replace('=', '_')
-             .replace('-', '').replace('^', '_')
-             .replace('conn_state_other', 'conn_state_OTH')
+    attrs = [re.sub(r'\W+', '*', a)
              for a in [col for col in df.columns]]
     return attrs, np.array(df)
 
 
-def write_result(fn, json_content):
+def write_result(fn, content):
     with open(fn, "w") as outfile:
-        json.dump(json_content, outfile, indent=4)
+        json.dump(content, outfile, indent=4)
     print('Wrote result to', fn, '\n')
 
 
@@ -57,7 +56,6 @@ class Result(object):
         self.f_score = Result.AvgList()
         self.n_records = Result.AvgList()
         self.n_evasions = Result.AvgList()
-        self.labels = Result.AvgList()
 
     def append_attack(self, attack):
         self.n_evasions.append(attack.n_evasions)
@@ -76,8 +74,7 @@ class Result(object):
             'recall': self.recall,
             'f_score': self.f_score,
             'n_records': self.n_records,
-            'n_evasions': self.n_evasions,
-            'labels': self.labels}
+            'n_evasions': self.n_evasions}
 
 
 class XGBoostRunner:
@@ -254,7 +251,7 @@ class ZooRunner:
         self.adv_y = np.array(adversarial)
         evades = np.array(
             (np.where(self.adv_y != original)[0])
-            .flatten().tolist())
+                .flatten().tolist())
         self.evasions = np.intersect1d(evades, correct)
 
     def run(self):
@@ -317,8 +314,8 @@ class Experiment:
         write_result(self.config.out, self.to_dict())
 
     def exec_fold(self, fi, f_idx):
-        self.cls.reset()\
-            .load(self.X.copy(), self.y.copy(), *f_idx, fi)\
+        self.cls.reset() \
+            .load(self.X.copy(), self.y.copy(), *f_idx, fi) \
             .train()
         self.stats.append_cls(self.cls)
         self.log_training_result(fi)

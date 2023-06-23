@@ -23,9 +23,9 @@ xgb:
   tree_method: exact
   objective: multi:softprob
 
-dataset: data/large.csv
+dataset: data/small_norm.csv
 out: result.json
 cls: xgb
 attack: zoo
 folds: 5 # K-folds
-iter: 5  # Attack iters
+iter: 3  # Attack iters
