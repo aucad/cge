@@ -1,2 +1,4 @@
 exp/__pycache__
+.coverage
+
 result.json

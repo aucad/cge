@@ -249,9 +249,8 @@ class ZooRunner:
         adv_in = self.cls.formatter(self.adv_x, self.ori_y)
         adversarial = self.cls.predict(adv_in).flatten().tolist()
         self.adv_y = np.array(adversarial)
-        evades = np.array(
-            (np.where(self.adv_y != original)[0])
-                .flatten().tolist())
+        evades = np.array((np.where(
+            self.adv_y != original)[0]).flatten().tolist())
         self.evasions = np.intersect1d(evades, correct)
 
     def run(self):
