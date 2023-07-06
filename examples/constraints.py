@@ -23,6 +23,7 @@ mask[1, 5] = 0  # select records
 mask[1:4, 2] = 0  # select records
 mask[0:3, 3] = 0  # select records
 
+
 # enforce constraints:
 adv_prime = adversary * mask + original * (1 - mask)
 
