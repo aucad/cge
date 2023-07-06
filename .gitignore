@@ -45,3 +45,5 @@ venv.bak/
 dmypy.json
 .pyre/
 result.json
+exp/__pycache__
+test/__pycache__
