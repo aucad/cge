@@ -31,6 +31,3 @@ show(original, 'Original')
 show(adversary, 'Adversary')
 show(mask, 'mask')
 show(adv_prime, 'returned adversary')
-
-# lambda x: x == 0 or x == 1
-# lambda x: x * (2 ** 64) % 12 == 0

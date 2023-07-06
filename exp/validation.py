@@ -11,8 +11,8 @@ class Validator:
     def __init__(
             self,
             original: np.array,
-            immutable: List[int],
-            constraints: Dict[int, PREDICATE]
+            immutable: List[int] = None,
+            constraints: Dict[int, PREDICATE] = None
     ):
         """Initial setup.
 
@@ -26,7 +26,7 @@ class Validator:
                 (Not sure about multivariate yet!)
         """
         self.original = original
-        self.immutable = immutable
+        self.immutable = immutable or []
         self.constraints = constraints or {}
 
     @property
@@ -54,12 +54,11 @@ class Validator:
             mask[:, i] = 0
 
         # iterate the evaluable constraints
-        for index, f in self.constraints:
+        for index, f in self.constraints.items():
             input_values = adv[:, index]  # column vector
             mask_bits = np.vectorize(f)(input_values)  # evaluate
-            mask[: index] = mask_bits  # apply to mask
-
-        # TODO: multivariate, maybe tuple of indices as a key?
+            mask[:, index] = mask_bits  # apply to mask
+            # TODO: multivariate, maybe tuple of indices as a key?
 
         # enforce the constraints
         result = adv * mask + self.original * (1 - mask)
