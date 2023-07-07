@@ -5,7 +5,7 @@ PREDICATE = Callable[[float], bool]
 """Predicate is a function from R -> bool."""
 
 
-class Validator:
+class Validation:
     """Constraint validation implementation"""
 
     def __init__(
