@@ -15,10 +15,12 @@ class Result(object):
         self.f_score = Result.AvgList()
         self.n_records = Result.AvgList()
         self.n_evasions = Result.AvgList()
+        self.valid = Result.AvgList()
 
-    def append_attack(self, attack):
+    def append_attack(self, attack, valid):
         self.n_evasions.append(attack.n_evasions)
         self.n_records.append(attack.n_records)
+        self.valid.append(valid)
 
     def append_cls(self, cls):
         self.accuracy.append(cls.accuracy)
@@ -33,4 +35,6 @@ class Result(object):
             'recall': self.recall,
             'f_score': self.f_score,
             'n_records': self.n_records,
-            'n_evasions': self.n_evasions}
+            'n_evasions': self.n_evasions,
+            'p_valid': self.valid
+        }

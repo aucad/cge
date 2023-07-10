@@ -1,0 +1,81 @@
+zoo:
+  # Attack instance parameters
+  confidence: 0.25
+  learning_rate: 0.1
+  binary_search_steps: 10
+  initial_const: 0.001
+  abort_early: True
+  use_resize: False
+  use_importance: False
+  variable_h: 0.3
+  targeted: False
+  nb_parallel: 5
+  batch_size: 1
+  verbose: True
+  max_iter: 5
+
+xgb:
+  # Tree booster params
+  eta: 0.3
+  gamma: 0
+  max_depth: 6
+  min_child_weight: 1
+  tree_method: exact
+  objective: multi:softprob
+
+dataset: data/small_norm.csv
+out: result.json
+cls: xgb
+attack: zoo
+folds: 5 # K-folds
+iter: 3  # Attack iters
+
+apply_validation: true
+immutable: [ 4,5,6,7 ]
+constraints:
+  0: "lambda x: x == 0 or x == 1"
+
+#   0 --- proto*udp
+#   1 --- duration
+#   2 --- orig_bytes
+#   3 --- resp_bytes
+#   4 --- conn_state*SF
+#   5 --- conn_state*S0
+#   6 --- conn_state*OTH
+#   7 --- conn_state*S1
+#   8 --- missed_bytes
+#   9 --- history*ShADadttfF
+#  10 --- history*S
+#  11 --- history*ShADadtfF
+#  12 --- history*Dd
+#  13 --- history*D
+#  14 --- history*DdA
+#  15 --- history*DdAaFf
+#  16 --- history*ShADda
+#  17 --- orig_pkts
+#  18 --- orig_ip_bytes
+#  19 --- resp_pkts
+#  20 --- resp_ip_bytes
+#  21 --- label
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
