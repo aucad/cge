@@ -5,14 +5,15 @@ PREDICATE = Callable[[float], bool]
 """Predicate is a function from R -> bool."""
 
 
-class Validator:
+class Validation:
     """Constraint validation implementation"""
 
     def __init__(
             self,
-            original: np.array,
+            original: np.array = None,
             immutable: List[int] = None,
-            constraints: Dict[int, PREDICATE] = None
+            constraints: Dict[int, PREDICATE] = None,
+            apply=True
     ):
         """Initial setup.
 
@@ -25,26 +26,22 @@ class Validator:
                 The value is a lambda function R -> bool.
                 (Not sure about multivariate yet!)
         """
-        self.original = original
+        self.original = np.copy(original) if \
+            original is not None else np.array([])
         self.immutable = immutable or []
         self.constraints = constraints or {}
+        self.disabled = not apply
+
+    def reset(self, ori: np.array):
+        """reset comparison data"""
+        self.original = ori
 
     @property
-    def has_constraints(self):
+    def __has_constraints(self):
         """Check if some constraints have been specified."""
         return len(self.immutable) + len(self.constraints.keys()) > 0
 
-    def enforce(self, adv: np.array) -> np.array:
-        """Enforce feature constraints.
-
-        Arguments:
-            adv - adversarially perturbed records (potentially invalid).
-
-        Returns:
-            Valid adversarial records, enforcing the provided constraints.
-        """
-        if not self.has_constraints:
-            return adv
+    def __enforce(self, adv: np.array) -> np.array:
 
         # initialize mask as all 1s
         mask = np.ones(self.original.shape, dtype=np.ubyte)
@@ -63,7 +60,35 @@ class Validator:
         # enforce the constraints
         result = adv * mask + self.original * (1 - mask)
 
-        # we can update original here, if we want
-        # self.original = np.copy(result)
+        return result
 
+    def enforce(self, adv: np.array) -> np.array:
+        """Enforce feature constraints.
+
+        Arguments:
+            adv - adversarially perturbed records (potentially invalid).
+
+        Returns:
+            Valid adversarial records, enforcing the provided constraints.
+        """
+        return adv if (self.disabled or not self.__has_constraints) else \
+            self.__enforce(adv)
+
+    def score_valid(self, arr: np.array):
+        """For some adversarial sample, calculate percent valid 0.0-1.0"""
+        total = arr.shape[0]
+        validated = self.__enforce(arr)
+        delta = self.original - validated
+        temp = (delta != 0).sum(1)
+        nonzero = np.count_nonzero(temp)
+        return (total - nonzero) / total
+
+    @staticmethod
+    def parse_pred(config: dict):
+        """Parse text input of a constraint predicate.
+        (There maybe some better approach not using eval).
+        """
+        result = {}
+        for key, value in config.items():
+            result[key] = eval(value)
         return result

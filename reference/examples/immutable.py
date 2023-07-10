@@ -2,12 +2,20 @@ from random import randint
 
 import numpy as np
 
-INPUT_FILE = "./data/ex_input.txt"
 IMMUTABLE_COLS = 3
 ATTACK_ITER = 15
 
 # load initial input -- this data is assumed valid
-original = np.loadtxt(INPUT_FILE, delimiter=',')
+original = np.array([
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0.000015, 0, 0.000279, 1, 0, 0, 0, 0, 0.002762, 0.000427, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0.000279, 1, 0, 0, 0, 0, 0.002762, 0.000427, 0],
+    [1, 0, 0, 0.000279, 1, 0, 0, 0, 0, 0.002762, 0.000427, 0],
+    [1, 0.000001, 0, 0.000279, 1, 0, 0, 0, 0, 0.002762, 0.000427, 0],
+    [0, 0.000174, 0, 0.801987, 1, 0, 0, 0, 0, 0.000075, 0.000004, 1]
+])
 num_rows, num_cols = original.shape
 
 # (randomly for this example) choose some columns to mask:
@@ -31,7 +39,5 @@ for _ in range(ATTACK_ITER):
     adv = (adv + noise) * mask + original * (1 - mask)
 
 print("Indices", indices_immutable, 'are immutable:')
-# Take the diff, coerce to int type for display
-
 for row in (adv - original).astype(int):
     print(' '.join(['=' if e == 0 else '.' for e in row]))
