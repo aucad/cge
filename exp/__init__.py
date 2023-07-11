@@ -4,19 +4,19 @@
 Adversarial machine learning with constraints.
 """
 
-__title__ = ""
-__license__ = ""
+__title__ = "Constrained AML"
+__license__ = "TBD"
 __author__ = ""
-__version__ = ""
+__version__ = "1.0.0"
 
 import warnings
 
 warnings.filterwarnings("ignore")
 
 from exp.utility import Utility
-from exp.result import Result
+from exp.result import Result, ModelScore, AttackScore
 from exp.validation import Validation
-from exp.zoo import ZooValid as MyZooAttack
+from exp.zoo import ZooConst
 from exp.classifier import ModelTraining
 from exp.attack import AttackRunner
 from exp.experiment import Experiment

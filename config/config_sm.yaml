@@ -25,15 +25,14 @@ xgb:
 
 dataset: data/small_norm.csv
 out: result.json
-cls: xgb
-attack: zoo
 folds: 5 # K-folds
 iter: 3  # Attack iters
 
-apply_validation: true
+validate: true
 immutable: [ 4,5,6,7 ]
 constraints:
   0: "lambda x: x == 0 or x == 1"
+  1: "lambda x: (x * 502) <= 5.0"
 
 #   0 --- proto*udp
 #   1 --- duration
