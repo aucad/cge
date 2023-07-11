@@ -1,4 +1,4 @@
-.PHONY: test
+.PHONY: test exp
 
 all: test lint
 
@@ -7,6 +7,10 @@ test:
 
 lint:
 	flake8 ./exp --count --show-source --statistics
+
+exp:
+	@$(foreach f, $(shell find config/$(cat) -type f -iname '*.yaml'), \
+ 		python3 -m exp $(f) ; )
 
 clean:
 	@find . -name '*.pyc' -exec rm -f {} +

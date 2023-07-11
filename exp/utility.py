@@ -1,5 +1,6 @@
-import json
+import os
 import re
+import yaml
 from typing import Any
 
 import numpy as np
@@ -7,6 +8,7 @@ import pandas as pd
 
 
 class Utility:
+    """Miscellaneous utility methods."""
 
     @staticmethod
     def read_dataset(dataset_path):
@@ -17,13 +19,17 @@ class Utility:
 
     @staticmethod
     def write_result(fn, content):
+        dir_path, _ = os.path.split(fn)
+        if len(dir_path) > 0 and not os.path.exists(dir_path):
+            os.makedirs(dir_path)
         with open(fn, "w") as outfile:
-            json.dump(content, outfile, indent=4)
+            yaml.dump(content, outfile, default_flow_style=None)
         print('Wrote result to', fn, '\n')
 
     @staticmethod
     def sdiv(num, denom, fault: Any = '', mult=True):
-        return fault if denom == 0 else ((100 if mult else 1) * num / denom)
+        return fault if denom == 0 else (
+                (100 if mult else 1) * num / denom)
 
     @staticmethod
     def log(label: str, value):
@@ -31,5 +37,31 @@ class Utility:
 
     @staticmethod
     def logr(label, num, den):
-        a, b, ratio = round(num, 0), round(den, 0), Utility.sdiv(num, den)
+        a, b, ratio = round(num, 0), round(den, 0), \
+                      Utility.sdiv(num, den)
         return Utility.log(label, f'{a} of {b} - {ratio:.1f} %')
+
+    @staticmethod
+    def logrd(label, num, den):
+        Utility.logr(label, num / 100, den / 100)
+
+    @staticmethod
+    def normalize(data, attr_ranges=None):
+        """Make sure data is in range 0.0 - 1.0"""
+        np.seterr(divide='ignore', invalid='ignore')
+        for i in range(data.shape[1]):
+            range_max = attr_ranges[i] \
+                if attr_ranges is not None else (data[:, i])
+            data[:, i] = (data[:, i]) / range_max
+            data[:, i] = np.nan_to_num(data[:, i])
+        return data
+
+    @staticmethod
+    def parse_pred(config: dict):
+        """Parse text value of a constraint predicate.
+        FIXME: find some better approach that does not use eval.
+        """
+        result = {}
+        for key, value in config.items():
+            result[key] = eval(value)
+        return result
