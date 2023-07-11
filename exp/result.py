@@ -53,7 +53,8 @@ class AttackScore:
             adv_y != original)[0]).flatten().tolist())
         self.evasions = np.intersect1d(evades, correct)
         self.n_evasions = len(self.evasions)
-        self.n_valid, idx_valid = validation.score_valid(adv_x)
+        self.n_valid, idx_valid = \
+            validation.score_valid(attack.ori_x, adv_x)
         valid = np.array((np.where(
             idx_valid == 0)[0]).flatten().tolist())
         self.valid_evades = np.intersect1d(self.evasions, valid)
@@ -69,6 +70,9 @@ class Result(object):
         @property
         def avg(self):
             return Util.sdiv(sum(self), len(self))
+
+        def to_dict(self):
+            return list(self)
 
     def __init__(self):
         self.accuracy = Result.AvgList()
@@ -94,12 +98,12 @@ class Result(object):
 
     def to_dict(self):
         return {
-            'accuracy': self.accuracy,
-            'precision': self.precision,
-            'recall': self.recall,
-            'f_score': self.f_score,
-            'n_records': self.n_records,
-            'n_valid_evades': self.n_ve,
-            'n_evasions': self.n_evasions,
-            'n_valid': self.n_valid,
+            'accuracy': self.accuracy.to_dict(),
+            'precision': self.precision.to_dict(),
+            'recall': self.recall.to_dict(),
+            'f_score': self.f_score.to_dict(),
+            'n_records': self.n_records.to_dict(),
+            'n_valid_evades': self.n_ve.to_dict(),
+            'n_evasions': self.n_evasions.to_dict(),
+            'n_valid': self.n_valid.to_dict(),
         }

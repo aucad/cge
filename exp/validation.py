@@ -23,15 +23,10 @@ class Validation:
                 The value is a lambda function R -> bool.
                 (Not sure about multivariate yet!)
         """
-        self.original = np.array([])
         self.immutable = immutable or []
         self.constraints = constraints or {}
 
-    def reset(self, ori: np.array):
-        self.original = ori
-        return self
-
-    def enforce(self, adv: np.array) -> np.array:
+    def enforce(self, ref: np.array, adv: np.array) -> np.array:
         """Enforce feature constraints.
 
         Arguments:
@@ -42,7 +37,7 @@ class Validation:
         """
 
         # initialize mask as all 1s
-        mask = np.ones(self.original.shape, dtype=np.ubyte)
+        mask = np.ones(ref.shape, dtype=np.ubyte)
 
         # immutables are always 0
         for i in self.immutable:
@@ -56,14 +51,14 @@ class Validation:
             # TODO: multivariate, maybe tuple of indices as a key?
 
         # enforce the constraints
-        result = adv * mask + self.original * (1 - mask)
+        result = adv * mask + ref * (1 - mask)
 
         return result
 
-    def score_valid(self, arr: np.array):
+    def score_valid(self, ref: np.array, arr: np.array):
         """Count number of valid instances."""
         total = arr.shape[0]
-        delta = np.subtract(arr, self.enforce(arr))
+        delta = np.subtract(arr, self.enforce(ref, arr))
         nonzero = (delta != 0).sum(1)
         count_nz = np.count_nonzero(nonzero)
         return total - count_nz, nonzero

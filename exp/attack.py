@@ -2,7 +2,7 @@ import numpy as np
 
 from art.attacks.evasion import ZooAttack as ZooUniversal
 
-from exp import ZooConst, AttackScore, Validation
+from exp import ZooConst, AttackScore, Validation, Validatable
 
 
 class AttackRunner:
@@ -34,11 +34,13 @@ class AttackRunner:
 
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
-        self.adv_x = self.mode(
+        attack = self.mode(
             **{'classifier': self.cls.classifier,
-               **self.attack_conf}).generate(x=self.ori_x)
-        self.adv_y = np.array(self.cls.predict(
-            self.cls.formatter(self.adv_x, self.ori_y))
-                              .flatten().tolist())
+               **self.attack_conf})
+        if issubclass(self.mode, Validatable):
+            attack.set_validation(v_model)
+        self.adv_x = attack.generate(x=self.ori_x)
+        self.adv_y = np.array(self.cls.predict(self.cls.formatter(
+            self.adv_x, self.ori_y)).flatten().tolist())
         self.score.calculate(self, v_model)
         return self

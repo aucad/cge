@@ -1,10 +1,13 @@
+import sys
 import yaml
 from pathlib import Path
 
 from exp import Experiment, Utility
 
+DEFAULT_CONFIG = './config/config_sm.yaml'
+
 if __name__ == '__main__':
-    fp = './config/config_lg.yaml'
+    fp = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CONFIG
     config = yaml.safe_load(Path(fp).read_text())
 
     # parse the predicates, because they are text

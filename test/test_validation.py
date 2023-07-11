@@ -5,7 +5,7 @@ from exp.validation import Validation
 def test_no_constraints():
     ori = np.array([[1, 2, 3], [5, 6, 7]])
     adv = np.array([[6, 7, 1], [3, 1, 2]])
-    result = Validation().reset(ori).enforce(adv)
+    result = Validation().enforce(ori, adv)
     assert (result == adv).all()
 
 
@@ -13,7 +13,7 @@ def test_immutable_all():
     ori = np.array([[.6, .4, .3, .3], [.3, .4, .5, .1]])
     adv = np.array([[.2, .4, .6, .0], [.7, .6, .6, .3]])
 
-    result = Validation(immutable=[0, 1, 2, 3]).reset(ori).enforce(adv)
+    result = Validation(immutable=[0, 1, 2, 3]).enforce(ori, adv)
     assert (result == ori).all()
 
 
@@ -22,7 +22,7 @@ def test_immutable_1():
     adv = np.array([[.2, .4, .6], [.0, .5, .2], [.6, .6, .3]])
     exp = np.array([[.2, .5, .6], [.0, .5, .2], [.6, .2, .3]])
 
-    result = Validation(immutable=[1]).reset(ori).enforce(adv)
+    result = Validation(immutable=[1]).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -31,7 +31,7 @@ def test_immutable_2():
     adv = np.array([[.5, .7, .8, .1, .9, .1], [.8, .3, .2, .5, .3, .2]])
     exp = np.array([[.5, .7, .4, .1, .9, .7], [.8, .3, .4, .5, .3, .1]])
 
-    result = Validation(immutable=[2, 5]).reset(ori).enforce(adv)
+    result = Validation(immutable=[2, 5]).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -40,7 +40,7 @@ def test_bin_feature():
     adv = np.array([[.8], [1.], [.4], [0.], [.2], [1.]])
     exp = np.array([[1.], [1.], [1.], [0.], [0.], [1.]])
     constraints = {0: lambda x: x == 0 or x == 1}
-    result = Validation(constraints=constraints).reset(ori).enforce(adv)
+    result = Validation(constraints=constraints).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -53,5 +53,5 @@ def test_single_feature():
         1: lambda x: x < .3 or x > .6,
         2: lambda x: (x * 10) % 2 == 0
     }
-    result = Validation(constraints=constraints).reset(ori).enforce(adv)
+    result = Validation(constraints=constraints).enforce(ori, adv)
     assert (result == exp).all()

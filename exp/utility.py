@@ -1,5 +1,6 @@
-import json
+import os
 import re
+import yaml
 from typing import Any
 
 import numpy as np
@@ -18,8 +19,11 @@ class Utility:
 
     @staticmethod
     def write_result(fn, content):
+        dir_path, _ = os.path.split(fn)
+        if len(dir_path) > 0 and not os.path.exists(dir_path):
+            os.makedirs(dir_path)
         with open(fn, "w") as outfile:
-            json.dump(content, outfile, indent=4)
+            yaml.dump(content, outfile, default_flow_style=None)
         print('Wrote result to', fn, '\n')
 
     @staticmethod

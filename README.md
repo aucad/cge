@@ -9,5 +9,5 @@ pip install -r requirements-dev.txt
 Run
 
 ```
-python -m exp
+make exp
 ```

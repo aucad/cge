@@ -24,36 +24,15 @@ xgb:
   objective: multi:softprob
 
 dataset: data/large_norm.csv
-out: result.json
+out: result/large_regular.yaml
 folds: 5 # K-folds
-iter: 3  # Attack iters
+iter: 2  # Attack iters
 
-validate: true
-immutable: [ 0, 1, 2]
+validate: false
+immutable: [ 0,  1,  2,  6,  7,  8,  10,  11,  12,  13 ]
 constraints:
   3: "lambda x: (x * 502) <= 5.0"
   17: "lambda x: round(x * 168910, 0) in [0, 40, 76, 131, 380, 456, 562, 563, 589, 100982, 114431, 110715]"
-
-#   0 --- proto=udp
-#   1 --- proto=tcp
-#   2 --- proto=icmp
-#   3 --- duration
-#   4 --- orig_bytes
-#   5 --- resp_bytes
-#   6 --- conn_state=S0
-#   7 --- conn_state=SF
-#   8 --- conn_state=other
-#   9 --- missed_bytes
-#  10 --- history=D
-#  11 --- history=Dd
-#  12 --- history=S
-#  13 --- history=other
-#  14 --- orig_pkts
-#  15 --- orig_ip_bytes
-#  16 --- resp_pkts
-#  17 --- resp_ip_bytes
-#  18 --- label
-  
   
   
   

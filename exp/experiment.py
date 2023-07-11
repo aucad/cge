@@ -8,8 +8,6 @@ from exp import Utility as Util, \
     AttackScore
 
 
-# TODO: apply experiment with validation (if enabled)
-
 class Experiment:
 
     def __init__(self, conf):
@@ -60,13 +58,12 @@ class Experiment:
         self.cls.reset(self.X.copy(), self.y.copy(), *f_idx).train()
         self.result.append_cls(self.cls.score)
         Experiment.log_fold_model(self.cls.score)
-        self.validation.reset(self.cls.test_x.copy())
         self.attack.reset(self.cls).run(self.validation)
         self.result.append_attack(self.attack.score)
         Experiment.log_fold_attack(self.attack.score)
 
     def to_dict(self) -> dict:
-        return {
+        return {'config': {
             'dataset': self.config.dataset,
             'classifier': self.cls.name,
             'attack': self.attack.name,
@@ -74,13 +71,14 @@ class Experiment:
             'n_attributes': len(self.attrs),
             'n_records': len(self.X),
             'attrs': self.attrs,
-            'attr_ranges': dict(
-                zip(self.attrs, self.attr_ranges.values())),
+            'attr_ranges': dict([
+                (str(k), float(v)) for k, v in
+                zip(self.attrs, self.attr_ranges.values())]),
             'k_folds': self.config.folds,
             'max_iter': self.attack.max_iter,
             'immutable': self.validation.immutable,
-            'constraints': list(self.validation.constraints.keys()),
-            **self.result.to_dict()}
+            'constraints': list(self.validation.constraints.keys())
+        }, 'folds': {**self.result.to_dict()}}
 
     @staticmethod
     def log_setup(exp):

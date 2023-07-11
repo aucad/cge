@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 from exp.utility import Utility
 from exp.result import Result, ModelScore, AttackScore
 from exp.validation import Validation
-from exp.zoo import ZooConst
+from exp.zoo import ZooConst, Validatable
 from exp.classifier import ModelTraining
 from exp.attack import AttackRunner
 from exp.experiment import Experiment
