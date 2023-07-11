@@ -6,8 +6,14 @@ Setup
 pip install -r requirements-dev.txt
 ```
 
-Run
+Run experiments
 
 ```
 make exp
+```
+
+Run unit tests
+
+```
+make test
 ```

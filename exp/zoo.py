@@ -1,15 +1,7 @@
 import numpy as np
 from art.attacks.evasion import ZooAttack
 
-from exp import Validation
-
-
-class Validatable:
-    v_model = None
-
-    def set_validation(self, v: Validation):
-        """connect validation module"""
-        self.v_model = v
+from exp import Validatable
 
 
 class ZooConst(ZooAttack, Validatable):

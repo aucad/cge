@@ -1,16 +1,18 @@
+import time
 from collections import namedtuple
+from typing import List
 
 import numpy as np
 from sklearn.model_selection import KFold
 
-from exp import Utility as Util, \
-    Result, Validation, AttackRunner, ModelTraining, ModelScore, \
-    AttackScore
+from exp import Utility as Util, Result, Validation, AttackRunner, \
+    ModelTraining, ModelScore, AttackScore
 
 
 class Experiment:
+    """Run adversarial experiment"""
 
-    def __init__(self, conf):
+    def __init__(self, conf: dict):
         c_keys = ",".join(list(conf.keys()))
         self.config = (namedtuple('exp', c_keys)(**conf))
         self.X = None
@@ -22,8 +24,11 @@ class Experiment:
         self.result = Result()
         self.attr_ranges = {}
         self.attrs = []
+        self.start = 0
+        self.end = 0
 
-    def custom_config(self, key):
+    def get_conf(self, key: str):
+        """Try get configration key, if exists."""
         return getattr(self.config, key) \
             if key and hasattr(self.config, key) else None
 
@@ -39,23 +44,25 @@ class Experiment:
         self.X = Util.normalize(self.X, self.attr_ranges)
 
     def run(self):
-        """Run an experiment w/ classification, attack, validation"""
+        """Run an experiment w/ classification, attack, validation."""
         conf = self.config
+        self.start = time.time_ns()
         self.load_csv(conf.dataset, conf.folds)
-        self.cls = ModelTraining(self.custom_config('xgb'))
+        self.cls = ModelTraining(self.get_conf('xgb'))
         self.validation = Validation(conf.immutable, conf.constraints)
         self.attack = AttackRunner(*(conf.iter, conf.validate,
-                                     self.custom_config('zoo')))
+                                     self.get_conf('zoo')))
         Experiment.log_setup(self)
         for i, fold in enumerate(self.folds):
             self.exec_fold(i + 1, fold)
+        self.end = time.time_ns()
         Experiment.log_result(self.result)
         Util.write_result(self.config.out, self.to_dict())
 
-    def exec_fold(self, fi, f_idx):
-        """Run one of K-folds"""
-        Experiment.log_fold_num(fi)
-        self.cls.reset(self.X.copy(), self.y.copy(), *f_idx).train()
+    def exec_fold(self, fold_i: int, data_indices: List[int]):
+        """Run one of K-folds."""
+        Experiment.log_fold_num(fold_i)
+        self.cls.reset(self.X.copy(), self.y.copy(), *data_indices).train()
         self.result.append_cls(self.cls.score)
         Experiment.log_fold_model(self.cls.score)
         self.attack.reset(self.cls).run(self.validation)
@@ -65,6 +72,7 @@ class Experiment:
     def to_dict(self) -> dict:
         return {'config': {
             'dataset': self.config.dataset,
+            'config_path': self.config.config_path,
             'classifier': self.cls.name,
             'attack': self.attack.name,
             'n_classes': len(np.unique(self.y)),
@@ -77,7 +85,8 @@ class Experiment:
             'k_folds': self.config.folds,
             'max_iter': self.attack.max_iter,
             'immutable': self.validation.immutable,
-            'constraints': list(self.validation.constraints.keys())
+            'constraints': list(self.validation.constraints.keys()),
+            'duration_sec': Util.time_sec(self.start, self.end)
         }, 'folds': {**self.result.to_dict()}}
 
     @staticmethod
