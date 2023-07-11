@@ -9,6 +9,7 @@ DEFAULT_CONFIG = './config/config_sm.yaml'
 if __name__ == '__main__':
     fp = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CONFIG
     config = yaml.safe_load(Path(fp).read_text())
+    config['config_path'] = fp
 
     # parse the predicates, because they are text
     const = 'constraints'

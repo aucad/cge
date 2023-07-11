@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Dict, Callable
+from typing import List, Dict, Callable, Tuple
 
 PREDICATE = Callable[[float], bool]
 """Predicate is a function from R -> bool."""
@@ -13,7 +13,7 @@ class Validation:
             immutable: List[int] = None,
             constraints: Dict[int, PREDICATE] = None
     ):
-        """Initial setup.
+        """Initialize validation module.
 
         Arguments:
             immutable - feature indices of immutable attributes.
@@ -26,10 +26,11 @@ class Validation:
         self.immutable = immutable or []
         self.constraints = constraints or {}
 
-    def enforce(self, ref: np.array, adv: np.array) -> np.array:
+    def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
         """Enforce feature constraints.
 
         Arguments:
+            ref - reset point (valid).
             adv - adversarially perturbed records (potentially invalid).
 
         Returns:
@@ -55,10 +56,20 @@ class Validation:
 
         return result
 
-    def score_valid(self, ref: np.array, arr: np.array):
+    def score_valid(self, ref: np.ndarray, arr: np.ndarray)\
+            -> Tuple[int, np.ndarray]:
         """Count number of valid instances."""
         total = arr.shape[0]
         delta = np.subtract(arr, self.enforce(ref, arr))
         nonzero = (delta != 0).sum(1)
         count_nz = np.count_nonzero(nonzero)
         return total - count_nz, nonzero
+
+
+class Validatable:
+    """Base class of a validatable entity."""
+    v_model = None
+
+    def set_validation(self, v: Validation):
+        """connect validation model"""
+        self.v_model = v

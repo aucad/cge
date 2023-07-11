@@ -1,5 +1,7 @@
 import os
 import re
+import time
+
 import yaml
 from typing import Any
 
@@ -27,26 +29,27 @@ class Utility:
         print('Wrote result to', fn, '\n')
 
     @staticmethod
-    def sdiv(num, denom, fault: Any = '', mult=True):
+    def sdiv(num: float, denom: float, fault: Any = '', mult=True):
+        """`safe` division"""
         return fault if denom == 0 else (
                 (100 if mult else 1) * num / denom)
 
     @staticmethod
-    def log(label: str, value):
+    def log(label: str, value: Any):
         print(f'{label} '.ljust(18, '-') + str(value))
 
     @staticmethod
-    def logr(label, num, den):
+    def logr(label: str, num: float, den: float):
         a, b, ratio = round(num, 0), round(den, 0), \
                       Utility.sdiv(num, den)
         return Utility.log(label, f'{a} of {b} - {ratio:.1f} %')
 
     @staticmethod
-    def logrd(label, num, den):
+    def logrd(label: str, num: float, den: float):
         Utility.logr(label, num / 100, den / 100)
 
     @staticmethod
-    def normalize(data, attr_ranges=None):
+    def normalize(data: np.ndarray, attr_ranges=None):
         """Make sure data is in range 0.0 - 1.0"""
         np.seterr(divide='ignore', invalid='ignore')
         for i in range(data.shape[1]):
@@ -65,3 +68,8 @@ class Utility:
         for key, value in config.items():
             result[key] = eval(value)
         return result
+
+    @staticmethod
+    def time_sec(start: time, end: time) -> int:
+        """Time difference between start and end time, in seconds."""
+        return round((end - start) / 1e9, 1)

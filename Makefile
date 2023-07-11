@@ -13,6 +13,9 @@ exp:
  		python3 -m exp $(f) ; )
 
 clean:
+	@rm -fr .pytest_cache/
+	@rm -fr .eggs/
+	@rm -fr .coverage
 	@find . -name '*.pyc' -exec rm -f {} +
 	@find . -name '*.pyo' -exec rm -f {} +
 	@find . -name '*~' -exec rm -f {} +
