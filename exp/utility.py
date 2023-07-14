@@ -1,4 +1,3 @@
-import collections
 import os
 import re
 import time
@@ -6,7 +5,6 @@ import warnings
 
 import yaml
 from typing import Any, Sized
-from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd

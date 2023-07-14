@@ -39,7 +39,7 @@ def test_bin_feature():
     ori = np.array([[1.], [0.], [1.], [1.], [0.], [1.]])
     adv = np.array([[.8], [1.], [.4], [0.], [.2], [1.]])
     exp = np.array([[1.], [1.], [1.], [0.], [0.], [1.]])
-    constraints = {0: lambda x: x == 0 or x == 1}
+    constraints = {0: ((0,), lambda x: x == 0 or x == 1)}
     result = Validation(constraints=constraints).enforce(ori, adv)
     assert (result == exp).all()
 
@@ -50,8 +50,8 @@ def test_single_feature():
     exp = np.array([[.0, .1, .2], [.5, .9, .6], [.3, .2, .6], [.9, .8, .8]])
 
     constraints = {
-        1: lambda x: x < .3 or x > .6,
-        2: lambda x: (x * 10) % 2 == 0
+        1: ((1,), lambda x: x < .3 or x > .6),
+        2: ((2,), lambda x: (x * 10) % 2 == 0)
     }
     result = Validation(constraints=constraints).enforce(ori, adv)
     assert (result == exp).all()

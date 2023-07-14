@@ -31,4 +31,3 @@ def test_const_parser_multi():
     assert parsed[2][0] == (2, 0, 1)
     assert parsed[3][0] == (3,)
     assert parsed[4][0] == (4, 0)
-
