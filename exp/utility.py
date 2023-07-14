@@ -1,9 +1,12 @@
+import collections
 import os
 import re
 import time
+import warnings
 
 import yaml
-from typing import Any
+from typing import Any, Sized
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
@@ -62,11 +65,20 @@ class Utility:
     @staticmethod
     def parse_pred(config: dict):
         """Parse text value of a constraint predicate.
-        FIXME: find some better approach that does not use eval.
+        FIXME: try not use eval here
         """
         result = {}
         for key, value in config.items():
-            result[key] = eval(value)
+            if isinstance(value, str):
+                result[key] = ((key,), eval(value),)
+            elif isinstance(value, Sized) \
+                    and len(value) == 2 \
+                    and isinstance(value[0], Sized) \
+                    and isinstance(value[1], str):
+                ids, pred = value
+                result[key] = (tuple([key] + ids), eval(pred))
+            else:
+                warnings.warn(f'Invalid constraint format: {value}')
         return result
 
     @staticmethod

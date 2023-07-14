@@ -29,7 +29,34 @@ folds: 5 # K-folds
 iter: 2  # Attack iters
 
 validate: true
-immutable: [ 0,  1,  2,  6,  7,  8,  10,  11,  12,  13 ]
+immutable: [ 10,  11,  12,  13 ]
 constraints:
-  3: "lambda x: (x * 502) <= 5.0"
-  17: "lambda x: round(x * 168910, 0) in [0, 40, 76, 131, 380, 456, 562, 563, 589, 100982, 114431, 110715]"
+  0: [ [ 1, 2 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
+  1: [ [ 0, 2 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
+  2: [ [ 0, 1 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
+  6: [ [ 7, 8, 1, 16, 17 ], "lambda SO, SF, OTH, tcp, rpk, rbt: SO + SF + OTH == 1 and ((tcp != 1) or (SO != 1) or (rpk == 0 and rbt == 0))" ]
+  7: [ [ 6, 8 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
+  8: [ [ 6, 7 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
+  14: [ [ 1, 2, 16, 8, 15, 17, 11, 7 ], "lambda opk, tcp, udp, rpk, oth, obt, rbt, hD, SF: (tcp != 1 or opk >= rpk or oth == 1 or obt < rbt) and (udp != 1 or (opk >= rpk or (SF == 1 and hD ==1)) and (opk < rpk or (SF==1 or obt < rbt)))" ]
+  15: [ [ 1, 14 ], "lambda obt, tcp, opk: (tcp != 1) or (opk <= obt and (opk == 0 or obt >= 20))" ]
+  17: [ [ 1, 16 ], "lambda rbt, tcp, rpk: (tcp != 1) or (rpk <= rbt and (rpk == 0 or rbt >= 20))" ]
+
+#   0 --- proto=udp
+#   1 --- proto=tcp
+#   2 --- proto=icmp
+#   3 --- duration
+#   4 --- orig_bytes
+#   5 --- resp_bytes
+#   6 --- conn_state=S0
+#   7 --- conn_state=SF
+#   8 --- conn_state=other
+#   9 --- missed_bytes
+#  10 --- history=D
+#  11 --- history=Dd
+#  12 --- history=S
+#  13 --- history=other
+#  14 --- orig_pkts
+#  15 --- orig_ip_bytes
+#  16 --- resp_pkts
+#  17 --- resp_ip_bytes
+#  18 --- label

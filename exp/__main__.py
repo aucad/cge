@@ -4,7 +4,7 @@ from pathlib import Path
 
 from exp import Experiment, Utility
 
-DEFAULT_CONFIG = './config/config_sm.yaml'
+DEFAULT_CONFIG = './config/config_lgT.yaml'
 
 if __name__ == '__main__':
     fp = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CONFIG
