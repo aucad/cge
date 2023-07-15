@@ -1,7 +1,9 @@
 from typing import List, Dict, Callable, Tuple
 
 import numpy as np
-from networkx import DiGraph, descendants
+from networkx import DiGraph, descendants, draw_networkx
+
+import matplotlib.pyplot as plt
 
 PREDICATE = Callable[[float], bool]
 """Predicate is a function from R -> bool."""
@@ -32,20 +34,15 @@ class Validation:
         self.immutable = immutable or []
         self.constraints = constraints or {}
         self.desc = self.desc_graph(self.constraints)
+        # split these internally because one is easier to handle
+        self.single_feat = dict(
+            [(k, P) for (k, (s, P)) in self.constraints.items()
+             if (k,) == s])
+        self.multi_feat = dict(
+            [x for x in self.constraints.items()
+             if x[0] not in self.single_feat])
         for v in self.desc.items():
             print(v)
-
-    @staticmethod
-    def desc_graph(constraints: CONSTR_DICT):
-        g = DiGraph()
-        targets = list(constraints.keys())
-        edges = [j for s in [[
-            (src, tgt) for src in list(set(y)) if src != tgt]
-            for tgt, (y, _) in constraints.items()] for j in s]
-        nodes = list(set([s for s, _ in edges] + targets))
-        g.add_nodes_from(nodes)
-        g.add_edges_from(edges)
-        return dict([(n, descendants(g, n)) for n in targets])
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
         """Enforce feature constraints.
@@ -66,20 +63,46 @@ class Validation:
             mask[:, i] = 0
 
         # iterate the evaluable constraints
-        for index, (src, f) in self.constraints.items():
-            input_values = adv[:, index]  # column vector
-            mask_bits = np.vectorize(f)(input_values)  # evaluate
+        for index, pred in self.single_feat.items():
+            input_values = adv[:, index]
+            mask_bits = np.vectorize(pred)(input_values)
             mask[:, index] = mask_bits  # apply to mask
-            # TODO: apply multivariate case
 
-        # enforce the constraints
-        result = adv * mask + ref * (1 - mask)
+        for target, (sources, pred) in self.multi_feat.items():
+            deps = self.desc[target]
+            input_values = adv[:, sources]  # column vectors
+            mask_bits = np.apply_along_axis(pred, 1, input_values)
+            mask[:, target] = mask_bits  # apply to mask
+            if deps and False in mask_bits:
+                invalid = np.array((np.where(mask_bits == 0)[0]))
+                # TODO: propagate, sketch
+                # mask[invalid, list(deps)] = 0
+                print(target, list(deps), mask)
 
-        return result
+        # apply the constraints
+        return adv * mask + ref * (1 - mask)
+
+    @staticmethod
+    def desc_graph(constraints: CONSTR_DICT):
+        g = DiGraph()
+        targets = list(constraints.keys())
+        edges = [j for s in [[
+            (src, tgt) for src in list(set(y)) if src != tgt]
+            for tgt, (y, _) in constraints.items()] for j in s]
+        nodes = list(set([s for s, _ in edges] + targets))
+        g.add_nodes_from(nodes)
+        g.add_edges_from(edges)
+        draw_networkx(g, with_labels=True)
+        plt.show()
+        return dict([(n, descendants(g, n)) for n in targets])
 
     def score_valid(self, ref: np.ndarray, arr: np.ndarray) \
             -> Tuple[int, np.ndarray]:
-        """Count number of valid instances."""
+        """Count number of valid instances.
+
+        This metric should only be relevant is the constraints were
+        not enforced during search, otherwise all should be valid.
+        """
         total = arr.shape[0]
         delta = np.subtract(arr, self.enforce(ref, arr))
         nonzero = (delta != 0).sum(1)

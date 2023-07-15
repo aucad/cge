@@ -31,15 +31,15 @@ iter: 2  # Attack iters
 validate: true
 immutable: [ 10,  11,  12,  13 ]
 constraints:
-  0: [ [ 1, 2 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
-  1: [ [ 0, 2 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
-  2: [ [ 0, 1 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
-  6: [ [ 7, 8, 1, 16, 17 ], "lambda SO, SF, OTH, tcp, rpk, rbt: SO + SF + OTH == 1 and ((tcp != 1) or (SO != 1) or (rpk == 0 and rbt == 0))" ]
-  7: [ [ 6, 8 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
-  8: [ [ 6, 7 ], "lambda c1, c2, c3: c1 + c2 + c3 == 1" ]
-  14: [ [ 1, 2, 16, 8, 15, 17, 11, 7 ], "lambda opk, tcp, udp, rpk, oth, obt, rbt, hD, SF: (tcp != 1 or opk >= rpk or oth == 1 or obt < rbt) and (udp != 1 or (opk >= rpk or (SF == 1 and hD ==1)) and (opk < rpk or (SF==1 or obt < rbt)))" ]
-  15: [ [ 1, 14 ], "lambda obt, tcp, opk: (tcp != 1) or (opk <= obt and (opk == 0 or obt >= 20))" ]
-  17: [ [ 1, 16 ], "lambda rbt, tcp, rpk: (tcp != 1) or (rpk <= rbt and (rpk == 0 or rbt >= 20))" ]
+  0: [ [ 1, 2 ], "lambda x: sum(x) == 1" ]
+  1: [ [ 0, 2 ], "lambda x: sum(x) == 1" ]
+  2: [ [ 0, 1 ], "lambda x: sum(x) == 1" ]
+  6: [ [ 7, 8, 1, 16, 17 ], "lambda x: sum(x[0:2]) == 1 and (x[0] != 1 or x[3] != 1 or (x[4] == 0 and x[5] == 0))" ]
+  7: [ [ 6, 8 ], "lambda x: sum(x) == 1" ]
+  8: [ [ 6, 7 ], "lambda x: sum(x) == 1" ]
+#  14: [ [ 1, 2, 16, 8, 15, 17, 11, 7 ], "lambda opk, tcp, udp, rpk, oth, obt, rbt, hD, SF: (tcp != 1 or opk >= rpk or oth == 1 or obt < rbt) and (udp != 1 or (opk >= rpk or (SF == 1 and hD ==1)) and (opk < rpk or (SF==1 or obt < rbt)))" ]
+  15: [ [ 1, 14 ], "lambda x: x[1] != 1 or (x[2] <= x[0] and (x[2] == 0 or x[0] >= 20))" ]
+  17: [ [ 1, 16 ], "lambda x: x[1] != 1 or (x[2] <= x[0] and (x[2] == 0 or x[0] >= 20))" ]
 
 #   0 --- proto=udp
 #   1 --- proto=tcp

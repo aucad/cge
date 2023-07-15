@@ -14,6 +14,7 @@ if __name__ == '__main__':
     # parse the predicates, because they are text
     const = 'constraints'
     if const in config.keys():
+        config['str_' + const] = config[const]
         config[const] = Utility.parse_pred(config[const]) \
             if config[const] is not None else {}
 

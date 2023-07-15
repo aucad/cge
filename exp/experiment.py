@@ -62,7 +62,8 @@ class Experiment:
     def exec_fold(self, fold_i: int, data_indices: List[int]):
         """Run one of K-folds."""
         Experiment.log_fold_num(fold_i)
-        self.cls.reset(self.X.copy(), self.y.copy(), *data_indices).train()
+        self.cls.reset(self.X.copy(), self.y.copy(),
+                       *data_indices).train()
         self.result.append_cls(self.cls.score)
         Experiment.log_fold_model(self.cls.score)
         self.attack.reset(self.cls).run(self.validation)
@@ -86,6 +87,7 @@ class Experiment:
             'max_iter': self.attack.max_iter,
             'immutable': self.validation.immutable,
             'constraints': list(self.validation.constraints.keys()),
+            'predicates': self.get_conf('str_constraints'),
             'duration_sec': Util.time_sec(self.start, self.end)
         }, 'folds': {**self.result.to_dict()}}
 

@@ -72,7 +72,7 @@ class Result(object):
             return Util.sdiv(sum(self), len(self))
 
         def to_dict(self):
-            return list(self)
+            return [round(x, 6) for x in list(self)]
 
     def __init__(self):
         self.accuracy = Result.AvgList()
