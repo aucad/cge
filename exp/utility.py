@@ -100,10 +100,9 @@ class Utility:
                 handles={patches.Patch(
                     fill=False, alpha=0, label=k)
                     for k in dep_graph.nodes},
-                labels=[f'{k} : {node_names[k]}' for k in
-                        sorted(dep_graph.nodes)],
-                handletextpad=-0.25,
-                loc='upper left', bbox_to_anchor=(.95, 1),
-                frameon=False)
+                labels=[f'{k} : {node_names[k]}'
+                        for k in sorted(dep_graph.nodes)],
+                handletextpad=-0.25, loc='upper left',
+                bbox_to_anchor=(.95, 1), frameon=False)
             plt.savefig(fn, bbox_inches="tight")
             plt.clf()
