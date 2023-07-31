@@ -10,7 +10,7 @@ class AttackRunner:
 
     def __init__(self, i, v, conf):
         self.mode = ZooConst if v else ZooUniversal
-        self.name = 'Zoo Constrained' if v else 'Zoo Regular'
+        self.name = 'Zoo+Validation' if v else 'Zoo Basic'
         self.max_iter = 10 if i < 1 else i
         self.cls = None
         self.ori_x = None

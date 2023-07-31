@@ -14,8 +14,7 @@ lint:
 
 exp:
 	@$(foreach f, $(shell find config/$(cat) -type f -iname '*.yaml'), \
-	$(foreach v, $(VALIDATE), \
- 		python3 -m exp $(f) $($(v)) ; ))
+	$(foreach v, $(VALIDATE), python3 -m exp $(f) $($(v)) ; ))
 
 clean:
 	@rm -fr .pytest_cache/
