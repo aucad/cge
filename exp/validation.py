@@ -34,10 +34,9 @@ class Validation:
         self.immutable = immutable or []
         self.constraints = constraints or {}
         self.desc = self.desc_graph(self.constraints)
-        # split these internally because one is easier to handle
         self.single_feat = dict(
-            [(k, P) for (k, (s, P)) in self.constraints.items()
-             if (k,) == s])
+            [(k, P) for (k, (s, P))
+             in self.constraints.items() if (k,) == s])
         self.multi_feat = dict(
             [x for x in self.constraints.items()
              if x[0] not in self.single_feat])
@@ -55,7 +54,7 @@ class Validation:
             Valid adversarial records wrt. constraints.
         """
 
-        # initialize mask as all 1s
+        # initialize mask
         mask = np.ones(ref.shape, dtype=np.ubyte)
 
         # immutables are always 0
@@ -69,15 +68,13 @@ class Validation:
             mask[:, index] = mask_bits  # apply to mask
 
         for target, (sources, pred) in self.multi_feat.items():
-            deps = self.desc[target]
+            deps = list(self.desc[target])
             input_values = adv[:, sources]  # column vectors
             mask_bits = np.apply_along_axis(pred, 1, input_values)
             mask[:, target] = mask_bits  # apply to mask
             if deps and False in mask_bits:
                 invalid = np.array((np.where(mask_bits == 0)[0]))
-                # TODO: propagate, sketch
-                # mask[invalid, list(deps)] = 0
-                print(target, list(deps), mask)
+                mask[np.ix_(invalid, deps)] = 0  # propagate
 
         # apply the constraints
         return adv * mask + ref * (1 - mask)
@@ -104,7 +101,9 @@ class Validation:
         not enforced during search, otherwise all should be valid.
         """
         total = arr.shape[0]
-        delta = np.subtract(arr, self.enforce(ref, arr))
+        final_arr = arr.copy()
+        correct = self.enforce(ref, arr)
+        delta = np.subtract(final_arr, correct)
         nonzero = (delta != 0).sum(1)
         count_nz = np.count_nonzero(nonzero)
         return total - count_nz, nonzero

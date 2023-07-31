@@ -9,7 +9,7 @@ def test_const_parser():
 
 
 def test_const_parser2():
-    cdict = {0: "lambda x: x>0.5", 2: "lambda x: x == 0"}
+    cdict = {0: "lambda x: x > 0.5", 2: "lambda x: x == 0"}
     parsed = Utility.parse_pred(cdict)
     assert 2 == len(parsed.keys())
     assert parsed[0][0] == (0,)
