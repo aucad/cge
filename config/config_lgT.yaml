@@ -1,5 +1,6 @@
 dataset: data/large_norm.csv
 out: result/large_const.yaml
+fig: result/large_const_graph.pdf
 validate: true
 
 immutable: [ 10,  11,  12,  13 ]
@@ -30,9 +31,9 @@ constraints:
 #   3 --- duration
 #   4 --- orig_bytes
 #   5 --- resp_bytes
-#   6 --- conn_state=S0
-#   7 --- conn_state=SF
-#   8 --- conn_state=other
+#   6 --- conn_st=S0
+#   7 --- conn_st=SF
+#   8 --- conn_st=other
 #   9 --- missed_bytes
 #  10 --- history=D
 #  11 --- history=Dd

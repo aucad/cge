@@ -1,4 +1,4 @@
-proto=udp,proto=tcp,proto=icmp,duration,orig_bytes,resp_bytes,conn_state=S0,conn_state=SF,conn_state=other,missed_bytes,history=D,history=Dd,history=S,history=other,orig_pkts,orig_ip_bytes,resp_pkts,resp_ip_bytes,label
+proto=udp,proto=tcp,proto=icmp,duration,orig_bytes,resp_bytes,conn_st=S0,conn_st=SF,conn_st=other,missed_bytes,history=D,history=Dd,history=S,history=other,orig_pkts,orig_ip_bytes,resp_pkts,resp_ip_bytes,label
 1,0,0,,,,1,0,0,0,1,0,0,0,0.000196,0.000196,0,0,0
 1,0,0,0.000144,0.05042,0.000292,0,1,0,0,0,1,0,0,0.000196,0.000372,0.005435,0.00045,0
 1,0,0,0.000005,0.05042,0.000292,0,1,0,0,0,1,0,0,0.000196,0.000372,0.005435,0.00045,0

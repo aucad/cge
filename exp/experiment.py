@@ -50,12 +50,13 @@ class Experiment:
         self.load_csv(conf.dataset, conf.folds)
         self.cls = ModelTraining(self.get_conf('xgb'))
         self.validation = Validation(conf.immutable, conf.constraints)
-        self.attack = AttackRunner(*(conf.iter, conf.validate,
-                                     self.get_conf('zoo')))
+        self.attack = AttackRunner(
+            *(conf.iter, conf.validate, self.get_conf('zoo')))
         Experiment.log_setup(self)
         for i, fold in enumerate(self.folds):
             self.exec_fold(i + 1, fold)
         self.end = time.time_ns()
+        self.save_dependency_graph(self.get_conf('fig'))
         Experiment.log_result(self.result)
         Util.write_result(self.config.out, self.to_dict())
 
@@ -69,6 +70,10 @@ class Experiment:
         self.attack.reset(self.cls).run(self.validation)
         self.result.append_attack(self.attack.score)
         Experiment.log_fold_attack(self.attack.score)
+
+    def save_dependency_graph(self, fn):
+        nn = dict([(i, n) for i, n in enumerate(self.attrs)])
+        Util.plot_graph(self.validation.dep_graph, fn, node_names=nn)
 
     def to_dict(self) -> dict:
         return {'config': {
@@ -87,6 +92,7 @@ class Experiment:
             'max_iter': self.attack.max_iter,
             'immutable': self.validation.immutable,
             'constraints': list(self.validation.constraints.keys()),
+            'dep_graph': self.validation.desc,
             'predicates': self.get_conf('str_constraints'),
             'duration_sec': Util.time_sec(self.start, self.end)
         }, 'folds': {**self.result.to_dict()}}

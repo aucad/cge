@@ -1,9 +1,10 @@
 from typing import List, Dict, Callable, Tuple
 
 import numpy as np
-from networkx import DiGraph, descendants, draw_networkx
+from networkx import DiGraph, descendants, draw_networkx, spring_layout
 
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 PREDICATE = Callable[[float], bool]
 """Predicate is a function from R -> bool."""
@@ -33,15 +34,13 @@ class Validation:
         """
         self.immutable = immutable or []
         self.constraints = constraints or {}
-        self.desc = self.desc_graph(self.constraints)
+        self.desc, self.dep_graph = self.desc_graph(self.constraints)
         self.single_feat = dict(
             [(k, P) for (k, (s, P))
              in self.constraints.items() if (k,) == s])
         self.multi_feat = dict(
             [x for x in self.constraints.items()
              if x[0] not in self.single_feat])
-        for v in self.desc.items():
-            print(v)
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
         """Enforce feature constraints.
@@ -89,9 +88,7 @@ class Validation:
         nodes = list(set([s for s, _ in edges] + targets))
         g.add_nodes_from(nodes)
         g.add_edges_from(edges)
-        draw_networkx(g, with_labels=True)
-        plt.show()
-        return dict([(n, descendants(g, n)) for n in targets])
+        return dict([(n, descendants(g, n)) for n in targets]), g
 
     def score_valid(self, ref: np.ndarray, arr: np.ndarray) \
             -> Tuple[int, np.ndarray]:

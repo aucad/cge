@@ -1,5 +1,6 @@
 dataset: data/large_norm.csv
 out: result/large_regular.yaml
+fig: result/large_regular_graph.pdf
 validate: false
 
 immutable: [ 0,  1,  2,  6,  7,  8,  10,  11,  12,  13 ]

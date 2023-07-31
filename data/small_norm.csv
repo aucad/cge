@@ -1,4 +1,4 @@
-proto=udp,duration,orig_bytes,resp_bytes,conn_state=SF,conn_state=S0,conn_state=OTH,conn_state=S1,missed_bytes,history=ShADadttfF,history=S,history=ShADadtfF,history=Dd,history=D,history=DdA,history=DdAaFf,history=ShADda,orig_pkts,orig_ip_bytes,resp_pkts,resp_ip_bytes,label
+proto=udp,duration,orig_bytes,resp_bytes,conn_st=SF,conn_st=S0,conn_st=OTH,conn_st=S1,missed_bytes,history=ShADadttfF,history=S,history=ShADadtfF,history=Dd,history=D,history=DdA,history=DdAaFf,history=ShADda,orig_pkts,orig_ip_bytes,resp_pkts,resp_ip_bytes,label
 0,0.000248,0,0.999255,1,0,0,0,0.571429,1,0,0,0,0,0,0,0,0.000093,0.000004,0.337017,0.999573,1
 0,0.000453,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0.000002,0,0,0,1
 0,,,,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1
