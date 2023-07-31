@@ -3,10 +3,10 @@ from typing import List, Dict, Callable, Tuple, Union
 import numpy as np
 from networkx import DiGraph, descendants
 
-PREDICATE = Union[Callable[[float], bool], Callable[[List[float]], bool]]
-"""Predicate is a function from R -> bool."""
+PREDICATE = Union[Callable[[float], bool], Callable[[Tuple[float]], bool]]
+"""Predicate is a function from R -> bool. (possibly tuple of floats)"""
 
-CONSTR_DICT = Dict[int, Tuple[Tuple[int], PREDICATE]]
+CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], PREDICATE]]
 """Constraints dictionary type."""
 
 
@@ -67,7 +67,9 @@ class Validation:
         for target, (sources, pred) in self.multi_feat.items():
             inputs = adv[:, sources]
             mask_bits = np.apply_along_axis(pred, 1, inputs)
-            mask[:, target] = mask_bits
+            # the *= compound assignment is super important
+            # to not reset an invalid bit back to valid!
+            mask[:, target] *= mask_bits
             # propagate invalidity to dependents
             deps = list(self.desc[target])
             if deps and False in mask_bits:
