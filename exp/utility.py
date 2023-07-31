@@ -1,12 +1,16 @@
 import os
 import re
 import time
+import warnings
 
 import yaml
-from typing import Any
+from typing import Any, Sized
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from networkx import draw_networkx, spring_layout
 
 
 class Utility:
@@ -62,14 +66,43 @@ class Utility:
     @staticmethod
     def parse_pred(config: dict):
         """Parse text value of a constraint predicate.
-        FIXME: find some better approach that does not use eval.
+        FIXME: try not use eval here
         """
         result = {}
         for key, value in config.items():
-            result[key] = eval(value)
+            if isinstance(value, str):
+                result[key] = ((key,), eval(value),)
+            elif isinstance(value, Sized) \
+                    and len(value) == 2 \
+                    and isinstance(value[0], Sized) \
+                    and isinstance(value[1], str):
+                ids, pred = value
+                result[key] = (tuple([key] + ids), eval(pred))
+            else:
+                warnings.warn(f'Invalid constraint format: {value}')
         return result
 
     @staticmethod
     def time_sec(start: time, end: time) -> int:
         """Time difference between start and end time, in seconds."""
         return round((end - start) / 1e9, 1)
+
+    @staticmethod
+    def plot_graph(dep_graph, fn, node_names: dict = None):
+        """Plot constraint dependency graph."""
+        if dep_graph and fn:
+            fig = plt.figure()
+            draw_networkx(
+                dep_graph, ax=fig.add_subplot(),
+                pos=spring_layout(dep_graph, k=0.25),
+                node_color='orange', with_labels=True)
+            plt.legend(
+                handles={patches.Patch(
+                    fill=False, alpha=0, label=k)
+                    for k in dep_graph.nodes},
+                labels=[f'{k} : {node_names[k]}'
+                        for k in sorted(dep_graph.nodes)],
+                handletextpad=-0.25, loc='upper left',
+                bbox_to_anchor=(.95, 1), frameon=False)
+            plt.savefig(fn, bbox_inches="tight")
+            plt.clf()

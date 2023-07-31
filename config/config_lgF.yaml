@@ -1,35 +1,26 @@
-zoo:
-  # Attack instance parameters
-  confidence: 0.25
-  learning_rate: 0.1
-  binary_search_steps: 10
-  initial_const: 0.001
-  abort_early: True
-  use_resize: False
-  use_importance: False
-  variable_h: 0.3
-  targeted: False
-  nb_parallel: 5
-  batch_size: 1
-  verbose: True
-  max_iter: 5
-
-xgb:
-  # Tree booster params
-  eta: 0.3
-  gamma: 0
-  max_depth: 6
-  min_child_weight: 1
-  tree_method: exact
-  objective: multi:softprob
-
 dataset: data/large_norm.csv
 out: result/large_regular.yaml
-folds: 5 # K-folds
-iter: 2  # Attack iters
-
+fig: result/large_regular_graph.pdf
 validate: false
-immutable: [ 0,  1,  2,  6,  7,  8,  10,  11,  12,  13 ]
+
+immutable: [ 10,  11,  12,  13 ]
 constraints:
-  3: "lambda x: (x * 502) <= 5.0"
-  17: "lambda x: round(x * 168910, 0) in [0, 40, 76, 131, 380, 456, 562, 563, 589, 100982, 114431, 110715]"
+  0: [ [ 1, 2 ], "lambda x: sum(x) == 1" ]
+  1: [ [ 0, 2 ], "lambda x: sum(x) == 1" ]
+  2: [ [ 0, 1 ], "lambda x: sum(x) == 1" ]
+  6: [ [ 7, 8, 1, 16, 17 ],
+       "lambda x: sum(x[0:2]) == 1 and 
+       (x[0] != 1 or x[3] != 1 or (x[4] == 0 and x[5] == 0))" ]
+  7: [ [ 6, 8 ], "lambda x: sum(x) == 1" ]
+  8: [ [ 6, 7 ], "lambda x: sum(x) == 1" ]
+  14: [ [ 1, 2, 16, 8, 15, 17, 11, 7 ],
+        "lambda x: 
+        (x[1] != 1 or x[0] >= x[3] or x[4] == 1 or x[5] < x[6]) and 
+        (x[2] != 1 or (x[0] >= x[3] or (x[8] == 1 and x[7] == 1)) and 
+        (x[0] < x[3] or (x[8] == 1 or x[5] < x[6])))" ]
+  15: [ [ 1, 14 ],
+        "lambda x: x[1] != 1 or 
+        (x[2] <= x[0] and (x[2] == 0 or x[0] >= 20))" ]
+  17: [ [ 1, 16 ],
+        "lambda x: x[1] != 1 or 
+        (x[2] <= x[0] and (x[2] == 0 or x[0] >= 20))" ]

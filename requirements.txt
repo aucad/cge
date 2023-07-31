@@ -4,3 +4,5 @@ numpy
 Pillow
 pandas
 pyyaml
+networkx
+matplotlib
