@@ -92,7 +92,8 @@ class Experiment:
             'max_iter': self.attack.max_iter,
             'immutable': self.validation.immutable,
             'constraints': list(self.validation.constraints.keys()),
-            'dep_graph': self.validation.desc,
+            'dep_graph': dict([(k, list(v)) for k, v in
+                               self.validation.desc.items()]),
             'predicates': self.get_conf('str_constraints'),
             'duration_sec': Util.time_sec(self.start, self.end)
         }, 'folds': {**self.result.to_dict()}}
