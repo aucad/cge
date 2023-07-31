@@ -1,5 +1,5 @@
+# Attack instance parameters
 zoo:
-  # Attack instance parameters
   confidence: 0.25
   learning_rate: 0.1
   binary_search_steps: 10
@@ -14,8 +14,8 @@ zoo:
   verbose: True
   max_iter: 5
 
+# Tree booster params
 xgb:
-  # Tree booster params
   eta: 0.3
   gamma: 0
   max_depth: 6
@@ -24,4 +24,5 @@ xgb:
   objective: multi:softprob
 
 folds: 5 # K-folds
-iter: 2  # Attack iterations
+iter: 5  # Attack iterations
+out: result # output directory

@@ -1,7 +1,6 @@
 dataset: data/small_norm.csv
-out: result/small_const.yaml
-fig: result/small_const_graph.pdf
-validate: true
+name: small
+iter: 10
 
 immutable: [ 4, 5, 6, 7 ]
 constraints:

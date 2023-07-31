@@ -1,5 +1,6 @@
 import time
 from collections import namedtuple
+from os import path
 from typing import List
 
 import numpy as np
@@ -26,6 +27,11 @@ class Experiment:
         self.attrs = []
         self.start = 0
         self.end = 0
+
+    def fname(self):
+        c = self.config
+        v = "T" if c.validate else "F"
+        return path.join(c.out, f'{c.name}_i{c.iter}_{v}.yaml')
 
     def get_conf(self, key: str):
         """Try get configration key, if exists."""
@@ -56,9 +62,9 @@ class Experiment:
         for i, fold in enumerate(self.folds):
             self.exec_fold(i + 1, fold)
         self.end = time.time_ns()
-        self.save_dependency_graph(self.get_conf('fig'))
+        self.save_dependency_graph()
         Experiment.log_result(self.result)
-        Util.write_result(self.config.out, self.to_dict())
+        Util.write_result(self.fname(), self.to_dict())
 
     def exec_fold(self, fold_i: int, data_indices: List[int]):
         """Run one of K-folds."""
@@ -71,7 +77,8 @@ class Experiment:
         self.result.append_attack(self.attack.score)
         Experiment.log_fold_attack(self.attack.score)
 
-    def save_dependency_graph(self, fn):
+    def save_dependency_graph(self):
+        fn = path.join(self.config.out, self.config.name + '_graph.pdf')
         nn = dict([(i, n) for i, n in enumerate(self.attrs)])
         Util.plot_graph(self.validation.dep_graph, fn, node_names=nn)
 
