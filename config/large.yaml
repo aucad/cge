@@ -1,7 +1,6 @@
 dataset: data/large_norm.csv
-out: result/large_regular.yaml
-fig: result/large_regular_graph.pdf
-validate: false
+name: large
+iter: 2
 
 immutable: [ 10,  11,  12,  13 ]
 constraints:
@@ -24,3 +23,23 @@ constraints:
   17: [ [ 1, 16 ],
         "lambda x: x[1] != 1 or 
         (x[2] <= x[0] and (x[2] == 0 or x[0] >= 20))" ]
+
+#   0 --- proto=udp
+#   1 --- proto=tcp
+#   2 --- proto=icmp
+#   3 --- duration
+#   4 --- orig_bytes
+#   5 --- resp_bytes
+#   6 --- conn_st=S0
+#   7 --- conn_st=SF
+#   8 --- conn_st=other
+#   9 --- missed_bytes
+#  10 --- history=D
+#  11 --- history=Dd
+#  12 --- history=S
+#  13 --- history=other
+#  14 --- orig_pkts
+#  15 --- orig_ip_bytes
+#  16 --- resp_pkts
+#  17 --- resp_ip_bytes
+#  18 --- label

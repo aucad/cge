@@ -28,12 +28,12 @@ class Experiment:
         self.end = 0
 
     def get_conf(self, key: str):
-        """Try get configration key, if exists."""
+        """Try get configration key."""
         return getattr(self.config, key) \
             if key and hasattr(self.config, key) else None
 
-    def load_csv(self, ds_path: str, n_splits: int):
-        """Read dataset and split into K-folds."""
+    def load_data(self, ds_path: str, n_splits: int):
+        """Read dataset and split it into K-folds."""
         self.attrs, rows = Util.read_dataset(ds_path)
         self.X = rows[:, :-1]
         self.y = rows[:, -1].astype(int).flatten()
@@ -44,10 +44,10 @@ class Experiment:
         self.X = Util.normalize(self.X, self.attr_ranges)
 
     def run(self):
-        """Run an experiment w/ classification, attack, validation."""
+        """Run an experiment: train model, attack, validation."""
         conf = self.config
         self.start = time.time_ns()
-        self.load_csv(conf.dataset, conf.folds)
+        self.load_data(conf.dataset, conf.folds)
         self.cls = ModelTraining(self.get_conf('xgb'))
         self.validation = Validation(conf.immutable, conf.constraints)
         self.attack = AttackRunner(
@@ -56,12 +56,13 @@ class Experiment:
         for i, fold in enumerate(self.folds):
             self.exec_fold(i + 1, fold)
         self.end = time.time_ns()
-        self.save_dependency_graph(self.get_conf('fig'))
+        Util.plot_graph(
+            self.validation.dep_graph, self.config, self.attrs)
         Experiment.log_result(self.result)
-        Util.write_result(self.config.out, self.to_dict())
+        Util.write_result(Util.dyn_fname(self.config), self.to_dict())
 
     def exec_fold(self, fold_i: int, data_indices: List[int]):
-        """Run one of K-folds."""
+        """Run one fold of K-folds."""
         Experiment.log_fold_num(fold_i)
         self.cls.reset(self.X.copy(), self.y.copy(),
                        *data_indices).train()
@@ -70,10 +71,6 @@ class Experiment:
         self.attack.reset(self.cls).run(self.validation)
         self.result.append_attack(self.attack.score)
         Experiment.log_fold_attack(self.attack.score)
-
-    def save_dependency_graph(self, fn):
-        nn = dict([(i, n) for i, n in enumerate(self.attrs)])
-        Util.plot_graph(self.validation.dep_graph, fn, node_names=nn)
 
     def to_dict(self) -> dict:
         return {'config': {

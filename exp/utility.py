@@ -2,7 +2,6 @@ import os
 import re
 import time
 import warnings
-
 import yaml
 from typing import Any, Sized
 
@@ -12,9 +11,11 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from networkx import draw_networkx, spring_layout
 
+from exp import CONSTR_DICT, CONFIG_CONST_DICT
+
 
 class Utility:
-    """Miscellaneous utility methods."""
+    """Miscellaneous helper methods."""
 
     @staticmethod
     def read_dataset(dataset_path):
@@ -22,6 +23,12 @@ class Utility:
         attrs = [re.sub(r'\W+', '*', a)
                  for a in [col for col in df.columns]]
         return attrs, np.array(df)
+
+    @staticmethod
+    def dyn_fname(c):
+        """Generate filename for where to save experiment results."""
+        v = "T" if c.validate else "F"
+        return os.path.join(c.out, f'{c.name}_i{c.iter}_{v}.yaml')
 
     @staticmethod
     def write_result(fn, content):
@@ -64,16 +71,18 @@ class Utility:
         return data
 
     @staticmethod
-    def parse_pred(config: dict):
-        """Parse text value of a constraint predicate.
-        FIXME: try not use eval here
-        """
+    def time_sec(start: time, end: time) -> int:
+        """Time difference between start and end time, in seconds."""
+        return round((end - start) / 1e9, 1)
+
+    @staticmethod
+    def parse_pred(config: CONFIG_CONST_DICT) -> CONSTR_DICT:
+        """Parse constraints from yaml text config file."""
         result = {}
         for key, value in config.items():
             if isinstance(value, str):
                 result[key] = ((key,), eval(value),)
-            elif isinstance(value, Sized) \
-                    and len(value) == 2 \
+            elif isinstance(value, Sized) and len(value) == 2 \
                     and isinstance(value[0], Sized) \
                     and isinstance(value[1], str):
                 ids, pred = value
@@ -83,14 +92,11 @@ class Utility:
         return result
 
     @staticmethod
-    def time_sec(start: time, end: time) -> int:
-        """Time difference between start and end time, in seconds."""
-        return round((end - start) / 1e9, 1)
-
-    @staticmethod
-    def plot_graph(dep_graph, fn, node_names: dict = None):
+    def plot_graph(dep_graph, config, attrs):
         """Plot constraint dependency graph."""
-        if dep_graph and fn:
+        fn = os.path.join(config.out, f'{config.name}_graph.pdf')
+        node_names = dict([(i, n) for i, n in enumerate(attrs)])
+        if dep_graph:
             fig = plt.figure()
             draw_networkx(
                 dep_graph, ax=fig.add_subplot(),

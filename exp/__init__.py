@@ -4,15 +4,16 @@
 Adversarial machine learning with constraints.
 """
 
-__title__ = "Constrained AML"
-__license__ = "TBD"
-__author__ = ""
-__version__ = "1.0.0"
+__title__ = 'Constrained AML'
+__license__ = 'TBD'
+__author__ = ''
+__version__ = '1.0.0'
 
 import warnings
 
-warnings.filterwarnings("ignore")
+warnings.filterwarnings('ignore')
 
+from exp.types import *
 from exp.utility import Utility
 from exp.result import Result, ModelScore, AttackScore
 from exp.validation import Validation, Validatable

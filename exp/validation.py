@@ -1,13 +1,9 @@
-from typing import List, Dict, Callable, Tuple, Union
+from typing import List, Dict, Tuple, Set
 
 import numpy as np
 from networkx import DiGraph, descendants
 
-PREDICATE = Union[Callable[[float], bool], Callable[[Tuple[float]], bool]]
-"""Predicate is a function from R -> bool. (possibly tuple of floats)"""
-
-CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], PREDICATE]]
-"""Constraints dictionary type."""
+from exp import CONSTR_DICT
 
 
 class Validation:
@@ -27,14 +23,15 @@ class Validation:
                 The key is the index of the target feature.
                 The value is a tuple, containing:
                  - a non-empty tuple of source feature indices
-                 - a lambda function to evaluate validity of target feature.
+                 - a lambda function to evaluate target feature,
+                    based on source feature values.
         """
         self.immutable = immutable or []
         self.constraints = constraints or {}
-        self.desc, self.dep_graph = self.desc_graph(self.constraints)
+        self.dep_graph, self.desc = self.desc_graph(self.constraints)
         self.single_feat = dict(
-            [(k, P) for (k, (s, P))
-             in self.constraints.items() if (k,) == s])
+            [(t, P) for (t, (s, P))
+             in self.constraints.items() if (t,) == s])
         self.multi_feat = dict(
             [x for x in self.constraints.items()
              if x[0] not in self.single_feat])
@@ -80,11 +77,18 @@ class Validation:
         return adv * mask + ref * (1 - mask)
 
     @staticmethod
-    def desc_graph(constraints: CONSTR_DICT):
+    def desc_graph(constraints: CONSTR_DICT) \
+            -> Tuple[DiGraph, Dict[int, Set]]:
         """Construct a dependency graph from constraints.
 
-        This gives a graph to determine which target feature(s)
+        This allows to determine which target features
         are reachable from a source (omit self-loops).
+
+        Arguments:
+            constraints - constraints dictionary.
+
+        Returns:
+            The graph, a map of reachable nodes from each source.
         """
         g = DiGraph()
         targets = list(constraints.keys())
@@ -94,7 +98,8 @@ class Validation:
         nodes = list(set([s for s, _ in edges] + targets))
         g.add_nodes_from(nodes)
         g.add_edges_from(edges)
-        return dict([(n, descendants(g, n)) for n in targets]), g
+        reachable = [(n, descendants(g, n)) for n in targets]
+        return g,  dict(reachable)
 
     def score_valid(self, ref: np.ndarray, arr: np.ndarray) \
             -> Tuple[int, np.ndarray]:
@@ -102,6 +107,13 @@ class Validation:
 
         This metric should only be relevant is the constraints were
         not enforced during search, otherwise all should be valid.
+
+        Arguments:
+            ref - valid values.
+            arr - modified records, to be evaluated.
+
+        Returns:
+            Total count of invalid records, array of invalid indices.
         """
         total = arr.shape[0]
         final_arr = arr.copy()

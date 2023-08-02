@@ -32,17 +32,13 @@ class ModelTraining:
         self.score = ModelScore()
         return self
 
-    @staticmethod
-    def formatter(x, y):
-        return DMatrix(x, y)
-
-    def predict(self, data):
-        tmp = self.model.predict(data)
+    def predict(self, x, y):
+        tmp = self.model.predict(DMatrix(x, y))
         ax = 1 if len(tmp.shape) == 2 else 0
         return tmp.argmax(axis=ax)
 
     def __train_classifier(self) -> None:
-        d_train = self.formatter(self.train_x, self.train_y)
+        d_train = DMatrix(self.train_x, self.train_y)
         n_classes = len(np.unique(self.train_y))
         sys.stdout = open(os.devnull, 'w')  # hide print
         self.model = xg_train(
@@ -60,10 +56,6 @@ class ModelTraining:
     def train(self):
         """Train and score the model."""
         self.__train_classifier()
-        eval_records = ((self.test_x, self.test_y)
-                        if len(self.test_x) > 0 else
-                        (self.train_x, self.train_y))
-        predictions = self.predict(self.formatter(*eval_records))
-        true_labels = eval_records[1]
-        self.score.calculate(true_labels, predictions)
+        self.score.calculate(
+            self.test_y, self.predict(self.test_x, self.test_y))
         return self
