@@ -33,6 +33,7 @@ class ModelScore:
 
 
 class AttackScore:
+    """Attack metrics."""
 
     def __init__(self):
         self.evasions = None
@@ -45,8 +46,7 @@ class AttackScore:
     def calculate(self, attack, validation):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
-        ori_in = attack.cls.formatter(ori_x, ori_y)
-        original = attack.cls.predict(ori_in).flatten().tolist()
+        original = attack.cls.predict(ori_x, ori_y).flatten().tolist()
         correct = np.array((np.where(
             np.array(ori_y) == original)[0]).flatten().tolist())
         evades = np.array((np.where(

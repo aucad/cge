@@ -8,9 +8,9 @@ from exp import ZooConst, AttackScore, Validation, Validatable
 class AttackRunner:
     """Wrapper for zoo attack"""
 
-    def __init__(self, i, v, conf):
-        self.mode = ZooConst if v else ZooUniversal
-        self.name = 'Zoo+Validation' if v else 'Zoo Basic'
+    def __init__(self, i, apply_constr, conf):
+        self.mode = ZooConst if apply_constr else ZooUniversal
+        self.name = 'Zoo+Validation' if apply_constr else 'Zoo Basic'
         self.max_iter = 10 if i < 1 else i
         self.cls = None
         self.ori_x = None
@@ -40,7 +40,7 @@ class AttackRunner:
         if issubclass(self.mode, Validatable):
             attack.set_validation(v_model)
         self.adv_x = attack.generate(x=self.ori_x)
-        self.adv_y = np.array(self.cls.predict(self.cls.formatter(
-            self.adv_x, self.ori_y)).flatten().tolist())
+        self.adv_y = np.array(self.cls.predict(
+            self.adv_x, self.ori_y).flatten().tolist())
         self.score.calculate(self, v_model)
         return self

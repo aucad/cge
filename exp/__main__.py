@@ -8,25 +8,24 @@ BASE_CONFIG = './config/base.yaml'
 DEFAULT_EXP = './config/large.yaml'
 
 
-def parse_args(parser: ArgumentParser, args=None):
+def parse_args(parser: ArgumentParser):
     """Setup available program arguments."""
     parser.add_argument(
-        dest="config",
-        action="store",
+        dest='config',
+        action='store',
         default=DEFAULT_EXP,
-        help=f'Experiment configuration file',
+        help='Experiment configuration file path',
     )
     parser.add_argument(
-        "-v", "--validate",
+        '-v', '--validate',
         action='store_true',
-        help="Enforce constraints during attack"
+        help='Actively enforce constraints during attack'
     )
-    return parser.parse_args(args)
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser()
-    args = parse_args(parser)
+    args = parse_args(ArgumentParser())
 
     fp = args.config
     def_args = yaml.safe_load(Path(BASE_CONFIG).read_text())
