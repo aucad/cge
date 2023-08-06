@@ -1,18 +1,7 @@
-from abc import ABC, abstractmethod
-
 import numpy as np
 
-from exp import Utility as Util
-
-
-class Loggable(ABC):
-    @abstractmethod
-    def log(self):
-        pass
-
-    @staticmethod
-    def attr_of(o, t):
-        return [x for x in dir(o) if isinstance(getattr(o, x), t)]
+from exp.types import Loggable
+from exp.utility import sdiv, log, logr, logrd, attr_of
 
 
 class ModelScore(Loggable):
@@ -31,14 +20,14 @@ class ModelScore(Loggable):
         tp_fp = int(np.sum(prd == positive))
         tp_fn = int(np.sum(lbl == positive))
         tp = len(np.where((prd == lbl) & (lbl == positive))[0])
-        self.accuracy = Util.sdiv(tp_tn, len(lbl), -1, False)
-        self.precision = p = Util.sdiv(tp, tp_fp, 1, False)
-        self.recall = r = Util.sdiv(tp, tp_fn, 1, False)
-        self.f_score = Util.sdiv(2 * p * r, p + r, 0, False)
+        self.accuracy = sdiv(tp_tn, len(lbl), -1, False)
+        self.precision = p = sdiv(tp, tp_fp, 1, False)
+        self.recall = r = sdiv(tp, tp_fn, 1, False)
+        self.f_score = sdiv(2 * p * r, p + r, 0, False)
 
     def log(self):
-        for a in self.attr_of(self, (int, float)):
-            Util.log(a.capitalize(), f'{getattr(self, a) * 100:.2f} %')
+        for a in attr_of(self, (int, float)):
+            log(a.capitalize(), f'{getattr(self, a) * 100:.2f} %')
 
 
 class AttackScore(Loggable):
@@ -57,7 +46,7 @@ class AttackScore(Loggable):
         original = attack.cls.predict(ori_x, ori_y)
         correct = np.where(ori_y == original)[0]
         evades = np.where(adv_y != original)[0]
-        self.n_valid, v_idx = validation.score_valid(ori_x, adv_x)
+        self.n_valid, v_idx = validation.score(ori_x, adv_x)
         self.evasions = np.intersect1d(evades, correct)
         self.valid_evades = np.intersect1d(
             self.evasions, np.where(v_idx == 0)[0])
@@ -66,9 +55,9 @@ class AttackScore(Loggable):
         self.n_records = ori_x.shape[0]
 
     def log(self):
-        Util.logr('Evasions', self.n_evasions, self.n_records)
-        Util.logr('Valid', self.n_valid, self.n_records)
-        Util.logr('Valid+Evades', self.n_valid_evades, self.n_records)
+        logr('Evasions', self.n_evasions, self.n_records)
+        logr('Valid', self.n_valid, self.n_records)
+        logr('Valid+Evades', self.n_valid_evades, self.n_records)
 
 
 class Result(Loggable):
@@ -76,7 +65,7 @@ class Result(Loggable):
 
         @property
         def avg(self):
-            return Util.sdiv(sum(self), len(self))
+            return sdiv(sum(self), len(self))
 
         def to_dict(self):
             return [round(x, 6) for x in list(self)]
@@ -92,21 +81,21 @@ class Result(Loggable):
         self.n_valid_evades = Result.AvgList()
 
     def append(self, obj):
-        for a in Result.attr_of(obj, (int, float)):
+        for a in attr_of(obj, (int, float)):
             if a in dir(self):
                 getattr(self, a).append(getattr(obj, a))
 
     def to_dict(self):
         return dict([(str(a), getattr(self, a).to_dict())
-                     for a in Result.attr_of(self, Result.AvgList)])
+                     for a in attr_of(self, Result.AvgList)])
 
     def log(self):
         print('=' * 52, '\nAVERAGE')
-        Util.log('Accuracy', f'{self.accuracy.avg :.2f} %')
-        Util.log('Precision', f'{self.precision.avg :.2f} %')
-        Util.log('Recall', f'{self.recall.avg :.2f} %')
-        Util.log('F-score', f'{self.f_score.avg :.2f} %')
-        Util.logrd('Evasions', self.n_evasions.avg, self.n_records.avg)
-        Util.logrd('Valid', self.n_valid.avg, self.n_records.avg)
-        Util.logrd('Valid Evasions',
-                   self.n_valid_evades.avg, self.n_records.avg)
+        log('Accuracy', f'{self.accuracy.avg :.2f} %')
+        log('Precision', f'{self.precision.avg :.2f} %')
+        log('Recall', f'{self.recall.avg :.2f} %')
+        log('F-score', f'{self.f_score.avg :.2f} %')
+        logrd('Evasions', self.n_evasions.avg, self.n_records.avg)
+        logrd('Valid', self.n_valid.avg, self.n_records.avg)
+        logrd('Valid Evasions',
+              self.n_valid_evades.avg, self.n_records.avg)

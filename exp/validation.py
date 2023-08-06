@@ -3,7 +3,7 @@ from typing import List, Dict, Tuple, Set
 import numpy as np
 from networkx import DiGraph, descendants
 
-from exp import CONSTR_DICT
+from exp.types import CONSTR_DICT
 
 
 class Validation:
@@ -64,10 +64,7 @@ class Validation:
         for target, (sources, pred) in self.multi_feat.items():
             inputs = adv[:, sources]
             mask_bits = np.apply_along_axis(pred, 1, inputs)
-            # the *= compound assignment is super important
-            # to not reset an invalid bit back to valid!
             mask[:, target] *= mask_bits
-            # propagate invalidity to dependents
             deps = list(self.desc[target])
             if deps and False in mask_bits:
                 invalid = np.array((np.where(mask_bits == 0)[0]))
@@ -90,8 +87,7 @@ class Validation:
         Returns:
             The graph, a map of reachable nodes from each source.
         """
-        g = DiGraph()
-        targets = list(constraints.keys())
+        g, targets = DiGraph(), list(constraints.keys())
         edges = [j for s in [[
             (src, tgt) for src in list(set(y)) if src != tgt]
             for tgt, (y, _) in constraints.items()] for j in s]
@@ -99,9 +95,9 @@ class Validation:
         g.add_nodes_from(nodes)
         g.add_edges_from(edges)
         reachable = [(n, descendants(g, n)) for n in targets]
-        return g,  dict(reachable)
+        return g, dict(reachable)
 
-    def score_valid(self, ref: np.ndarray, arr: np.ndarray) \
+    def score(self, ref: np.ndarray, arr: np.ndarray) \
             -> Tuple[int, np.ndarray]:
         """Count number of valid instances.
 
@@ -115,13 +111,9 @@ class Validation:
         Returns:
             Total count of invalid records, array of invalid indices.
         """
-        total = arr.shape[0]
-        final_arr = arr.copy()
-        correct = self.enforce(ref, arr)
-        delta = np.subtract(final_arr, correct)
-        nonzero = (delta != 0).sum(1)
-        count_nz = np.count_nonzero(nonzero)
-        return total - count_nz, nonzero
+        delta = np.subtract(arr.copy(), self.enforce(ref, arr))
+        nonzr = (delta != 0).sum(1)
+        return arr.shape[0] - np.count_nonzero(nonzr), nonzr
 
 
 class Validatable:

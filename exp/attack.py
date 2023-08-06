@@ -18,15 +18,13 @@ class AttackRunner:
         self.adv_x = None
         self.adv_y = None
         self.score = None
-        self.attack_conf = conf or {}
-        self.n_records = 0
+        self.conf = conf or {}
 
     def reset(self, cls):
         indices = range(len(cls.test_x))
         self.cls = cls
         self.ori_x = cls.test_x.copy()[indices, :]
         self.ori_y = cls.test_y.copy()[indices]
-        self.n_records = len(self.ori_x)
         self.adv_x = np.array([])
         self.adv_y = np.array([])
         self.score = AttackScore()
@@ -34,13 +32,11 @@ class AttackRunner:
 
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
-        attack = self.mode(
-            **{'classifier': self.cls.classifier,
-               **self.attack_conf})
+        attack = self.mode(self.cls.classifier, **self.conf)
         if issubclass(self.mode, Validatable):
             attack.set_validation(v_model)
         self.adv_x = attack.generate(x=self.ori_x)
         self.adv_y = np.array(self.cls.predict(
-            self.adv_x, self.ori_y).flatten().tolist())
+            self.adv_x, self.ori_y).flatten())
         self.score.calculate(self, v_model)
         return self

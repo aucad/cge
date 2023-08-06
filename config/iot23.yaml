@@ -9,20 +9,20 @@ constraints:
   1: [ [ 0, 2 ], "lambda x: sum(x) == 1" ]
   2: [ [ 0, 1 ], "lambda x: sum(x) == 1" ]
   6: [ [ 7, 8, 1, 16, 17 ],
-       "lambda x: sum(x[0:2]) == 1 and 
+       "lambda x: sum(x[0:2]) == 1 and
        (x[0] != 1 or x[3] != 1 or (x[4] == 0 and x[5] == 0))" ]
   7: [ [ 6, 8 ], "lambda x: sum(x) == 1" ]
   8: [ [ 6, 7 ], "lambda x: sum(x) == 1" ]
   14: [ [ 1, 2, 16, 8, 15, 17, 11, 7 ],
-        "lambda x: 
-        (x[1] != 1 or x[0] >= x[3] or x[4] == 1 or x[5] < x[6]) and 
-        (x[2] != 1 or (x[0] >= x[3] or (x[8] == 1 and x[7] == 1)) and 
+        "lambda x:
+        (x[1] != 1 or x[0] >= x[3] or x[4] == 1 or x[5] < x[6]) and
+        (x[2] != 1 or (x[0] >= x[3] or (x[8] == 1 and x[7] == 1)) and
         (x[0] < x[3] or (x[8] == 1 or x[5] < x[6])))" ]
   15: [ [ 1, 14 ],
-        "lambda x: x[1] != 1 or 
+        "lambda x: x[1] != 1 or
         (x[2] <= x[0] and (x[2] == 0 or x[0] >= 20))" ]
   17: [ [ 1, 16 ],
-        "lambda x: x[1] != 1 or 
+        "lambda x: x[1] != 1 or
         (x[2] <= x[0] and (x[2] == 0 or x[0] >= 20))" ]
 
 #   0 --- proto=udp
