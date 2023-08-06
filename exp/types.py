@@ -1,7 +1,8 @@
+from abc import ABC, abstractmethod
 from typing import Dict, Callable, Tuple, Union
 
 PREDICATE = \
-    Union[Callable[[float], bool], Callable[[Tuple[float]], bool]]
+    Union[Callable[[float], bool], Callable[[Tuple[float, ...]], bool]]
 """Predicate is a function from R -> bool."""
 
 CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], PREDICATE]]
@@ -10,3 +11,9 @@ CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], PREDICATE]]
 CONFIG_CONST_DICT = \
     Union[Dict[int, str], Dict[int, Tuple[Tuple[int, ...], str]]]
 """Constraint dictionary type for experiment configuration file."""
+
+
+class Loggable(ABC):
+    @abstractmethod
+    def log(self):
+        pass

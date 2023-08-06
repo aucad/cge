@@ -1,5 +1,6 @@
-dataset: data/small_norm.csv
-name: small
+dataset: data/ctu_44.csv
+name: test
+desc: IoT23 Malware-Capture-44-1
 iter: 10
 
 immutable: [ 4, 5, 6, 7 ]

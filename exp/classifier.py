@@ -34,10 +34,9 @@ class ModelTraining:
 
     def predict(self, x, y):
         tmp = self.model.predict(DMatrix(x, y))
-        ax = 1 if len(tmp.shape) == 2 else 0
-        return tmp.argmax(axis=ax)
+        return tmp.argmax(axis=1 if len(tmp.shape) == 2 else 0)
 
-    def __train_classifier(self) -> None:
+    def train(self):
         d_train = DMatrix(self.train_x, self.train_y)
         n_classes = len(np.unique(self.train_y))
         sys.stdout = open(os.devnull, 'w')  # hide print
@@ -52,10 +51,6 @@ class ModelTraining:
             nb_features=self.train_x.shape[1],
             nb_classes=n_classes,
             clip_values=(0, 1))
-
-    def train(self):
-        """Train and score the model."""
-        self.__train_classifier()
-        self.score.calculate(
-            self.test_y, self.predict(self.test_x, self.test_y))
+        predictions = self.predict(self.test_x, self.test_y)
+        self.score.calculate(self.test_y, predictions)
         return self

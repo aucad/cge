@@ -2,10 +2,11 @@ import yaml
 from pathlib import Path
 from argparse import ArgumentParser
 
-from exp import Experiment, Utility
+from exp import Experiment
+from exp.utility import parse_pred
 
-BASE_CONFIG = './config/base.yaml'
-DEFAULT_EXP = './config/large.yaml'
+BASE_CONFIG = './config/default.yaml'
+DEFAULT_EXP = './config/iot23.yaml'
 
 
 def parse_args(parser: ArgumentParser):
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     const = 'constraints'
     if const in config.keys():
         config['str_' + const] = config[const]
-        config[const] = Utility.parse_pred(config[const]) \
+        config[const] = parse_pred(config[const]) \
             if config[const] is not None else {}
 
     Experiment({**config}).run()

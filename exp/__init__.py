@@ -4,8 +4,8 @@
 Adversarial machine learning with constraints.
 """
 
-__title__ = 'Constrained AML'
-__license__ = 'TBD'
+__title__ = 'Constrained AML attacks'
+__license__ = ''
 __author__ = ''
 __version__ = '1.0.0'
 
@@ -13,8 +13,8 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-from exp.types import *
-from exp.utility import Utility
+import exp.types
+import exp.utility
 from exp.result import Result, ModelScore, AttackScore
 from exp.validation import Validation, Validatable
 from exp.zoo import ZooConst
