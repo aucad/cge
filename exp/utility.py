@@ -39,6 +39,15 @@ def write_result(fn, content):
         yaml.dump(content, outfile, default_flow_style=None)
     print('Wrote result to', fn, '\n')
 
+def normalize(data: np.ndarray, attr_ranges=None):
+    """Make sure data is in range 0.0 - 1.0"""
+    np.seterr(divide='ignore', invalid='ignore')
+    for i in range(data.shape[1]):
+        range_max = attr_ranges[i] \
+            if attr_ranges is not None else (data[:, i])
+        data[:, i] = (data[:, i]) / range_max
+        data[:, i] = np.nan_to_num(data[:, i])
+    return data
 
 def sdiv(n: float, d: float, fault='', mult=True):
     return fault if d == 0 else (100 if mult else 1) * n / d

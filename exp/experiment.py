@@ -7,7 +7,7 @@ from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ModelTraining
 from exp.utility import read_dataset, log, plot_graph, time_sec, \
-    write_result, dyn_fname
+    write_result, dyn_fname, normalize
 from exp.types import Loggable
 
 
@@ -43,6 +43,8 @@ class Experiment(Loggable):
         self.y = rows[:, -1].astype(int).flatten()
         self.folds = [x for x in KFold(
             n_splits=c.folds, shuffle=True).split(self.X)]
+        self.X = normalize(self.X, [
+            max(self.X[:, i]) for i in range(len(self.attrs) - 1)])
         self.cls = ModelTraining(self.conf('xgb'))
         self.attack = AttackRunner(c.iter, c.validate, self.conf('zoo'))
         self.validation = Validation(c.immutable, c.constraints)
