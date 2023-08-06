@@ -60,6 +60,9 @@ class Validation:
             mask_bits = np.vectorize(pred)(inputs)  # evaluate
             mask[:, index] = mask_bits  # apply to mask
 
+        adv = adv * mask + ref * (1 - mask)
+        mask = np.ones(ref.shape, dtype=np.ubyte)
+
         # evaluate multi-variate constraints
         for target, (sources, pred) in self.multi_feat.items():
             inputs = adv[:, sources]

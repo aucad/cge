@@ -39,6 +39,7 @@ def write_result(fn, content):
         yaml.dump(content, outfile, default_flow_style=None)
     print('Wrote result to', fn, '\n')
 
+
 def normalize(data: np.ndarray, attr_ranges=None):
     """Make sure data is in range 0.0 - 1.0"""
     np.seterr(divide='ignore', invalid='ignore')
@@ -48,6 +49,7 @@ def normalize(data: np.ndarray, attr_ranges=None):
         data[:, i] = (data[:, i]) / range_max
         data[:, i] = np.nan_to_num(data[:, i])
     return data
+
 
 def sdiv(n: float, d: float, fault='', mult=True):
     return fault if d == 0 else (100 if mult else 1) * n / d
@@ -80,16 +82,22 @@ def parse_pred(conf: CONFIG_CONST_DICT) -> CONSTR_DICT:
     return {**dict(single), **dict(multi)}
 
 
-def plot_graph(g, c, a):
+def plot_graph(v, c, a):
     """Plot a constraint-dependency graph."""
-    if len(gn := sorted(g.nodes)) > 0:
+    if len(gn := sorted(v.dep_graph.nodes)) > 0:
         fn = os.path.join(c.out, f'{c.name}_graph.pdf')
+        color_map = [
+            '#CFD8DC' if n in v.immutable else
+            '#00E676' if n not in v.constraints.keys() else
+            '#00BCD4' if n in v.single_feat.keys() else
+            '#FFC107' for n in gn]
         ensure_dir(fn)
         draw_networkx(
-            g, spring_layout(g), True, True,
-            node_color='orange', arrowstyle='->')
+            v.dep_graph, spring_layout(v.dep_graph),
+            with_labels=True, node_color=color_map, arrowstyle='->',
+            font_size=8, font_weight='bold')
         plt.legend(
-            labels=[f'{k}: {a[i]}' for i, k in enumerate(gn)],
+            labels=[f'{k}: {a[k]}' for k in gn],
             handles={Patch(fill=False, alpha=0) for _ in gn},
             bbox_to_anchor=(.92, 1), frameon=False)
         plt.savefig(fn, bbox_inches="tight")

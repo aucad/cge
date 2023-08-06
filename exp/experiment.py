@@ -36,8 +36,6 @@ class Experiment(Loggable):
     def run(self):
         """Run an experiment of K folds."""
         c = self.config
-
-        # load dataset, experiment setup
         self.attrs, rows = read_dataset(c.dataset)
         self.X = rows[:, :-1]
         self.y = rows[:, -1].astype(int).flatten()
@@ -67,8 +65,7 @@ class Experiment(Loggable):
         self.end = time.time_ns()
         self.result.log()
 
-        # write results to file
-        plot_graph(self.validation.dep_graph, c, self.attrs)
+        plot_graph(self.validation, c, self.attrs)
         write_result(dyn_fname(c), self.to_dict())
 
     def log(self):
@@ -87,6 +84,7 @@ class Experiment(Loggable):
     def to_dict(self) -> dict:
         return {'config': {
             'dataset': self.config.dataset,
+            'description': self.config.desc,
             'config_path': self.config.config_path,
             'classifier': self.cls.name,
             'attack': self.attack.name,
@@ -100,6 +98,7 @@ class Experiment(Loggable):
             'k_folds': self.config.folds,
             'n_attack_max_iter': self.attack.max_iter,
             'duration_sec': time_sec(self.start, self.end),
+            'enforcing_constraints': self.attack.validating,
             'immutable': self.validation.immutable,
             'constraints': list(self.validation.constraints.keys()),
             'predicates': self.conf('str_constraints'),
