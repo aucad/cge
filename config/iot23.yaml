@@ -1,5 +1,6 @@
-dataset: data/large_norm.csv
-name: large
+dataset: data/ctu_1-8-34.csv
+name: IoT-23
+desc: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
 iter: 2
 
 immutable: [ 10,  11,  12,  13 ]

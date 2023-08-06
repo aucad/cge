@@ -1,9 +1,21 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
+
 from exp import Utility as Util
 
 
-class ModelScore:
-    """Classifier scoring."""
+class Loggable(ABC):
+    @abstractmethod
+    def log(self):
+        pass
+
+    @staticmethod
+    def attr_of(o, t):
+        return [x for x in dir(o) if isinstance(getattr(o, x), t)]
+
+
+class ModelScore(Loggable):
 
     def __init__(self):
         self.accuracy = 0
@@ -13,27 +25,23 @@ class ModelScore:
 
     def calculate(self, true_labels, predictions, positive=0):
         """Calculate classifier performance metrics."""
-        tp, tp_tn, p_pred, p_actual = 0, 0, 0, 0
-        for actual, pred in zip(true_labels, predictions):
-            int_pred = int(round(pred, 0))
-            if int_pred == positive:
-                p_pred += 1
-            if actual == positive:
-                p_actual += 1
-            if int_pred == actual:
-                tp_tn += 1
-            if int_pred == actual and int_pred == positive:
-                tp += 1
-        self.accuracy = Util.sdiv(tp_tn, len(predictions), -1, False)
-        self.precision = Util.sdiv(tp, p_pred, 1, False)
-        self.recall = Util.sdiv(tp, p_actual, 1, False)
-        self.f_score = Util.sdiv(
-            2 * self.precision * self.recall,
-            self.precision + self.recall, 0, False)
+        prd = np.array([round(p, 0) for p in predictions], dtype=int)
+        lbl = np.array(true_labels)
+        tp_tn = int(np.sum(prd == lbl))
+        tp_fp = int(np.sum(prd == positive))
+        tp_fn = int(np.sum(lbl == positive))
+        tp = len(np.where((prd == lbl) & (lbl == positive))[0])
+        self.accuracy = Util.sdiv(tp_tn, len(lbl), -1, False)
+        self.precision = p = Util.sdiv(tp, tp_fp, 1, False)
+        self.recall = r = Util.sdiv(tp, tp_fn, 1, False)
+        self.f_score = Util.sdiv(2 * p * r, p + r, 0, False)
+
+    def log(self):
+        for a in self.attr_of(self, (int, float)):
+            Util.log(a.capitalize(), f'{getattr(self, a) * 100:.2f} %')
 
 
-class AttackScore:
-    """Attack metrics."""
+class AttackScore(Loggable):
 
     def __init__(self):
         self.evasions = None
@@ -46,25 +54,24 @@ class AttackScore:
     def calculate(self, attack, validation):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
-        original = attack.cls.predict(ori_x, ori_y).flatten().tolist()
-        correct = np.array((np.where(
-            np.array(ori_y) == original)[0]).flatten().tolist())
-        evades = np.array((np.where(
-            adv_y != original)[0]).flatten().tolist())
+        original = attack.cls.predict(ori_x, ori_y)
+        correct = np.where(ori_y == original)[0]
+        evades = np.where(adv_y != original)[0]
+        self.n_valid, v_idx = validation.score_valid(ori_x, adv_x)
         self.evasions = np.intersect1d(evades, correct)
+        self.valid_evades = np.intersect1d(
+            self.evasions, np.where(v_idx == 0)[0])
         self.n_evasions = len(self.evasions)
-        self.n_valid, idx_valid = \
-            validation.score_valid(attack.ori_x, adv_x)
-        valid = np.array((np.where(
-            idx_valid == 0)[0]).flatten().tolist())
-        self.valid_evades = np.intersect1d(self.evasions, valid)
         self.n_valid_evades = len(self.valid_evades)
         self.n_records = ori_x.shape[0]
 
+    def log(self):
+        Util.logr('Evasions', self.n_evasions, self.n_records)
+        Util.logr('Valid', self.n_valid, self.n_records)
+        Util.logr('Valid+Evades', self.n_valid_evades, self.n_records)
 
-class Result(object):
-    """Experiment result."""
 
+class Result(Loggable):
     class AvgList(list):
 
         @property
@@ -82,28 +89,24 @@ class Result(object):
         self.n_records = Result.AvgList()
         self.n_evasions = Result.AvgList()
         self.n_valid = Result.AvgList()
-        self.n_ve = Result.AvgList()
+        self.n_valid_evades = Result.AvgList()
 
-    def append_attack(self, asc: AttackScore):
-        self.n_evasions.append(asc.n_evasions)
-        self.n_records.append(asc.n_records)
-        self.n_valid.append(asc.n_valid)
-        self.n_ve.append(asc.n_valid_evades)
-
-    def append_cls(self, ms: ModelScore):
-        self.accuracy.append(ms.accuracy)
-        self.precision.append(ms.precision)
-        self.recall.append(ms.recall)
-        self.f_score.append(ms.f_score)
+    def append(self, obj):
+        for a in Result.attr_of(obj, (int, float)):
+            if a in dir(self):
+                getattr(self, a).append(getattr(obj, a))
 
     def to_dict(self):
-        return {
-            'accuracy': self.accuracy.to_dict(),
-            'precision': self.precision.to_dict(),
-            'recall': self.recall.to_dict(),
-            'f_score': self.f_score.to_dict(),
-            'n_records': self.n_records.to_dict(),
-            'n_valid_evades': self.n_ve.to_dict(),
-            'n_evasions': self.n_evasions.to_dict(),
-            'n_valid': self.n_valid.to_dict(),
-        }
+        return dict([(str(a), getattr(self, a).to_dict())
+                     for a in Result.attr_of(self, Result.AvgList)])
+
+    def log(self):
+        print('=' * 52, '\nAVERAGE')
+        Util.log('Accuracy', f'{self.accuracy.avg :.2f} %')
+        Util.log('Precision', f'{self.precision.avg :.2f} %')
+        Util.log('Recall', f'{self.recall.avg :.2f} %')
+        Util.log('F-score', f'{self.f_score.avg :.2f} %')
+        Util.logrd('Evasions', self.n_evasions.avg, self.n_records.avg)
+        Util.logrd('Valid', self.n_valid.avg, self.n_records.avg)
+        Util.logrd('Valid Evasions',
+                   self.n_valid_evades.avg, self.n_records.avg)

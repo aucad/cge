@@ -20,15 +20,13 @@ class Utility:
     @staticmethod
     def read_dataset(dataset_path):
         df = pd.read_csv(dataset_path).fillna(0)
-        attrs = [re.sub(r'\W+', '*', a)
-                 for a in [col for col in df.columns]]
+        attrs = [re.sub(r'\W+', '*', col) for col in df.columns]
         return attrs, np.array(df)
 
     @staticmethod
     def dyn_fname(c):
-        """Generate filename for where to save experiment results."""
-        v = "T" if c.validate else "F"
-        return os.path.join(c.out, f'{c.name}_i{c.iter}_{v}.yaml')
+        v = "" if c.validate else "_F"
+        return os.path.join(c.out, f'{c.name}_i{c.iter}{v}.yaml')
 
     @staticmethod
     def write_result(fn, content):
@@ -95,6 +93,9 @@ class Utility:
     def plot_graph(dep_graph, config, attrs):
         """Plot constraint dependency graph."""
         fn = os.path.join(config.out, f'{config.name}_graph.pdf')
+        dir_path, _ = os.path.split(fn)
+        if len(dir_path) > 0 and not os.path.exists(dir_path):
+            os.makedirs(dir_path)
         node_names = dict([(i, n) for i, n in enumerate(attrs)])
         if dep_graph:
             fig = plt.figure()

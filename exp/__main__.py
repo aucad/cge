@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from exp import Experiment, Utility
 
 BASE_CONFIG = './config/base.yaml'
-DEFAULT_EXP = './config/large.yaml'
+DEFAULT_EXP = './config/iot23.yaml'
 
 
 def parse_args(parser: ArgumentParser):

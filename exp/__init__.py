@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 
 from exp.types import *
 from exp.utility import Utility
-from exp.result import Result, ModelScore, AttackScore
+from exp.result import Result, ModelScore, AttackScore, Loggable
 from exp.validation import Validation, Validatable
 from exp.zoo import ZooConst
 from exp.classifier import ModelTraining
