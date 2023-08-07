@@ -102,12 +102,14 @@ class Experiment(Loggable):
             'constraints': list(self.validation.constraints.keys()),
             'constraints_enforced': self.attack.validating,
             'predicates_immutable': self.validation.immutable,
-            'predicates': dict([
-                (self.attrs.index(k), [k, str(v)])
-                for (k, v) in self.conf('str_constraints').items()]),
+            'predicates': dict(
+                [(str(k), str(v).strip()) for (k, v) in
+                 self.conf('str_constraints').items()]),
             'predicates_sing+multi': dict(
-                [(k, str(v) if isinstance(v, str) else list(v))
-                 for k, v in self.conf('str_func').items()]),
+                [(k, str(v) if isinstance(v, str) else [
+                    str(x).strip() if isinstance(x, str) else x
+                    for x in v]) for k, v
+                 in self.conf('str_func').items()]),
             'dependencies': dict(
                 [(k, list(v)) for k, v in
                  self.validation.desc.items() if len(v) > 0]),
