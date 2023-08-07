@@ -75,7 +75,8 @@ class Experiment(Loggable):
         self.o_valid = self.X.shape[0] - o_valid
         if self.o_valid > 0:
             self.X = np.delete(self.X, self.ov_idx, 0)
-            print(f'WARNING: invalid entries were excluded {self.o_valid}.')
+            self.y = np.delete(self.y, self.ov_idx, 0)
+            print(f'WARNING: {self.o_valid} invalid entries were excluded')
 
     def log(self):
         log('Dataset', self.config.dataset)

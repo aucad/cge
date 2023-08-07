@@ -14,7 +14,7 @@ CONFIG_CONST_DICT = \
 
 
 class Validatable:
-    """Base class for attack with active validation"""
+    """Base class for an attack with constraints"""
     v_model = None
 
 

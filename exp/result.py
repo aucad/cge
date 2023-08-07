@@ -10,7 +10,6 @@ def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT):
     single_feat = [k for k, v in cd.items() if len(v[0]) == 1 and v[1]]
     multi_feat = [k for k in cd.keys() if k not in immutable + single_feat]
     invalid = np.array([], dtype=int)
-
     for feat_idx in immutable:
         correct, modified = ori[:, feat_idx], adv[:, feat_idx]
         wrong = np.where(np.subtract(correct, modified) != 0)[0]

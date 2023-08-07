@@ -58,11 +58,11 @@ def pred_convert(items: Dict[str, str], attr: List[str]) \
 
 
 def parse_pred_config(config):
-    const = 'constraints'
-    if const in config.keys():
+    c_key = 'constraints'
+    if c_key in config.keys():
         attrs, _ = read_dataset(config['dataset'])
-        config['str_' + const] = config[const]
-        config[const], config['str_func'] = (
-            pred_convert(config[const], attrs) if
-            config[const] is not None else ({}, {}))
+        config['str_' + c_key] = config[c_key]
+        config[c_key], config['str_func'] = (
+            pred_convert(config[c_key], attrs) if
+            config[c_key] is not None else ({}, {}))
     return config
