@@ -30,6 +30,5 @@ out: result # output directory
 # each experiment should define, at minimum:
 dataset: # path to file
 name: # dataset display name
-immutable: # array of feature indices, or empty
-constraints: # dictionary
 desc: # optional details or notes
+constraints: # dictionary

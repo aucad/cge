@@ -1,6 +1,8 @@
 import os
 import re
 import time
+from typing import Tuple
+
 import yaml
 
 import numpy as np
@@ -18,7 +20,7 @@ def attr_of(o, t):
 
 def read_dataset(dataset_path):
     df = pd.read_csv(dataset_path).fillna(0)
-    attrs = [re.sub(r'\W+', '*', col) for col in df.columns]
+    attrs = [re.sub(r'^\w=_-', '*', col) for col in df.columns]
     return attrs, np.array(df)
 
 
@@ -82,6 +84,27 @@ def parse_pred(conf: CONFIG_CONST_DICT) -> CONSTR_DICT:
     return {**dict(single), **dict(multi)}
 
 
+def pred_convert(items: dict[str, str], attr) \
+        -> Tuple[CONFIG_CONST_DICT, CONFIG_CONST_DICT]:
+    result, f_dict = {}, {}
+    for a in [a for a in attr if a in items.keys()]:
+        k, txt = attr.index(a), items[a]
+        if txt is False or bool(txt) is False:
+            result[k] = ((k,), False)
+            continue
+        s = [a] + [t for t in attr if t != a and t in txt]
+        idx = tuple([attr.index(x) for x in s])
+        if len(s) == 1:
+            f_text = 'lambda x: ' + txt.replace(a, 'x')
+        else:
+            for t in sorted(s, key=len, reverse=True):
+                txt = txt.replace(t, f'a[{s.index(t)}]')
+            f_text = 'lambda a: ' + txt
+        f_dict[k] = (idx, f_text)
+        result[k] = idx, eval(f_text)
+    return result, f_dict
+
+
 def plot_graph(v, c, a):
     """Plot a constraint-dependency graph."""
     if len(gn := sorted(v.dep_graph.nodes)) > 0:
@@ -97,7 +120,7 @@ def plot_graph(v, c, a):
             with_labels=True, node_color=color_map, arrowstyle='->',
             font_size=8, font_weight='bold')
         plt.legend(
-            labels=[f'{k}: {a[k]}' for k in gn],
+            labels=[f'{k}: {a[k]}' for k in gn], loc='upper left',
             handles={Patch(fill=False, alpha=0) for _ in gn},
             bbox_to_anchor=(.92, 1), frameon=False)
         plt.savefig(fn, bbox_inches="tight")

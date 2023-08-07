@@ -3,7 +3,7 @@ from pathlib import Path
 from argparse import ArgumentParser
 
 from exp import Experiment
-from exp.utility import parse_pred
+from exp.utility import pred_convert, read_dataset
 
 BASE_CONFIG = './config/default.yaml'
 DEFAULT_EXP = './config/iot23.yaml'
@@ -34,11 +34,11 @@ if __name__ == '__main__':
     config = {**def_args, **exp_args, 'config_path': fp,
               'validate': args.validate}
 
-    # parse the predicates, because they are text
     const = 'constraints'
     if const in config.keys():
+        attrs, _ = read_dataset(config['dataset'])
         config['str_' + const] = config[const]
-        config[const] = parse_pred(config[const]) \
-            if config[const] is not None else {}
-
+        config[const], config['str_func'] = (
+            pred_convert(config[const], attrs) if
+            config[const] is not None else ({}, {}))
     Experiment({**config}).run()

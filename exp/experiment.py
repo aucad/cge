@@ -45,7 +45,7 @@ class Experiment(Loggable):
             max(self.X[:, i]) for i in range(len(self.attrs) - 1)])
         self.cls = ModelTraining(self.conf('xgb'))
         self.attack = AttackRunner(c.iter, c.validate, self.conf('zoo'))
-        self.validation = Validation(c.immutable, c.constraints)
+        self.validation = Validation(c.constraints)
 
         # run K folds
         self.log()
@@ -98,10 +98,16 @@ class Experiment(Loggable):
             'k_folds': self.config.folds,
             'n_attack_max_iter': self.attack.max_iter,
             'duration_sec': time_sec(self.start, self.end),
+        }, 'validation': {
             'enforcing_constraints': self.attack.validating,
             'immutable': self.validation.immutable,
             'constraints': list(self.validation.constraints.keys()),
-            'predicates': self.conf('str_constraints'),
+            'predicates': dict([
+                (str(k), str(v)) for k, v in
+                self.conf('str_constraints').items()]),
+            'pred_funct': dict(
+                [(k, list((list(s), f))) for k, (s, f) in
+                 self.conf('str_func').items()]),
             'dep_graph': dict(
                 [(k, list(v)) for k, v in
                  self.validation.desc.items()]),
