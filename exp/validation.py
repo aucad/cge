@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple, Set
+from typing import Dict, Tuple, Set
 
 import numpy as np
 from networkx import DiGraph, descendants
@@ -9,16 +9,10 @@ from exp.types import CONSTR_DICT
 class Validation:
     """Constraint validation implementation."""
 
-    def __init__(
-            self,
-            immutable: List[int] = None,
-            constraints: CONSTR_DICT = None
-    ):
+    def __init__(self, constraints: CONSTR_DICT = None):
         """Initialize validation module.
 
         Arguments:
-            immutable - feature indices of immutable attributes.
-                These are separate since they do not require evaluation.
             constraints - dictionary of enforceable predicates.
                 The key is the index of the target feature.
                 The value is a tuple, containing:
@@ -26,15 +20,16 @@ class Validation:
                  - a lambda function to evaluate target feature,
                     based on source feature values.
         """
-        self.immutable = immutable or []
         self.constraints = constraints or {}
-        self.dep_graph, self.desc = self.desc_graph(self.constraints)
-        self.single_feat = dict(
-            [(t, P) for (t, (s, P))
-             in self.constraints.items() if (t,) == s])
+        self.immutable = [
+            k for k, v in self.constraints.items() if v[1] is False]
+        mutable = [x for x in self.constraints.items()
+                   if x[0] not in self.immutable]
+        self.single_feat = dict([
+            (t, P) for (t, (s, P)) in mutable if (t,) == s])
         self.multi_feat = dict(
-            [x for x in self.constraints.items()
-             if x[0] not in self.single_feat])
+            [x for x in mutable if x[0] not in self.single_feat])
+        self.dep_graph, self.desc = self.desc_graph(self.constraints)
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
         """Enforce feature constraints.

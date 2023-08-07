@@ -12,8 +12,13 @@ def test_no_constraints():
 def test_immutable_all():
     ori = np.array([[.6, .4, .3, .3], [.3, .4, .5, .1]])
     adv = np.array([[.2, .4, .6, .0], [.7, .6, .6, .3]])
-
-    result = Validation(immutable=[0, 1, 2, 3]).enforce(ori, adv)
+    constraints = {
+        0: ((0,), False),
+        1: ((1,), False),
+        2: ((2,), False),
+        3: ((3,), False)
+    }
+    result = Validation(constraints).enforce(ori, adv)
     assert (result == ori).all()
 
 
@@ -21,8 +26,8 @@ def test_immutable_1():
     ori = np.array([[.2, .5, .6], [.6, .5, .4], [.1, .2, .3]])
     adv = np.array([[.2, .4, .6], [.0, .5, .2], [.6, .6, .3]])
     exp = np.array([[.2, .5, .6], [.0, .5, .2], [.6, .2, .3]])
-
-    result = Validation(immutable=[1]).enforce(ori, adv)
+    constraints = {1: ((1,), False)}
+    result = Validation(constraints).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -30,8 +35,8 @@ def test_immutable_2():
     ori = np.array([[.0, .3, .4, .5, .6, .7], [.2, .8, .4, .7, .6, .1]])
     adv = np.array([[.5, .7, .8, .1, .9, .1], [.8, .3, .2, .5, .3, .2]])
     exp = np.array([[.5, .7, .4, .1, .9, .7], [.8, .3, .4, .5, .3, .1]])
-
-    result = Validation(immutable=[2, 5]).enforce(ori, adv)
+    constraints = {2: ((2,), False), 5: ((5,), False)}
+    result = Validation(constraints).enforce(ori, adv)
     assert (result == exp).all()
 
 

@@ -1,4 +1,4 @@
-dur,proto=tcp,proto=udp,proto=other,service=-,service=http,service=dns,service=other,state=FIN,state=INT,state=other,sbytes,dbytes,rate,sloss,dloss,sjit,djit,swin,stcpb,dtcpb,dwin,smean,dmean,trans_depth,ct_srv_src,ct_dst_ltm,ct_src_dport_ltm,ct_dst_sport_ltm,ct_dst_src_ltm,ct_src_ltm,ct_srv_dst,label
+dur,proto_tcp,proto_udp,proto_other,service_none,service_http,service_dns,service_other,state_FIN,state_INT,state_other,sbytes,dbytes,rate,sloss,dloss,sjit,djit,swin,stcpb,dtcpb,dwin,smean,dmean,trans_depth,ct_srv_src,ct_dst_ltm,ct_src_dport_ltm,ct_dst_sport_ltm,ct_dst_src_ltm,ct_src_ltm,ct_srv_dst,label
 0.000004,0,0,1,1,0,0,0,0,1,0,200,0,250000.0006,0,0,0,0,0,0,0,0,100,0,0,3,2,2,2,3,2,3,1
 59.49836,0,0,1,1,0,0,0,0,0,1,20128,0,1.226925,0,0,998.777438,0,0,0,0,0,272,0,0,1,1,1,1,1,1,1,1
 0.000006,0,1,0,1,0,0,0,0,1,0,2058,0,166666.6608,0,0,0,0,0,0,0,0,1029,0,0,4,1,1,1,4,1,4,1

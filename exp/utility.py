@@ -1,13 +1,15 @@
 import os
 import re
 import time
+from typing import Tuple
+
 import yaml
 
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
-from networkx import draw_networkx, spring_layout
+from networkx import draw_networkx, shell_layout
 
 from exp.types import CONSTR_DICT, CONFIG_CONST_DICT
 
@@ -18,7 +20,7 @@ def attr_of(o, t):
 
 def read_dataset(dataset_path):
     df = pd.read_csv(dataset_path).fillna(0)
-    attrs = [re.sub(r'\W+', '*', col) for col in df.columns]
+    attrs = [re.sub(r'^\w=_-', '*', col) for col in df.columns]
     return attrs, np.array(df)
 
 
@@ -82,6 +84,31 @@ def parse_pred(conf: CONFIG_CONST_DICT) -> CONSTR_DICT:
     return {**dict(single), **dict(multi)}
 
 
+def sfmt(text, attr):
+    return 'lambda x: ' + text.replace(attr, 'x')
+
+
+def mfmt(text, attrs):
+    for t in sorted(attrs, key=len, reverse=True):
+        text = text.replace(t, f'a[{attrs.index(t)}]')
+    return 'lambda a: ' + text
+
+
+def pred_convert(items: dict[str, str], attr) \
+        -> Tuple[CONFIG_CONST_DICT, CONFIG_CONST_DICT]:
+    both, f_dict = [a for a in attr if a in items.keys()], {}
+    imm = dict([(k, ((k,), False)) for k in [
+        attr.index(a) for a in both
+        if items[a] is False or bool(items[a]) is False]])
+    for a in [a for a in both if attr.index(a) not in imm]:
+        s = [a] + [t for t in attr if t != a and t in items[a]]
+        f_dict[attr.index(a)] = \
+            sfmt(items[a], a) if len(s) == 1 else \
+                ([attr.index(x) for x in s[1:]], mfmt(items[a], s))
+    result = {**imm, **parse_pred(f_dict)}
+    return result, f_dict
+
+
 def plot_graph(v, c, a):
     """Plot a constraint-dependency graph."""
     if len(gn := sorted(v.dep_graph.nodes)) > 0:
@@ -93,11 +120,12 @@ def plot_graph(v, c, a):
             '#FFC107' for n in gn]
         ensure_dir(fn)
         draw_networkx(
-            v.dep_graph, spring_layout(v.dep_graph),
+            v.dep_graph,
+            pos=shell_layout(v.dep_graph),
             with_labels=True, node_color=color_map, arrowstyle='->',
             font_size=8, font_weight='bold')
         plt.legend(
-            labels=[f'{k}: {a[k]}' for k in gn],
+            labels=[f'{k}: {a[k]}' for k in gn], loc='upper left',
             handles={Patch(fill=False, alpha=0) for _ in gn},
             bbox_to_anchor=(.92, 1), frameon=False)
         plt.savefig(fn, bbox_inches="tight")
