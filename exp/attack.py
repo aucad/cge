@@ -1,9 +1,9 @@
-import numpy as np
+import sys
 
+import numpy as np
 from art.attacks.evasion import ZooAttack
 
-from exp import ZooConst, AttackScore, Validation
-from exp.types import Validatable
+from exp import ZooConst, AttackScore, Validation, Validatable
 
 
 class AttackRunner:
@@ -40,7 +40,9 @@ class AttackRunner:
         if self.can_validate:
             aml_attack.v_model = v_model
         self.adv_x = aml_attack.generate(x=self.ori_x)
+        sys.stdout.write('\x1b[1A')
+        sys.stdout.write('\x1b[2K')
         self.adv_y = np.array(self.cls.predict(
             self.adv_x, self.ori_y).flatten())
-        self.score.calculate(self, v_model)
+        self.score.calculate(self, v_model.constraints)
         return self

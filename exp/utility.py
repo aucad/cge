@@ -2,7 +2,6 @@ import os
 import time
 import yaml
 
-import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
 from networkx import draw_networkx, shell_layout
@@ -30,16 +29,6 @@ def write_result(fn, content):
     print('Wrote result to', fn, '\n')
 
 
-def normalize(data: np.ndarray, attr_ranges=None):
-    """Make sure data is in range 0.0 - 1.0"""
-    np.seterr(divide='ignore', invalid='ignore')
-    for i in range(data.shape[1]):
-        range_max = attr_ranges[i] \
-            if attr_ranges is not None else (data[:, i])
-        data[:, i] = np.nan_to_num((data[:, i]) / range_max)
-    return data
-
-
 def sdiv(n: float, d: float, fault='', mult=True):
     return fault if d == 0 else (100 if mult else 1) * n / d
 
@@ -64,7 +53,8 @@ def time_sec(start: time, end: time) -> int:
 
 def plot_graph(v, c, a):
     """Plot a constraint-dependency graph."""
-    if len(gn := sorted(v.dep_graph.nodes)) > 0:
+    gn = sorted(v.dep_graph.nodes)
+    if len(gn) > 0:
         fn = os.path.join(c.out, f'{c.name}_graph.pdf')
         color_map = [
             '#CFD8DC' if n in v.immutable else

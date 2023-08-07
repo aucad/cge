@@ -16,14 +16,22 @@ def read_dataset(dataset_path):
     return attr_fmt(df.columns), np.array(df)
 
 
-def sfmt(text, attr):
-    return 'lambda x: ' + text.replace(attr, 'x')
+def normalize(data: np.ndarray, attr_ranges=None):
+    np.seterr(divide='ignore', invalid='ignore')
+    for i in range(data.shape[1]):
+        range_max = attr_ranges[i] \
+            if attr_ranges is not None else (data[:, i])
+        data[:, i] = np.nan_to_num((data[:, i]) / range_max)
+    return data
 
 
-def mfmt(text, attrs):
+def fmt(text, *attrs):
+    option_1 = ('x', lambda v: 'x')
+    option_2 = ('a', lambda v: f'a[{attrs.index(v)}]')
+    param, fmt_str = option_1 if len(attrs) == 1 else option_2
     for t in sorted(attrs, key=len, reverse=True):
-        text = text.replace(t, f'a[{attrs.index(t)}]')
-    return 'lambda a: ' + text
+        text = text.replace(t, fmt_str(t))
+    return f'lambda {param}: {text}'
 
 
 def parse_pred(conf: CONFIG_CONST_DICT) -> CONSTR_DICT:
@@ -42,9 +50,9 @@ def pred_convert(items: Dict[str, str], attr: List[str]) \
         if items[a] is False or bool(items[a]) is False]])
     for a in [a for a in both if attr.index(a) not in imm]:
         s = [a] + [t for t in attr if t != a and t in items[a]]
-        f_dict[attr.index(a)] = \
-            sfmt(items[a], a) if len(s) == 1 else \
-                ([attr.index(x) for x in s[1:]], mfmt(items[a], s))
+        value = fmt(items[a], *s)
+        f_dict[attr.index(a)] = value if len(s) == 1 \
+            else ([attr.index(x) for x in s[1:]], value)
     result = {**imm, **parse_pred(f_dict)}
     return result, f_dict
 

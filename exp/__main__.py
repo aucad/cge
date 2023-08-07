@@ -2,11 +2,7 @@ import yaml
 from pathlib import Path
 from argparse import ArgumentParser
 
-from exp import Experiment
-from exp.preproc import parse_pred_config as pconfig
-
-BASE_CONFIG = './config/default.yaml'
-DEFAULT_EXP = './config/iot23.yaml'
+from exp import Experiment, parse_pred_config as pconfig
 
 
 def parse_args(parser: ArgumentParser):
@@ -14,7 +10,6 @@ def parse_args(parser: ArgumentParser):
     parser.add_argument(
         dest='config',
         action='store',
-        default=DEFAULT_EXP,
         help='Experiment configuration file path',
     )
     parser.add_argument(
@@ -26,8 +21,8 @@ def parse_args(parser: ArgumentParser):
 
 
 if __name__ == '__main__':
+    BASE_CONFIG = './config/default.yaml'
     args = parse_args(ArgumentParser())
-
     fp = args.config
     def_args = yaml.safe_load(Path(BASE_CONFIG).read_text())
     exp_args = yaml.safe_load(Path(fp).read_text())

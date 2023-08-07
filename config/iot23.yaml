@@ -14,24 +14,24 @@ constraints:
   history_Dd: False
   history_S: False
   history_other: False
-  orig_ip_bytes: >
-    orig_ip_bytes >= orig_pkts 
-    and (proto_tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
-  resp_ip_bytes: >
-    resp_ip_bytes >= resp_pkts
-    and (conn_st_S0 != 1 or (resp_pkts == resp_ip_bytes == 0)) 
-    and (proto_tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
+#  orig_ip_bytes: >
+#    orig_ip_bytes >= orig_pkts
+#    and (proto_tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
+#  resp_ip_bytes: >
+#    resp_ip_bytes >= resp_pkts
+#    and (conn_st_S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
+#    and (proto_tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
   orig_pkts: >
     orig_pkts <= orig_ip_bytes
-    and (proto_tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
-    and (proto_tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_st_other != 1)
-    and (proto_udp != 1 or orig_pkts >= resp_pkts or (history_Dd == 1 and conn_st_SF == 1))
-    and (proto_udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_st_SF == 1)
-  resp_pkts: > 
-    resp_pkts <= resp_ip_bytes 
-    and (conn_st_S0 != 1 or (resp_pkts == resp_ip_bytes == 0)) 
-    and (proto_tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
-    and (proto_tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_st_other != 1)
-    and (proto_udp != 1 or orig_pkts >= resp_pkts or (history_Dd == 1 and conn_st_SF == 1))
-    and (proto_udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_st_SF == 1)
+#    and (proto_tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
+#    and (proto_tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_st_other != 1)
+#    and (proto_udp != 1 or orig_pkts >= resp_pkts or (history_Dd == 1 and conn_st_SF == 1))
+#    and (proto_udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_st_SF == 1)
+  resp_pkts: >
+    resp_pkts <= resp_ip_bytes
+#    and (conn_st_S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
+#    and (proto_tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
+#    and (proto_tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_st_other != 1)
+#    and (proto_udp != 1 or orig_pkts >= resp_pkts or (history_Dd == 1 and conn_st_SF == 1))
+#    and (proto_udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_st_SF == 1)
   

@@ -1,7 +1,33 @@
 import numpy as np
 
-from exp.types import Loggable
+from exp import Loggable, CONSTR_DICT
 from exp.utility import sdiv, log, logr, logrd, attr_of
+
+
+def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT):
+    """Independent validity scoring"""
+    immutable = [k for k, v in cd.items() if v[1] is False]
+    single_feat = [k for k, v in cd.items() if len(v[0]) == 1 and v[1]]
+    multi_feat = [k for k in cd.keys() if k not in immutable + single_feat]
+    invalid = np.array([], dtype=int)
+
+    for feat_idx in immutable:
+        correct, modified = ori[:, feat_idx], adv[:, feat_idx]
+        wrong = np.where(np.subtract(correct, modified) != 0)[0]
+        invalid = np.union1d(invalid, wrong)
+    for feat_idx in single_feat:
+        pred = cd[feat_idx][1]
+        modified = adv[:, feat_idx]
+        bits = np.vectorize(pred)(modified)
+        wrong = np.where(bits == 0)[0]
+        invalid = np.union1d(invalid, wrong)
+    for feat_idx in multi_feat:
+        sources, pred = cd[feat_idx]
+        inputs = adv[:, sources]
+        bits = np.apply_along_axis(pred, 1, inputs)
+        wrong = np.where(bits == 0)[0]
+        invalid = np.union1d(invalid, wrong)
+    return ori.shape[0] - invalid.shape[0], invalid
 
 
 class ModelScore(Loggable):
@@ -40,16 +66,15 @@ class AttackScore(Loggable):
         self.n_valid = 0
         self.n_valid_evades = 0
 
-    def calculate(self, attack, validation):
+    def calculate(self, attack, constraints):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
         original = attack.cls.predict(ori_x, ori_y)
         correct = np.where(ori_y == original)[0]
         evades = np.where(adv_y != original)[0]
-        self.n_valid, v_idx = validation.score(ori_x, adv_x)
         self.evasions = np.intersect1d(evades, correct)
-        self.valid_evades = np.intersect1d(
-            self.evasions, np.where(v_idx == 0)[0])
+        self.n_valid, inv_idx = score_valid(ori_x, adv_x, constraints)
+        self.valid_evades = np.setdiff1d(self.evasions, inv_idx)
         self.n_evasions = len(self.evasions)
         self.n_valid_evades = len(self.valid_evades)
         self.n_records = ori_x.shape[0]

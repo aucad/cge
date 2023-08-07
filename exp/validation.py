@@ -3,7 +3,7 @@ from typing import Dict, Tuple, Set
 import numpy as np
 from networkx import DiGraph, descendants
 
-from exp.types import CONSTR_DICT
+from exp import CONSTR_DICT
 
 
 class Validation:
@@ -13,12 +13,12 @@ class Validation:
         """Initialize validation module.
 
         Arguments:
-            constraints - dictionary of enforceable predicates.
+            constraints - dictionary of enforceable constraints.
                 The key is the index of the target feature.
                 The value is a tuple, containing:
-                 - a non-empty tuple of source feature indices
-                 - a lambda function to evaluate target feature,
-                    based on source feature values.
+                 - a non-empty tuple of source feature indices.
+                 - a predicate (lambda function) to evaluate
+                    target feature validity, based on source values.
         """
         self.constraints = constraints or {}
         self.immutable = [
@@ -94,21 +94,3 @@ class Validation:
         g.add_edges_from(edges)
         reachable = [(n, descendants(g, n)) for n in targets]
         return g, dict(reachable)
-
-    def score(self, ref: np.ndarray, arr: np.ndarray) \
-            -> Tuple[int, np.ndarray]:
-        """Count number of valid instances.
-
-        This metric should only be relevant is the constraints were
-        not enforced during search, otherwise all should be valid.
-
-        Arguments:
-            ref - valid values.
-            arr - modified records, to be evaluated.
-
-        Returns:
-            Total count of invalid records, array of invalid indices.
-        """
-        delta = np.subtract(arr.copy(), self.enforce(ref, arr))
-        nonzr = (delta != 0).sum(1)
-        return arr.shape[0] - np.count_nonzero(nonzr), nonzr
