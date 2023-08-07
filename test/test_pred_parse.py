@@ -1,5 +1,4 @@
 from exp.utility import parse_pred
-from exp.types import PREDICATE
 
 
 def test_constraint_parser():

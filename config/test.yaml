@@ -8,5 +8,5 @@ constraints:
   conn_st_S0: False
   conn_st_OTH: False
   conn_st_S1: False
-  proto_udp: "proto_udp == 0 or proto_udp == 1"
-  duration: "(duration * 502) <= 5.0"
+  proto_udp: proto_udp == 0 or proto_udp == 1
+  duration: (duration * 502) <= 5.0

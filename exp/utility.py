@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
-from networkx import draw_networkx, spring_layout
+from networkx import draw_networkx, shell_layout
 
 from exp.types import CONSTR_DICT, CONFIG_CONST_DICT
 
@@ -84,24 +84,28 @@ def parse_pred(conf: CONFIG_CONST_DICT) -> CONSTR_DICT:
     return {**dict(single), **dict(multi)}
 
 
+def sfmt(text, attr):
+    return 'lambda x: ' + text.replace(attr, 'x')
+
+
+def mfmt(text, attrs):
+    for t in sorted(attrs, key=len, reverse=True):
+        text = text.replace(t, f'a[{attrs.index(t)}]')
+    return 'lambda a: ' + text
+
+
 def pred_convert(items: dict[str, str], attr) \
         -> Tuple[CONFIG_CONST_DICT, CONFIG_CONST_DICT]:
-    result, f_dict = {}, {}
-    for a in [a for a in attr if a in items.keys()]:
-        k, txt = attr.index(a), items[a]
-        if txt is False or bool(txt) is False:
-            result[k] = ((k,), False)
-            continue
-        s = [a] + [t for t in attr if t != a and t in txt]
-        idx = tuple([attr.index(x) for x in s])
-        if len(s) == 1:
-            f_text = 'lambda x: ' + txt.replace(a, 'x')
-        else:
-            for t in sorted(s, key=len, reverse=True):
-                txt = txt.replace(t, f'a[{s.index(t)}]')
-            f_text = 'lambda a: ' + txt
-        f_dict[k] = (idx, f_text)
-        result[k] = idx, eval(f_text)
+    both, f_dict = [a for a in attr if a in items.keys()], {}
+    imm = dict([(k, ((k,), False)) for k in [
+        attr.index(a) for a in both
+        if items[a] is False or bool(items[a]) is False]])
+    for a in [a for a in both if attr.index(a) not in imm]:
+        s = [a] + [t for t in attr if t != a and t in items[a]]
+        f_dict[attr.index(a)] = \
+            sfmt(items[a], a) if len(s) == 1 else \
+                ([attr.index(x) for x in s[1:]], mfmt(items[a], s))
+    result = {**imm, **parse_pred(f_dict)}
     return result, f_dict
 
 
@@ -116,7 +120,8 @@ def plot_graph(v, c, a):
             '#FFC107' for n in gn]
         ensure_dir(fn)
         draw_networkx(
-            v.dep_graph, spring_layout(v.dep_graph),
+            v.dep_graph,
+            pos=shell_layout(v.dep_graph),
             with_labels=True, node_color=color_map, arrowstyle='->',
             font_size=8, font_weight='bold')
         plt.legend(

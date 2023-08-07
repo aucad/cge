@@ -23,12 +23,12 @@ xgb:
   tree_method: exact
   objective: multi:softprob
 
+out: result # output directory
 folds: 5 # K-folds (min: 2)
 iter: 5  # Attack iterations
-out: result # output directory
 
 # each experiment should define, at minimum:
-dataset: # path to file
 name: # dataset display name
-desc: # optional details or notes
+dataset: # path to data set file (CSV)
 constraints: # dictionary
+desc: # optional details or experiment notes

@@ -99,16 +99,16 @@ class Experiment(Loggable):
             'n_attack_max_iter': self.attack.max_iter,
             'duration_sec': time_sec(self.start, self.end),
         }, 'validation': {
-            'enforcing_constraints': self.attack.validating,
-            'immutable': self.validation.immutable,
             'constraints': list(self.validation.constraints.keys()),
+            'constraints_enforced': self.attack.validating,
+            'predicates_immutable': self.validation.immutable,
             'predicates': dict([
-                (str(k), str(v)) for k, v in
-                self.conf('str_constraints').items()]),
-            'pred_funct': dict(
-                [(k, list((list(s), f))) for k, (s, f) in
-                 self.conf('str_func').items()]),
-            'dep_graph': dict(
+                (self.attrs.index(k), [k, str(v)])
+                for (k, v) in self.conf('str_constraints').items()]),
+            'predicates_sing+multi': dict(
+                [(k, str(v) if isinstance(v, str) else list(v))
+                 for k, v in self.conf('str_func').items()]),
+            'dependencies': dict(
                 [(k, list(v)) for k, v in
-                 self.validation.desc.items()]),
+                 self.validation.desc.items() if len(v) > 0]),
         }, 'folds': {**self.result.to_dict()}}

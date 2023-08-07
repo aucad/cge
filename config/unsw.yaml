@@ -4,14 +4,14 @@ desc: sampled from 175K training set
 iter: 2
 
 constraints:
-  proto=tcp : False
-  proto=udp : False
-  proto=other : False
-  service=- : False
-  service=http : False
-  service=dns : False
-  service=other : False
-  state=FIN : False
-  state=INT : False
-  state=other : False
+  proto_tcp: False
+  proto_udp: False
+  proto_other: False
+  service_none: False
+  service_http: False
+  service_dns: False
+  service_other: False
+  state_FIN: False
+  state_INT: False
+  state_other: False
 
