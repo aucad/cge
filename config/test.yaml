@@ -9,4 +9,4 @@ constraints:
   conn_st_OTH: False
   conn_st_S1: False
   proto_udp: proto_udp == 0 or proto_udp == 1
-  duration: (duration * 502) <= 5.0
+  duration: (duration * 502) <= 23.0 or duration == 1

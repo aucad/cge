@@ -1,14 +1,13 @@
-import sys
 import time
 from collections import namedtuple
 
 import numpy as np
 from sklearn.model_selection import KFold
 
-from exp import Result, Validation, AttackRunner, ModelTraining
-from exp.utility import read_dataset, log, plot_graph, time_sec, \
-    write_result, dyn_fname, normalize
-from exp.types import Loggable
+from exp import \
+    Result, Validation, AttackRunner, ModelTraining, Loggable, score_valid
+from exp.preproc import read_dataset, normalize
+from exp.utility import log, plot_graph, time_sec, write_result, fname
 
 
 class Experiment(Loggable):
@@ -27,6 +26,8 @@ class Experiment(Loggable):
         self.attrs = []
         self.start = 0
         self.end = 0
+        self.o_valid = None
+        self.ov_idx = None
 
     def conf(self, key: str):
         """Try get configration key."""
@@ -39,10 +40,11 @@ class Experiment(Loggable):
         self.attrs, rows = read_dataset(c.dataset)
         self.X = rows[:, :-1]
         self.y = rows[:, -1].astype(int).flatten()
-        self.folds = [x for x in KFold(
-            n_splits=c.folds, shuffle=True).split(self.X)]
         self.X = normalize(self.X, [
             max(self.X[:, i]) for i in range(len(self.attrs) - 1)])
+        self.validate_original()
+        self.folds = [x for x in KFold(
+            n_splits=c.folds, shuffle=True).split(self.X)]
         self.cls = ModelTraining(self.conf('xgb'))
         self.attack = AttackRunner(c.iter, c.validate, self.conf('zoo'))
         self.validation = Validation(c.constraints)
@@ -57,8 +59,6 @@ class Experiment(Loggable):
             self.result.append(self.cls.score)
             self.attack.reset(self.cls).run(self.validation)
             self.result.append(self.attack.score)
-            sys.stdout.write('\x1b[1A')
-            sys.stdout.write('\x1b[2K')
             log('Fold #', fold_num + 1)
             self.cls.score.log()
             self.attack.score.log()
@@ -66,7 +66,17 @@ class Experiment(Loggable):
         self.result.log()
 
         plot_graph(self.validation, c, self.attrs)
-        write_result(dyn_fname(c), self.to_dict())
+        write_result(fname(c), self.to_dict())
+
+    def validate_original(self):
+        """ensure only initially valid examples are included in input."""
+        o_valid, self.ov_idx = score_valid(
+            self.X.copy(), self.X.copy(), self.config.constraints)
+        self.o_valid = self.X.shape[0] - o_valid
+        if self.o_valid > 0:
+            self.X = np.delete(self.X, self.ov_idx, 0)
+            self.y = np.delete(self.y, self.ov_idx, 0)
+            print(f'WARNING: {self.o_valid} invalid entries were excluded')
 
     def log(self):
         log('Dataset', self.config.dataset)
@@ -99,15 +109,19 @@ class Experiment(Loggable):
             'n_attack_max_iter': self.attack.max_iter,
             'duration_sec': time_sec(self.start, self.end),
         }, 'validation': {
+            **({'original_dataset_invalid_rows': self.ov_idx.tolist()}
+               if self.o_valid > 0 else {}),
             'constraints': list(self.validation.constraints.keys()),
-            'constraints_enforced': self.attack.validating,
+            'constraints_enforced': self.attack.can_validate,
             'predicates_immutable': self.validation.immutable,
-            'predicates': dict([
-                (self.attrs.index(k), [k, str(v)])
-                for (k, v) in self.conf('str_constraints').items()]),
+            'predicates': dict(
+                [(str(k), str(v).strip()) for (k, v) in
+                 self.conf('str_constraints').items()]),
             'predicates_sing+multi': dict(
-                [(k, str(v) if isinstance(v, str) else list(v))
-                 for k, v in self.conf('str_func').items()]),
+                [(k, str(v) if isinstance(v, str) else [
+                    str(x).strip() if isinstance(x, str) else x
+                    for x in v]) for k, v
+                 in self.conf('str_func').items()]),
             'dependencies': dict(
                 [(k, list(v)) for k, v in
                  self.validation.desc.items() if len(v) > 0]),

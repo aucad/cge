@@ -13,6 +13,11 @@ CONFIG_CONST_DICT = \
 """Constraint dictionary type for experiment configuration file."""
 
 
+class Validatable:
+    """Base class for an attack with constraints"""
+    v_model = None
+
+
 class Loggable(ABC):
     @abstractmethod
     def log(self):
