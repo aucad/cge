@@ -6,9 +6,10 @@ import numpy as np
 from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ModelTraining
-from exp.utility import read_dataset, log, plot_graph, time_sec, \
-    write_result, dyn_fname, normalize
 from exp.types import Loggable
+from exp.preproc import read_dataset
+from exp.utility import \
+    log, plot_graph, time_sec, write_result, fname, normalize
 
 
 class Experiment(Loggable):
@@ -66,7 +67,7 @@ class Experiment(Loggable):
         self.result.log()
 
         plot_graph(self.validation, c, self.attrs)
-        write_result(dyn_fname(c), self.to_dict())
+        write_result(fname(c), self.to_dict())
 
     def log(self):
         log('Dataset', self.config.dataset)
@@ -100,7 +101,7 @@ class Experiment(Loggable):
             'duration_sec': time_sec(self.start, self.end),
         }, 'validation': {
             'constraints': list(self.validation.constraints.keys()),
-            'constraints_enforced': self.attack.validating,
+            'constraints_enforced': self.attack.can_validate,
             'predicates_immutable': self.validation.immutable,
             'predicates': dict(
                 [(str(k), str(v).strip()) for (k, v) in

@@ -112,12 +112,3 @@ class Validation:
         delta = np.subtract(arr.copy(), self.enforce(ref, arr))
         nonzr = (delta != 0).sum(1)
         return arr.shape[0] - np.count_nonzero(nonzr), nonzr
-
-
-class Validatable:
-    """Base class of a validatable attack."""
-    v_model = None
-
-    def set_validation(self, v: Validation):
-        """Connect validation model."""
-        self.v_model = v

@@ -1,7 +1,7 @@
 import numpy as np
 from art.attacks.evasion import ZooAttack
 
-from exp import Validatable
+from exp.types import Validatable
 
 
 class ZooConst(ZooAttack, Validatable):

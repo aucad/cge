@@ -2,7 +2,8 @@ import numpy as np
 
 from art.attacks.evasion import ZooAttack
 
-from exp import ZooConst, AttackScore, Validation, Validatable
+from exp import ZooConst, AttackScore, Validation
+from exp.types import Validatable
 
 
 class AttackRunner:
@@ -30,14 +31,14 @@ class AttackRunner:
         return self
 
     @property
-    def validating(self):
+    def can_validate(self):
         return issubclass(self.attack, Validatable)
 
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
         aml_attack = self.attack(self.cls.classifier, **self.conf)
-        if self.validating:
-            aml_attack.set_validation(v_model)
+        if self.can_validate:
+            aml_attack.v_model = v_model
         self.adv_x = aml_attack.generate(x=self.ori_x)
         self.adv_y = np.array(self.cls.predict(
             self.adv_x, self.ori_y).flatten())

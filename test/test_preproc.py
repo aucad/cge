@@ -1,4 +1,4 @@
-from exp.utility import parse_pred
+from exp.preproc import parse_pred
 
 
 def test_constraint_parser():
