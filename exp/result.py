@@ -4,25 +4,22 @@ from exp import Loggable, CONSTR_DICT, categorize
 from exp.utility import sdiv, log, logr, logrd, attr_of
 
 
-def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT):
-    """Independent validity scoring"""
+def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT, scalars):
+    """Record validity scoring"""
     immutable, single_ft, multi_ft = categorize(cd)
     invalid = np.array([], dtype=int)
-    for feat_idx in immutable:
-        correct, modified = ori[:, feat_idx], adv[:, feat_idx]
+    for ft_i in immutable:
+        correct, modified = ori[:, ft_i], adv[:, ft_i]
         wrong = np.where(np.subtract(correct, modified) != 0)[0]
         invalid = np.union1d(invalid, wrong)
-    for feat_idx in single_ft.keys():
-        pred, modified = cd[feat_idx][1], adv[:, feat_idx]
-        bits = np.vectorize(pred)(modified)
-        wrong = np.where(bits == 0)[0]
-        invalid = np.union1d(invalid, wrong)
-    for feat_idx in multi_ft.keys():
-        sources, pred = cd[feat_idx]
-        inputs = adv[:, sources]
-        bits = np.apply_along_axis(pred, 1, inputs)
-        wrong = np.where(bits == 0)[0]
-        invalid = np.union1d(invalid, wrong)
+    for ft_i in single_ft:
+        pred, in_, scale = cd[ft_i][1], adv[:, ft_i], scalars[ft_i]
+        bits = np.vectorize(pred)(in_ * scale)
+        invalid = np.union1d(invalid, np.where(bits == 0)[0])
+    for (sources, pred) in [cd[ft_i] for ft_i in multi_ft]:
+        in_, sf = adv[:, sources], scalars[list(sources)]
+        bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
+        invalid = np.union1d(invalid, np.where(bits == 0)[0])
     return ori.shape[0] - invalid.shape[0], invalid
 
 
@@ -62,14 +59,14 @@ class AttackScore(Loggable):
         self.n_valid = 0
         self.n_valid_evades = 0
 
-    def calculate(self, attack, constraints):
+    def calculate(self, attack, constraints, amax):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
         original = attack.cls.predict(ori_x, ori_y)
         correct = np.where(ori_y == original)[0]
         evades = np.where(adv_y != original)[0]
         self.evasions = np.intersect1d(evades, correct)
-        self.n_valid, inv_idx = score_valid(ori_x, adv_x, constraints)
+        self.n_valid, inv_idx = score_valid(ori_x, adv_x, constraints, amax)
         self.valid_evades = np.setdiff1d(self.evasions, inv_idx)
         self.n_evasions = len(self.evasions)
         self.n_valid_evades = len(self.valid_evades)

@@ -14,6 +14,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import exp.utility
+from exp.plot import plot_graph
 from exp.types import Loggable, Validatable, CONSTR_DICT, CONSTR_TXT
 from exp.preproc import categorize
 from exp.validation import Validation

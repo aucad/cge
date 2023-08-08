@@ -43,7 +43,7 @@ class AttackRunner:
         sys.stdout.write('\x1b[2K')
         self.adv_y = np.array(self.cls.predict(
             self.adv_x, self.ori_y).flatten())
-        self.score.calculate(self, v_model.constraints)
+        self.score.calculate(self, v_model.constraints, v_model.scalars)
         return self
 
     def to_dict(self):

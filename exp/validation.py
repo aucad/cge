@@ -9,11 +9,12 @@ from exp import CONSTR_DICT, categorize
 class Validation:
     """Constraint validation implementation."""
 
-    def __init__(self, constraints: CONSTR_DICT = None):
+    def __init__(self, constraints: CONSTR_DICT, attr_max: np.ndarray):
         self.constraints = constraints or {}
+        self.scalars = attr_max
+        self.dep_graph, self.desc = self.desc_graph(self.constraints)
         self.immutable, self.single_feat, self.multi_feat = \
             categorize(self.constraints)
-        self.dep_graph, self.desc = self.desc_graph(self.constraints)
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
         """Enforce feature constraints.
@@ -31,7 +32,7 @@ class Validation:
         for i in self.immutable:
             vmap[:, i] = 0
         for index, pred in self.single_feat.items():
-            inputs = adv[:, index]
+            inputs = adv[:, index] * self.scalars[index]
             mask_bits = np.vectorize(pred)(inputs)  # evaluate
             vmap[:, index] = mask_bits  # apply to mask
         adv = adv * vmap + ref * (1 - vmap)
@@ -39,8 +40,8 @@ class Validation:
         # evaluate multi-variate constraints
         vmap = np.ones(ref.shape, dtype=np.ubyte)
         for target, (sources, pred) in self.multi_feat.items():
-            inputs = adv[:, sources]
-            mask_bits = np.apply_along_axis(pred, 1, inputs)
+            in_, sf = adv[:, sources], self.scalars[list(sources)]
+            mask_bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
             vmap[:, target] *= mask_bits
             deps = list(self.desc[target])
             if deps and False in mask_bits:

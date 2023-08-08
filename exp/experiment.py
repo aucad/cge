@@ -1,3 +1,4 @@
+import sys
 import time
 from collections import namedtuple
 
@@ -5,9 +6,8 @@ import numpy as np
 from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ModelTraining, \
-    Loggable, score_valid
-from exp.utility import log, plot_graph, time_sec, write_result, \
-    fname, read_dataset
+    Loggable, score_valid, plot_graph
+from exp.utility import log, time_sec, write_result, fname, read_dataset
 
 
 class Experiment(Loggable):
@@ -23,7 +23,7 @@ class Experiment(Loggable):
         self.attack = None
         self.validation = None
         self.result = Result()
-        self.attr_max = {}
+        self.attr_max = np.array([])
         self.attrs = []
         self.start = 0
         self.end = 0
@@ -40,7 +40,7 @@ class Experiment(Loggable):
         self.prepare_input_data()
         self.cls = ModelTraining(self.conf('xgb'))
         self.attack = AttackRunner(c.validate, self.conf('zoo'))
-        self.validation = Validation(c.constraints)
+        self.validation = Validation(c.constraints, self.attr_max)
         self.log()
 
         self.start = time.time_ns()
@@ -65,15 +65,20 @@ class Experiment(Loggable):
         self.attrs, rows = read_dataset(self.config.dataset)
         self.X = rows[:, :-1]
         self.y = rows[:, -1].astype(int).flatten()
+        self.attr_max = np.ones(self.X.shape[1])
         for i in range(self.X.shape[1]):
             self.attr_max[i] = mx = max(self.X[:, i])
             self.X[:, i] = np.nan_to_num(self.X[:, i] / mx)
         self.inv_idx = score_valid(
-            self.X, self.X, self.config.constraints)[1]
+            self.X, self.X, self.config.constraints, self.attr_max)[1]
         if len(self.inv_idx) > 0:
             self.X = np.delete(self.X, self.inv_idx, 0)
             self.y = np.delete(self.y, self.inv_idx, 0)
-            print(f'WARNING: {len(self.inv_idx)} invalid entries')
+            print(f'WARNING: {len(self.inv_idx)} invalid records.')
+            print('They were excluded from input data.')
+        if self.X.shape[0] < self.config.folds:
+            print('Insufficient input, terminating')
+            sys.exit(1)
         self.folds = [x for x in KFold(
             n_splits=self.config.folds, shuffle=True).split(self.X)]
 
@@ -83,8 +88,8 @@ class Experiment(Loggable):
         log('Classifier', self.cls.name)
         log('Classes', len(np.unique(self.y)))
         log('Attributes', len(self.attrs))
-        log('Immutable', len(self.validation.immutable))
         log('Constraints', len(self.validation.constraints.keys()))
+        log('Immutable', len(self.validation.immutable))
         log('Attack', self.attack.name)
         log('Attack max iter', self.attack.conf['max_iter'])
         log('Validation', self.config.validate)
@@ -94,7 +99,7 @@ class Experiment(Loggable):
         return {'experiment': {
             'dataset': self.config.dataset,
             'description': self.config.desc,
-            'config_path': self.config.config_path,
+            'config': self.config.config_path,
             'k_folds': self.config.folds,
             'duration_sec': time_sec(self.start, self.end),
         }, 'classifier': {
@@ -107,8 +112,7 @@ class Experiment(Loggable):
                 (int(k), int(v)) for k, v in
                 zip(*np.unique(self.y, return_counts=True))]),
             'attr_range': dict([
-                (k, float(v)) for k, v in
-                zip(self.attrs, self.attr_max.values())]),
+                (k, float(v)) for k, v in enumerate(self.attr_max)]),
             'model_train_params': self.cls.train_config,
             'cls_config': self.cls.cls_config
         }, 'validation': {

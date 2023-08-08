@@ -6,9 +6,6 @@ from typing import List
 
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
-from matplotlib.patches import Patch
-from networkx import draw_networkx, shell_layout
 
 
 def attr_fmt(attr: List[str]):
@@ -63,25 +60,3 @@ def logrd(label: str, n: float, d: float):
 def time_sec(start: time, end: time) -> int:
     """Time difference in seconds."""
     return round((end - start) / 1e9, 1)
-
-
-def plot_graph(v, c, a):
-    """Plot a constraint-dependency graph."""
-    gn = sorted(v.dep_graph.nodes)
-    if len(gn) > 0:
-        fn = os.path.join(c.out, f'__graph_{c.name}.pdf')
-        color_map = [
-            '#CFD8DC' if n in v.immutable else
-            '#00E676' if n not in v.constraints.keys() else
-            '#00BCD4' if n in v.single_feat.keys() else
-            '#FFC107' for n in gn]
-        ensure_dir(fn)
-        draw_networkx(
-            v.dep_graph, pos=shell_layout(v.dep_graph),
-            with_labels=True, node_color=color_map, arrowstyle='->',
-            font_size=8, font_weight='bold')
-        plt.legend(
-            labels=[f'{k}: {a[k]}' for k in gn], loc='upper left',
-            handles={Patch(fill=False, alpha=0) for _ in gn},
-            bbox_to_anchor=(.92, 1), frameon=False)
-        plt.savefig(fn, bbox_inches="tight")

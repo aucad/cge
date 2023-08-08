@@ -26,7 +26,9 @@ if __name__ == '__main__':
     args = parse_args(ArgumentParser())
     def_args = yaml.safe_load(Path(BASE_CONFIG).read_text())
     exp_args = yaml.safe_load(Path(args.config).read_text())
-    config = pred_parse({
-        **def_args, **exp_args, 'config_path': args.config,
-        'validate': args.validate})
+    c = {**def_args, 'config_path': args.config, 'validate': args.validate}
+    for k, v in exp_args.items():
+        c[k] = {**((c[k] or {}) if k in c else {}), **v} \
+            if type(v) is dict else v
+    config = pred_parse(c)
     Experiment(config).run()
