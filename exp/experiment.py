@@ -108,7 +108,9 @@ class Experiment(Loggable):
                 zip(*np.unique(self.y, return_counts=True))]),
             'attr_range': dict([
                 (k, float(v)) for k, v in
-                zip(self.attrs, self.attr_max.values())])
+                zip(self.attrs, self.attr_max.values())]),
+            'model_train_params': self.cls.train_config,
+            'cls_config': self.cls.cls_config
         }, 'validation': {
             'original_invalid_rows': self.inv_idx.tolist(),
             'constraints': list(self.validation.constraints.keys()),
