@@ -23,8 +23,8 @@ def attr_of(o, t):
 
 def fname(c):
     r = str(round(time.time() * 1000))[-4:]
-    v = "" if c.validate else "_F"
-    return os.path.join(c.out, f'{c.name}{v}_{r}.yaml')
+    v = "" if c.validate else "REG_"
+    return os.path.join(c.out, f'{v}{c.name}_{r}.yaml')
 
 
 def ensure_dir(fpath):

@@ -15,11 +15,14 @@ def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT, scalars):
     for ft_i in single_ft:
         pred, in_, scale = cd[ft_i][1], adv[:, ft_i], scalars[ft_i]
         bits = np.vectorize(pred)(in_ * scale)
-        invalid = np.union1d(invalid, np.where(bits == 0)[0])
+        wrong = np.where(bits == 0)[0]
+        invalid = np.union1d(invalid, wrong)
     for (sources, pred) in [cd[ft_i] for ft_i in multi_ft]:
         in_, sf = adv[:, sources], scalars[list(sources)]
-        bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
-        invalid = np.union1d(invalid, np.where(bits == 0)[0])
+        inputs = np.multiply(in_, sf)
+        bits = np.apply_along_axis(pred, 1, inputs)
+        wrong = np.where(bits == 0)[0]
+        invalid = np.union1d(invalid, wrong)
     return ori.shape[0] - invalid.shape[0], invalid
 
 

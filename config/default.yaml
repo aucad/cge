@@ -1,4 +1,16 @@
+# *******************************************
+# Each experiment must define the following:
+name: # dataset display name
+dataset: # path to data set file (CSV)
+constraints: # dictionary
+# *******************************************
+
+out: result # output directory
+folds: 5 # K-folds (min: 2)
+desc: # optional details or experiment notes
+
 # Attack instance parameters
+# https://adversarial-robustness-toolbox.readthedocs.io/en/latest/modules/attacks/evasion.html#art.attacks.evasion.ZooAttack.__init__
 zoo:
   confidence: 0.25
   learning_rate: 0.1
@@ -14,21 +26,19 @@ zoo:
   verbose: True
   max_iter: 5
 
-# Tree booster params
+# XGB parameters
+# https://xgboost.readthedocs.io/en/stable/parameter.html#general-parameters
+# tree booster params
+# https://xgboost.readthedocs.io/en/stable/parameter.html#parameters-for-tree-booster
 xgb:
-  eta: 0.3
-  gamma: 0
-  max_depth: 6
-  min_child_weight: 1
-  tree_method: exact
-  objective: multi:softprob
+  num_boost_round: 20
+  params:
+    eta: 0.3
+    gamma: 0
+    max_depth: 6
+    min_child_weight: 1
+    tree_method: exact
+    objective: multi:softprob
 
-out: result # output directory
-folds: 5 # K-folds (min: 2)
-iter: 5  # Attack iterations
 
-# each experiment should define, at minimum:
-name: # dataset display name
-dataset: # path to data set file (CSV)
-constraints: # dictionary
-desc: # optional details or experiment notes
+
