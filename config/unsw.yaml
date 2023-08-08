@@ -1,7 +1,7 @@
 dataset: data/unsw_nb15.csv
 name: UNSW NB15
 desc: sampled from 175K training set
-iter: 2
+
 
 constraints:
   proto_tcp: False

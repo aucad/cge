@@ -1,10 +1,23 @@
 import os
 import time
 import yaml
+import re
+from typing import List
 
+import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
 from networkx import draw_networkx, shell_layout
+
+
+def attr_fmt(attr: List[str]):
+    return [re.sub(r'^\w=_-', '*', col) for col in attr]
+
+
+def read_dataset(dataset_path):
+    df = pd.read_csv(dataset_path).fillna(0)
+    return attr_fmt(df.columns), np.array(df)
 
 
 def attr_of(o, t):
@@ -12,8 +25,9 @@ def attr_of(o, t):
 
 
 def fname(c):
+    r = str(round(time.time() * 1000))[-4:]
     v = "" if c.validate else "_F"
-    return os.path.join(c.out, f'{c.name}_i{c.iter}{v}.yaml')
+    return os.path.join(c.out, f'{c.name}{v}_{r}.yaml')
 
 
 def ensure_dir(fpath):
@@ -55,7 +69,7 @@ def plot_graph(v, c, a):
     """Plot a constraint-dependency graph."""
     gn = sorted(v.dep_graph.nodes)
     if len(gn) > 0:
-        fn = os.path.join(c.out, f'{c.name}_graph.pdf')
+        fn = os.path.join(c.out, f'__graph_{c.name}.pdf')
         color_map = [
             '#CFD8DC' if n in v.immutable else
             '#00E676' if n not in v.constraints.keys() else
@@ -63,8 +77,7 @@ def plot_graph(v, c, a):
             '#FFC107' for n in gn]
         ensure_dir(fn)
         draw_networkx(
-            v.dep_graph,
-            pos=shell_layout(v.dep_graph),
+            v.dep_graph, pos=shell_layout(v.dep_graph),
             with_labels=True, node_color=color_map, arrowstyle='->',
             font_size=8, font_weight='bold')
         plt.legend(

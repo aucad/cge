@@ -1,7 +1,6 @@
 import sys
-import os
+from os import devnull
 
-import numpy as np
 from art.estimators.classification import XGBoostClassifier
 from xgboost import DMatrix, train as xg_train
 
@@ -38,19 +37,17 @@ class ModelTraining:
 
     def train(self):
         d_train = DMatrix(self.train_x, self.train_y)
-        n_classes = len(np.unique(self.train_y))
-        sys.stdout = open(os.devnull, 'w')  # hide print
+        n_classes = len(list(set(list(self.train_y))))
+        sys.stdout = open(devnull, 'w')  # hide print
         self.model = xg_train(
-            num_boost_round=10,
-            dtrain=d_train,
+            num_boost_round=10, dtrain=d_train,
             evals=[(d_train, 'eval'), (d_train, 'train')],
             params={'num_class': n_classes, **self.cls_conf})
         sys.stdout = sys.__stdout__  # re-enable print
         self.classifier = XGBoostClassifier(
-            model=self.model,
+            model=self.model, clip_values=(0, 1),
             nb_features=self.train_x.shape[1],
-            nb_classes=n_classes,
-            clip_values=(0, 1))
+            nb_classes=n_classes)
         predictions = self.predict(self.test_x, self.test_y)
         self.score.calculate(self.test_y, predictions)
         return self
