@@ -1,37 +1,37 @@
 dataset: data/ctu_1-8-34.csv
 name: IoT-23
 desc: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
-iter: 2
+
 
 constraints:
-  proto_udp: False
-  proto_tcp: False
-  proto_icmp: False
-  conn_st_S0: False
-  conn_st_SF: False
-  conn_st_other: False
-  history_D: False
-  history_Dd: False
-  history_S: False
-  history_other: False
-#  orig_ip_bytes: >
-#    orig_ip_bytes >= orig_pkts
-#    and (proto_tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
-#  resp_ip_bytes: >
-#    resp_ip_bytes >= resp_pkts
-#    and (conn_st_S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
-#    and (proto_tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
+  proto=udp: False
+  proto=tcp: False
+  proto=icmp: False
+  conn_state=S0: False
+  conn_state=SF: False
+  conn_state=other: False
+  history=D: False
+  history=Dd: False
+  history=S: False
+  history=other: False
+  #  orig_ip_bytes: >
+  #    orig_ip_bytes >= orig_pkts
+  #    and (proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
+  #  resp_ip_bytes: >
+  #    resp_ip_bytes >= resp_pkts
+  #    and (conn_state=S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
+  #    and (proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
   orig_pkts: >
     orig_pkts <= orig_ip_bytes
-#    and (proto_tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
-#    and (proto_tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_st_other != 1)
-#    and (proto_udp != 1 or orig_pkts >= resp_pkts or (history_Dd == 1 and conn_st_SF == 1))
-#    and (proto_udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_st_SF == 1)
-  resp_pkts: >
+  #    and (proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
+  #    and (proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_state=other != 1)
+  #    and (proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF == 1))
+  #    and (proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_state=SF == 1)
+#  resp_pkts: >
 #    resp_pkts <= resp_ip_bytes
-#    and (conn_st_S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
-#    and (proto_tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
-#    and (proto_tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_st_other != 1)
-#    and (proto_udp != 1 or orig_pkts >= resp_pkts or (history_Dd == 1 and conn_st_SF == 1))
-#    and (proto_udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_st_SF == 1)
+  #    and (conn_state=S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
+  #    and (proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
+  #    and (proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_state=other != 1)
+  #    and (proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF == 1))
+  #    and (proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_state=SF == 1)
   

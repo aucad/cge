@@ -9,10 +9,9 @@ from exp import ZooConst, AttackScore, Validation, Validatable
 class AttackRunner:
     """Wrapper for adversarial attack"""
 
-    def __init__(self, i, apply_constr, conf):
+    def __init__(self, apply_constr, conf):
         self.attack = ZooConst if apply_constr else ZooAttack
         self.name = self.attack.__name__
-        self.max_iter = 10 if i < 1 else i
         self.cls = None
         self.ori_x = None
         self.ori_y = None
@@ -46,3 +45,7 @@ class AttackRunner:
             self.adv_x, self.ori_y).flatten())
         self.score.calculate(self, v_model.constraints)
         return self
+
+    def to_dict(self):
+        return {'name': self.name, 'config': self.conf,
+                'can_validate': self.can_validate}

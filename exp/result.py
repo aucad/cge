@@ -1,26 +1,23 @@
 import numpy as np
 
-from exp import Loggable, CONSTR_DICT
+from exp import Loggable, CONSTR_DICT, categorize
 from exp.utility import sdiv, log, logr, logrd, attr_of
 
 
 def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT):
     """Independent validity scoring"""
-    immutable = [k for k, v in cd.items() if v[1] is False]
-    single_feat = [k for k, v in cd.items() if len(v[0]) == 1 and v[1]]
-    multi_feat = [k for k in cd.keys() if k not in immutable + single_feat]
+    immutable, single_ft, multi_ft = categorize(cd)
     invalid = np.array([], dtype=int)
     for feat_idx in immutable:
         correct, modified = ori[:, feat_idx], adv[:, feat_idx]
         wrong = np.where(np.subtract(correct, modified) != 0)[0]
         invalid = np.union1d(invalid, wrong)
-    for feat_idx in single_feat:
-        pred = cd[feat_idx][1]
-        modified = adv[:, feat_idx]
+    for feat_idx in single_ft.keys():
+        pred, modified = cd[feat_idx][1], adv[:, feat_idx]
         bits = np.vectorize(pred)(modified)
         wrong = np.where(bits == 0)[0]
         invalid = np.union1d(invalid, wrong)
-    for feat_idx in multi_feat:
+    for feat_idx in multi_ft.keys():
         sources, pred = cd[feat_idx]
         inputs = adv[:, sources]
         bits = np.apply_along_axis(pred, 1, inputs)

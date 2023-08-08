@@ -2,7 +2,8 @@ import yaml
 from pathlib import Path
 from argparse import ArgumentParser
 
-from exp import Experiment, parse_pred_config as pconfig
+from exp import Experiment
+from exp.preproc import pred_parse
 
 
 def parse_args(parser: ArgumentParser):
@@ -23,11 +24,9 @@ def parse_args(parser: ArgumentParser):
 if __name__ == '__main__':
     BASE_CONFIG = './config/default.yaml'
     args = parse_args(ArgumentParser())
-    fp = args.config
     def_args = yaml.safe_load(Path(BASE_CONFIG).read_text())
-    exp_args = yaml.safe_load(Path(fp).read_text())
-    config = pconfig({
-        **def_args, **exp_args,
-        'config_path': fp,
+    exp_args = yaml.safe_load(Path(args.config).read_text())
+    config = pred_parse({
+        **def_args, **exp_args, 'config_path': args.config,
         'validate': args.validate})
     Experiment(config).run()

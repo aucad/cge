@@ -1,12 +1,11 @@
 dataset: data/test.csv
 name: test
 desc: IoT23 Malware-Capture-44-1
-iter: 10
 
 constraints:
-  conn_st_SF: False
-  conn_st_S0: False
-  conn_st_OTH: False
-  conn_st_S1: False
-  proto_udp: proto_udp == 0 or proto_udp == 1
-  duration: (duration * 502) <= 23.0 or duration == 1
+  conn_state=SF: False
+  conn_state=S0: False
+  conn_state=OTH: False
+  conn_state=S1: False
+  proto=udp: "proto=udp == 0 or proto=udp == 1"
+  duration: "(duration * 502) <= 23.0 or duration == 1"

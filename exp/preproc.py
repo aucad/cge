@@ -1,28 +1,17 @@
-import re
-from typing import Tuple, Dict, List
+from typing import Dict, List
 
-import numpy as np
-import pandas as pd
-
-from exp.types import CONSTR_DICT, CONFIG_CONST_DICT
+from exp import CONSTR_DICT
+from exp.utility import read_dataset
 
 
-def attr_fmt(attr: List[str]):
-    return [re.sub(r'^\w=_-', '*', col) for col in attr]
-
-
-def read_dataset(dataset_path):
-    df = pd.read_csv(dataset_path).fillna(0)
-    return attr_fmt(df.columns), np.array(df)
-
-
-def normalize(data: np.ndarray, attr_ranges=None):
-    np.seterr(divide='ignore', invalid='ignore')
-    for i in range(data.shape[1]):
-        range_max = attr_ranges[i] \
-            if attr_ranges is not None else (data[:, i])
-        data[:, i] = np.nan_to_num((data[:, i]) / range_max)
-    return data
+def categorize(cd: CONSTR_DICT):
+    immutable = [k for k, (_, P) in cd.items() if P is False]
+    single_ft = dict([
+        (t, P) for (t, (s, P)) in cd.items() if (t,) == s and P])
+    multi_ft = dict([
+        x for x in cd.items()
+        if x[0] not in single_ft and x[0] not in immutable])
+    return immutable, single_ft, multi_ft
 
 
 def fmt(text, *attrs):
@@ -31,10 +20,10 @@ def fmt(text, *attrs):
     param, fmt_str = option_1 if len(attrs) == 1 else option_2
     for t in sorted(attrs, key=len, reverse=True):
         text = text.replace(t, fmt_str(t))
-    return f'lambda {param}: {text}'
+    return f'lambda {param}: {text}'.strip()
 
 
-def parse_pred(conf: CONFIG_CONST_DICT) -> CONSTR_DICT:
+def parse_pred(conf) -> CONSTR_DICT:
     single = [(k, ((k,), eval(v),))
               for k, v in conf.items() if isinstance(v, str)]
     multi = [(k, (tuple([k] + v[0]), eval(v[1]),))
@@ -42,8 +31,7 @@ def parse_pred(conf: CONFIG_CONST_DICT) -> CONSTR_DICT:
     return {**dict(single), **dict(multi)}
 
 
-def pred_convert(items: Dict[str, str], attr: List[str]) \
-        -> Tuple[CONFIG_CONST_DICT, CONFIG_CONST_DICT]:
+def pred_convert(items: Dict[str, str], attr: List[str]):
     both, f_dict = [a for a in attr if a in items.keys()], {}
     imm = dict([(k, ((k,), False)) for k in [
         attr.index(a) for a in both
@@ -57,12 +45,19 @@ def pred_convert(items: Dict[str, str], attr: List[str]) \
     return result, f_dict
 
 
-def parse_pred_config(config):
+def pred_parse(config):
     c_key = 'constraints'
     if c_key in config.keys():
         attrs, _ = read_dataset(config['dataset'])
-        config['str_' + c_key] = config[c_key]
-        config[c_key], config['str_func'] = (
-            pred_convert(config[c_key], attrs) if
-            config[c_key] is not None else ({}, {}))
+        config['str_' + c_key] = dict(
+            [(str(k), str(v).strip()) for (k, v) in
+             config[c_key].items()])
+        if config[c_key] is not None:
+            config[c_key], str_c = \
+                pred_convert(config[c_key], attrs)
+        else:
+            config[c_key], str_c = {}, {}
+        config['str_func'] = dict(
+            [(k, v if isinstance(v, str) else list(v))
+             for k, v in str_c.items()])
     return config
