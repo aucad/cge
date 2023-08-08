@@ -27,6 +27,7 @@ if __name__ == '__main__':
     def_args = yaml.safe_load(Path(BASE_CONFIG).read_text())
     exp_args = yaml.safe_load(Path(args.config).read_text())
     config = pred_parse({
-        **def_args, **exp_args, 'config_path': args.config,
+        **def_args, **exp_args,
+        'config_path': args.config,
         'validate': args.validate})
     Experiment(config).run()

@@ -8,4 +8,4 @@ constraints:
   conn_state=OTH: False
   conn_state=S1: False
   proto=udp: "proto=udp == 0 or proto=udp == 1"
-  duration: "(duration * 502) <= 23.0 or duration == 1"
+  duration: "duration <= 23.0 or (150 <= duration <= 200) or duration > 300"

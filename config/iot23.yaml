@@ -14,8 +14,8 @@ constraints:
   history=Dd: False
   history=S: False
   history=other: False
-  #  orig_ip_bytes: >
-  #    orig_ip_bytes >= orig_pkts
+  orig_ip_bytes: >
+    orig_ip_bytes >= orig_pkts
   #    and (proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
   #  resp_ip_bytes: >
   #    resp_ip_bytes >= resp_pkts
