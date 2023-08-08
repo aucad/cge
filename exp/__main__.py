@@ -18,17 +18,27 @@ def parse_args(parser: ArgumentParser):
         action='store_true',
         help='Actively enforce constraints during attack'
     )
+    parser.add_argument(
+        '-i', '--iter',
+        type=int,
+        choices=range(0, 500),
+        metavar="1-500",
+        help='max attack iterations',
+        default=0
+    )
     return parser.parse_args()
 
 
 if __name__ == '__main__':
     BASE_CONFIG = './config/default.yaml'
     args = parse_args(ArgumentParser())
-    def_args = yaml.safe_load(Path(BASE_CONFIG).read_text())
-    exp_args = yaml.safe_load(Path(args.config).read_text())
-    c = {**def_args, 'config_path': args.config, 'validate': args.validate}
-    for k, v in exp_args.items():
+    # merge the default config, experiment config and cmd args
+    c = yaml.safe_load(Path(BASE_CONFIG).read_text())
+    params = yaml.safe_load(Path(args.config).read_text())
+    if args.iter:
+        params = {**params, 'zoo': {'max_iter': args.iter}}
+    for k, v in params.items():
         c[k] = {**((c[k] or {}) if k in c else {}), **v} \
             if type(v) is dict else v
-    config = pred_parse(c)
-    Experiment(config).run()
+    config = {**c, 'config_path': args.config, 'validate': args.validate}
+    Experiment(pred_parse(config)).run()

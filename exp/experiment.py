@@ -108,13 +108,12 @@ class Experiment(Loggable):
             'n_classes': len(np.unique(self.y)),
             'n_attributes': len(self.attrs),
             'attrs': dict(enumerate(self.attrs)),
+            'config': self.cls.conf,
             'class_distribution': dict([
                 (int(k), int(v)) for k, v in
                 zip(*np.unique(self.y, return_counts=True))]),
             'attr_range': dict([
                 (k, float(v)) for k, v in enumerate(self.attr_max)]),
-            'model_train_params': self.cls.train_config,
-            'cls_config': self.cls.cls_config
         }, 'validation': {
             'original_invalid_rows': self.inv_idx.tolist(),
             'constraints': list(self.validation.constraints.keys()),
