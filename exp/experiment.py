@@ -6,9 +6,8 @@ import numpy as np
 from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ModelTraining, \
-    Loggable, score_valid
-from exp.utility import log, plot_graph, time_sec, write_result, \
-    fname, read_dataset
+    Loggable, score_valid, plot_graph
+from exp.utility import log, time_sec, write_result, fname, read_dataset
 
 
 class Experiment(Loggable):

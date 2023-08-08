@@ -5,7 +5,7 @@ from exp.utility import sdiv, log, logr, logrd, attr_of
 
 
 def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT, scalars):
-    """Independent validity scoring"""
+    """Record validity scoring"""
     immutable, single_ft, multi_ft = categorize(cd)
     invalid = np.array([], dtype=int)
     for ft_i in immutable:

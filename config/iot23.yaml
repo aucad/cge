@@ -2,6 +2,8 @@ dataset: data/ctu_1-8-34.csv
 name: IoT-23
 desc: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
 
+zoo:
+  max_iter: 2
 
 constraints:
   proto=udp: False
