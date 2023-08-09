@@ -1,5 +1,5 @@
-dataset: data/test.csv
 name: test
+dataset: data/ctu_44-1.csv
 desc: IoT23 Malware-Capture-44-1
 
 constraints:

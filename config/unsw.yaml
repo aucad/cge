@@ -1,5 +1,5 @@
+name: UNSW-NB15
 dataset: data/unsw_nb15.csv
-name: UNSW NB15
 desc: sampled from 175K training set
 
 
