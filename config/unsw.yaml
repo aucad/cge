@@ -14,4 +14,12 @@ constraints:
   state_FIN: False
   state_INT: False
   state_other: False
+  swin: >
+    (swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1)
+  dwin: >
+    (swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1)
 
+# dur,proto_tcp,proto_udp,proto_other,service_none,service_http,
+# service_dns,service_other,state_FIN,state_INT,state_other,sbytes,dbytes,rate,
+# sloss,dloss,sjit,djit,swin,stcpb,dtcpb,dwin,smean,dmean,trans_depth,ct_srv_src,
+# ct_dst_ltm,ct_src_dport_ltm,ct_dst_sport_ltm,ct_dst_src_ltm,ct_src_ltm,ct_srv_dst,label
