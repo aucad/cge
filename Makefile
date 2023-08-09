@@ -1,20 +1,25 @@
-.PHONY: test exp
+SHELL := /bin/bash
 
-VALIDATE = VALID_DURING VALID_AFTER
-VALID_DURING := --validate
-VALID_AFTER :=
+ITERS = 2 5
+VALID = V_DURING V_AFTER
+V_DURING := -v
+V_AFTER :=
 
-all: test lint
+all: exp
+
+dev: test lint
+
+.PHONY: exp
+exp:
+	@$(foreach f, $(shell find config/$(cat) -type f -iname '*.yaml'), \
+	$(foreach v, $(VALID), $(foreach i, $(ITERS), \
+	python3 -m exp $(f) $($(v)) -i $(i) ; )))
 
 test:
 	pytest --cov-report term-missing --cov=./exp test
 
 lint:
 	flake8 ./exp --count --show-source --statistics
-
-exp:
-	@$(foreach f, $(shell find config/$(cat) -type f -iname '*.yaml'), \
-	$(foreach v, $(VALIDATE), python3 -m exp $(f) $($(v)) ; ))
 
 clean:
 	@rm -fr .pytest_cache/
