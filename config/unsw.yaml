@@ -2,7 +2,7 @@ name: UNSW-NB15
 dataset: data/unsw_nb15.csv
 desc: sampled from 175K training set
 
-
+#This is UNSW Constraints
 constraints:
   proto_tcp: False
   proto_udp: False
@@ -15,9 +15,9 @@ constraints:
   state_INT: False
   state_other: False
   swin: >
-    (swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1)
+    (proto_tcp != 1 or ((swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1))
   dwin: >
-    (swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1)
+    (proto_tcp != 1 or ((swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1))
 
 # dur,proto_tcp,proto_udp,proto_other,service_none,service_http,
 # service_dns,service_other,state_FIN,state_INT,state_other,sbytes,dbytes,rate,
