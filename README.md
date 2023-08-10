@@ -16,6 +16,12 @@ Run all experiments for all configuration options:
 make all
 ```
 
+Help running the experiments
+
+```
+python3 -m exp --help
+```
+
 ### Development instructions
 
 First ensure all dev dependencies are installed
