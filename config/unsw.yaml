@@ -15,10 +15,21 @@ constraints:
   state_INT: False
   state_other: False
   swin: >
-    (proto_tcp != 1 or ((swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1))
+      (proto_tcp != 1 or ((swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1))
+       and (proto_udp != 1 or (swin == 0 and dwin == 0 and stcpb == 0 and dtcpb == 0)) 
+       and (proto_other != 1 or (swin == 0 and dwin == 0 and stcpb == 0 and dtcpb == 0))
   dwin: >
-    (proto_tcp != 1 or ((swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1))
-
+      (proto_tcp != 1 or ((swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1))
+       and (proto_udp != 1 or (swin == 0 and dwin == 0 and stcpb == 0 and dtcpb == 0)) 
+       and (proto_other != 1 or (swin == 0 and dwin == 0 and stcpb == 0 and dtcpb == 0))
+  dur: >
+      (proto_tcp != 1 or state_FIN == 1 or (dur > 0 and state_INT == 1 and dbytes == 0 )
+       and (proto_tcp != 1 or state_FIN == 1 or (dur == 0 and dbytes == 0)
+  dbytes: >
+      (proto_tcp != 1 or (dbytes == 0 and djit == 0)) 
+      and (proto_tcp != 1 or state_FIN == 1 or (dur > 0 and state_INT == 1 and dbytes == 0 )
+      and (proto_tcp != 1 or state_FIN == 1 or (dur == 0 and dbytes == 0)
+      and (proto_tcp != 1 or ((swin == 255 and dwin == 255) or ((dbytes == 0 and dwin == 0) or state_FIN==1))
 # dur,proto_tcp,proto_udp,proto_other,service_none,service_http,
 # service_dns,service_other,state_FIN,state_INT,state_other,sbytes,dbytes,rate,
 # sloss,dloss,sjit,djit,swin,stcpb,dtcpb,dwin,smean,dmean,trans_depth,ct_srv_src,
