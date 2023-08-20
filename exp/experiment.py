@@ -39,7 +39,8 @@ class Experiment(Loggable):
         c = self.config
         self.prepare_input_data()
         self.cls = ModelTraining(self.conf('xgb'))
-        self.attack = AttackRunner('zoo', c.validate, self.conf('zoo'))
+        self.attack = AttackRunner(
+            c.attack, c.validate, self.conf(c.attack))
         self.validation = Validation(c.constraints, self.attr_max)
         self.log()
 

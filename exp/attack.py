@@ -6,15 +6,32 @@ from art.attacks.evasion import ZooAttack, AutoProjectedGradientDescent
 from exp import ZooConst, PGDConst, AttackScore, Validation, Validatable
 
 
+class AttackPicker:
+    ZOO = 'zoo'
+    APDG = 'apgd'
+
+    @staticmethod
+    def list_attacks():
+        return [AttackPicker.ZOO, AttackPicker.APDG]
+
+    @staticmethod
+    def load_attack(attack_name, apply_constr: bool):
+        if attack_name == AttackPicker.ZOO and apply_constr:
+            return ZooConst
+        if attack_name == AttackPicker.ZOO:
+            return ZooAttack
+        if attack_name == AttackPicker.APDG and apply_constr:
+            return PGDConst
+        if attack_name == AttackPicker.APDG:
+            return AutoProjectedGradientDescent
+
+
 class AttackRunner:
     """Wrapper for adversarial attack"""
 
-    def __init__(self, attack_type, apply_constr, conf):
-        if attack_type == 'zoo':
-            self.attack = ZooConst if apply_constr else ZooAttack
-        elif attack_type == 'pgd':
-            self.attack = PGDConst if apply_constr else \
-                AutoProjectedGradientDescent
+    def __init__(self, attack_type: str, apply_constr: bool, conf):
+        self.attack = AttackPicker.load_attack(
+            attack_type, apply_constr)
         self.name = self.attack.__name__
         self.cls = None
         self.ori_x = None

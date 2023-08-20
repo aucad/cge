@@ -5,13 +5,34 @@ dataset: # path to data set file (CSV)
 constraints: # dictionary
 # *******************************************
 
+attack: zoo # choice attack
 out: result # output directory
 folds: 5 # K-folds (min: 2)
 desc: # optional details or experiment notes
 
-# Attack instance parameters
-# https://adversarial-robustness-toolbox.readthedocs.io/en/latest/modules/attacks/evasion.html#art.attacks.evasion.ZooAttack.__init__
+
+# *******************************************
+# CLASSIFIER CONFIGURATIONS
+# *******************************************
+# XGB parameters:
+# https://xgboost.readthedocs.io/en/stable/parameter.html#general-parameters
+# tree booster params:
+# https://xgboost.readthedocs.io/en/stable/parameter.html#parameters-for-tree-booster
+xgb:
+  num_boost_round: 20
+  params:
+    eta: 0.3
+    gamma: 0
+    max_depth: 6
+    min_child_weight: 1
+    tree_method: exact
+    objective: multi:softprob
+
+# *******************************************
+# ATTACK CONFIGURATIONS
+# *******************************************
 zoo:
+  # https://adversarial-robustness-toolbox.readthedocs.io/en/latest/modules/attacks/evasion.html#art.attacks.evasion.ZooAttack.__init__
   confidence: 0.25
   learning_rate: 0.1
   binary_search_steps: 10
@@ -26,27 +47,14 @@ zoo:
   verbose: True
   max_iter: 5
 
-# XGB parameters
-# https://xgboost.readthedocs.io/en/stable/parameter.html#general-parameters
-# tree booster params
-# https://xgboost.readthedocs.io/en/stable/parameter.html#parameters-for-tree-booster
-xgb:
-  num_boost_round: 20
-  params:
-    eta: 0.3
-    gamma: 0
-    max_depth: 6
-    min_child_weight: 1
-    tree_method: exact
-    objective: multi:softprob
-
-
-pgd:
+apgd:
+  # see: https://adversarial-robustness-toolbox.readthedocs.io/en/latest/modules/attacks/evasion.html#auto-projected-gradient-descent-auto-pgd
+  norm: "inf"
   eps: 0.2
   eps_step: 0.1
   max_iter: 20
   targeted: False
-  num_random_init: 0
+  nb_random_init: 0
   batch_size: 1
   verbose: True
 
