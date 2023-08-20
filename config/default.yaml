@@ -5,12 +5,34 @@ dataset: # path to data set file (CSV)
 constraints: # dictionary
 # *******************************************
 
+attack: zoo # choice attack
+validate: false # enforce constrains during attack
 out: result # output directory
 folds: 5 # K-folds (min: 2)
 desc: # optional details or experiment notes
 
-# Attack instance parameters
-# https://adversarial-robustness-toolbox.readthedocs.io/en/latest/modules/attacks/evasion.html#art.attacks.evasion.ZooAttack.__init__
+
+# *******************************************
+# CLASSIFIER CONFIGURATIONS
+
+# XGBoost Classifier
+# https://tinyurl.com/4xdnf9vs
+xgb:
+  num_boost_round: 20
+  params:
+    eta: 0.3
+    gamma: 0
+    max_depth: 6
+    min_child_weight: 1
+    tree_method: exact
+    objective: multi:softprob
+
+
+# *******************************************
+# ATTACK CONFIGURATIONS
+
+# Zeroth-Order Optimization
+# https://tinyurl.com/mad2v59a
 zoo:
   confidence: 0.25
   learning_rate: 0.1
@@ -26,29 +48,28 @@ zoo:
   verbose: True
   max_iter: 5
 
-# XGB parameters
-# https://xgboost.readthedocs.io/en/stable/parameter.html#general-parameters
-# tree booster params
-# https://xgboost.readthedocs.io/en/stable/parameter.html#parameters-for-tree-booster
-xgb:
-  num_boost_round: 20
-  params:
-    eta: 0.3
-    gamma: 0
-    max_depth: 6
-    min_child_weight: 1
-    tree_method: exact
-    objective: multi:softprob
-
-
-pgd:
+# Auto PGD
+# https://tinyurl.com/mry5752e
+apgd:
+  norm: "inf"
   eps: 0.2
   eps_step: 0.1
   max_iter: 20
   targeted: False
-  num_random_init: 0
+  nb_random_init: 0
   batch_size: 1
   verbose: True
+  loss_type: difference_logits_ratio
 
-
+# HopSkipJump
+# https://tinyurl.com/bddm9byb
+hsj:
+  max_iter: 10 # Maximum number of iterations.
+  verbose: True # Show progress bars.
+  batch_size: 64 # size of the batch used by the estimator during inference.
+  targeted: False # should the attack target one specific class.
+  max_eval: 1000 # Max evaluations for estimating gradient.
+  init_eval: 100 # Initial number of evaluations for estimating gradient.
+  init_size: 100 # Max trials for initial generation of adversarial examples.
+  norm: 2 # Order of the norm. Possible values: "inf" or 2.
 

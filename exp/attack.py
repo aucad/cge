@@ -1,20 +1,43 @@
 import sys
 
 import numpy as np
-from art.attacks.evasion import ZooAttack, AutoProjectedGradientDescent
+from art.attacks.evasion import ZooAttack, \
+    AutoProjectedGradientDescent, HopSkipJump
 
-from exp import ZooConst, PGDConst, AttackScore, Validation, Validatable
+from exp import ZooConst, PGDConst, HopSkipConst, \
+    AttackScore, Validation, Validatable
+
+
+class AttackPicker:
+    ZOO = 'zoo'
+    APDG = 'apgd'
+    HSJ = 'hsj'
+
+    @staticmethod
+    def list_attacks():
+        return sorted([AttackPicker.ZOO, AttackPicker.APDG,
+                       AttackPicker.HSJ])
+
+    @staticmethod
+    def load_attack(attack_name, apply_constr: bool):
+
+        if attack_name == AttackPicker.ZOO:
+            return ZooConst if apply_constr else ZooAttack
+
+        if attack_name == AttackPicker.APDG:
+            return PGDConst if apply_constr else \
+                AutoProjectedGradientDescent
+
+        if attack_name == AttackPicker.HSJ:
+            return HopSkipConst if apply_constr else HopSkipJump
 
 
 class AttackRunner:
     """Wrapper for adversarial attack"""
 
-    def __init__(self, attack_type, apply_constr, conf):
-        if attack_type == 'zoo':
-            self.attack = ZooConst if apply_constr else ZooAttack
-        elif attack_type == 'pgd':
-            self.attack = PGDConst if apply_constr else \
-                AutoProjectedGradientDescent
+    def __init__(self, attack_type: str, apply_constr: bool, conf):
+        self.attack = AttackPicker.load_attack(
+            attack_type, apply_constr)
         self.name = self.attack.__name__
         self.cls = None
         self.ori_x = None
