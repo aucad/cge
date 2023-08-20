@@ -1,7 +1,7 @@
 import sys
 
 import numpy as np
-from art.attacks.evasion import ZooAttack, AutoProjectedGradientDescent
+from art.attacks.evasion import ZooAttack, ProjectedGradientDescent
 
 from exp import ZooConst, PGDConst, AttackScore, Validation, Validatable
 
@@ -13,7 +13,7 @@ class AttackRunner:
         if attack_type == 'zoo':
             self.attack = ZooConst if apply_constr else ZooAttack
         elif attack_type == 'pgd':
-            self.attack = PGDConst if apply_constr else AutoProjectedGradientDescent
+            self.attack = PGDConst if apply_constr else ProjectedGradientDescent
         self.name = self.attack.__name__
         self.cls = None
         self.ori_x = None

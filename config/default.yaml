@@ -42,8 +42,10 @@ xgb:
 
 
 pgd:
-  eps: 0.2
+  norm: none
+  eps: 0.3
   eps_step: 0.1
+  random_eps: False
   max_iter: 20
   targeted: False
   num_random_init: 0
