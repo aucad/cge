@@ -13,7 +13,8 @@ class AttackRunner:
         if attack_type == 'zoo':
             self.attack = ZooConst if apply_constr else ZooAttack
         elif attack_type == 'pgd':
-            self.attack = PGDConst if apply_constr else AutoProjectedGradientDescent
+            self.attack = PGDConst if apply_constr else \
+                AutoProjectedGradientDescent
         self.name = self.attack.__name__
         self.cls = None
         self.ori_x = None
