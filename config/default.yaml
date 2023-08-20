@@ -41,4 +41,14 @@ xgb:
     objective: multi:softprob
 
 
+pgd:
+  eps: 0.2
+  eps_step: 0.1
+  max_iter: 20
+  targeted: False
+  num_random_init: 0
+  batch_size: 1
+  verbose: True
+
+
 
