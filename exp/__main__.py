@@ -44,9 +44,10 @@ if __name__ == '__main__':
     for k, v in params.items():
         c[k] = {**((c[k] or {}) if k in c else {}), **v} \
             if type(v) is dict else v
-    config = {**c, 'config_path': args.config,
-              'validate': args.validate}
+    config = {**c, 'config_path': args.config}
     # if defined, override file configs with command arguments
+    if args.validate:
+        config['validate'] = True
     attack_name = config['attack'] = \
         args.attack if args.attack else config['attack']
     if args.iter:

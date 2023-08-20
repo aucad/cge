@@ -1,29 +1,35 @@
 import sys
 
 import numpy as np
-from art.attacks.evasion import ZooAttack, AutoProjectedGradientDescent
+from art.attacks.evasion import ZooAttack, \
+    AutoProjectedGradientDescent, HopSkipJump
 
-from exp import ZooConst, PGDConst, AttackScore, Validation, Validatable
+from exp import ZooConst, PGDConst, HopSkipConst, \
+    AttackScore, Validation, Validatable
 
 
 class AttackPicker:
     ZOO = 'zoo'
     APDG = 'apgd'
+    HSJ = 'hsj'
 
     @staticmethod
     def list_attacks():
-        return [AttackPicker.ZOO, AttackPicker.APDG]
+        return sorted([AttackPicker.ZOO, AttackPicker.APDG,
+                       AttackPicker.HSJ])
 
     @staticmethod
     def load_attack(attack_name, apply_constr: bool):
-        if attack_name == AttackPicker.ZOO and apply_constr:
-            return ZooConst
+
         if attack_name == AttackPicker.ZOO:
-            return ZooAttack
-        if attack_name == AttackPicker.APDG and apply_constr:
-            return PGDConst
+            return ZooConst if apply_constr else ZooAttack
+
         if attack_name == AttackPicker.APDG:
-            return AutoProjectedGradientDescent
+            return PGDConst if apply_constr else \
+                AutoProjectedGradientDescent
+
+        if attack_name == AttackPicker.HSJ:
+            return HopSkipConst if apply_constr else HopSkipJump
 
 
 class AttackRunner:
