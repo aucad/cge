@@ -1,16 +1,19 @@
 import sys
 
 import numpy as np
-from art.attacks.evasion import ZooAttack
+from art.attacks.evasion import ZooAttack, AutoProjectedGradientDescent
 
-from exp import ZooConst, AttackScore, Validation, Validatable
+from exp import ZooConst, PGDConst, AttackScore, Validation, Validatable
 
 
 class AttackRunner:
     """Wrapper for adversarial attack"""
 
-    def __init__(self, apply_constr, conf):
-        self.attack = ZooConst if apply_constr else ZooAttack
+    def __init__(self, attack_type, apply_constr, conf):
+        if attack_type == 'zoo':
+            self.attack = ZooConst if apply_constr else ZooAttack
+        elif attack_type == 'pgd':
+            self.attack = PGDConst if apply_constr else AutoProjectedGradientDescent
         self.name = self.attack.__name__
         self.cls = None
         self.ori_x = None
