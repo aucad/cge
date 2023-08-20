@@ -22,7 +22,7 @@ def parse_args(parser: ArgumentParser):
         '-a', '--attack',
         action='store',
         choices=AttackPicker.list_attacks(),
-        help=f'evasion attack'
+        help='evasion attack'
     )
     parser.add_argument(
         '-i', '--iter',
