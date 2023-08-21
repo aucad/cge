@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 from art.attacks.evasion import ZooAttack, \
-    AutoProjectedGradientDescent, HopSkipJump
+    ProjectedGradientDescent, HopSkipJump
 
 from exp import ZooConst, PGDConst, HopSkipConst, \
     AttackScore, Validation, Validatable
@@ -10,12 +10,12 @@ from exp import ZooConst, PGDConst, HopSkipConst, \
 
 class AttackPicker:
     ZOO = 'zoo'
-    APDG = 'apgd'
+    PDG = 'pgd'
     HSJ = 'hsj'
 
     @staticmethod
     def list_attacks():
-        return sorted([AttackPicker.ZOO, AttackPicker.APDG,
+        return sorted([AttackPicker.ZOO, AttackPicker.PDG,
                        AttackPicker.HSJ])
 
     @staticmethod
@@ -24,9 +24,9 @@ class AttackPicker:
         if attack_name == AttackPicker.ZOO:
             return ZooConst if apply_constr else ZooAttack
 
-        if attack_name == AttackPicker.APDG:
+        if attack_name == AttackPicker.PDG:
             return PGDConst if apply_constr else \
-                AutoProjectedGradientDescent
+                ProjectedGradientDescent
 
         if attack_name == AttackPicker.HSJ:
             return HopSkipConst if apply_constr else HopSkipJump

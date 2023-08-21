@@ -1,10 +1,10 @@
 import numpy as np
-from art.attacks.evasion import AutoProjectedGradientDescent
+from art.attacks.evasion import ProjectedGradientDescent
 
 from exp import Validatable
 
 
-class PGDConst(AutoProjectedGradientDescent, Validatable):
+class PGDConst(ProjectedGradientDescent, Validatable):
 
     def generate(
             self, x_batch: np.ndarray, y_batch: np.ndarray = None,

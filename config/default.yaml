@@ -31,7 +31,7 @@ xgb:
 # *******************************************
 # ATTACK CONFIGURATIONS
 
-# Zeroth-Order Optimization
+# Zeroth-Order Optimization (ZOO)
 # https://tinyurl.com/mad2v59a
 zoo:
   confidence: 0.25
@@ -48,18 +48,18 @@ zoo:
   verbose: True
   max_iter: 5
 
-# Auto PGD
-# https://tinyurl.com/mry5752e
-apgd:
-  norm: "inf"
-  eps: 0.2
+# Projected Gradient Descent (PGD)
+# https://tinyurl.com/b88f6djr
+pgd:
+  norm: none
+  eps: 0.3
   eps_step: 0.1
+  random_eps: False
   max_iter: 20
   targeted: False
-  nb_random_init: 0
+  num_random_init: 0
   batch_size: 1
   verbose: True
-  loss_type: difference_logits_ratio
 
 # HopSkipJump
 # https://tinyurl.com/bddm9byb
