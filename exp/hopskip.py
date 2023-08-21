@@ -12,5 +12,5 @@ class HopSkipConst(HopSkipJump, Validatable):
             self, x: np.ndarray, y: Optional[np.ndarray] = None,
             **kwargs
     ) -> np.ndarray:
-        o_best_attack = super().generate(x, y)
-        return self.v_model.enforce(x, o_best_attack)
+        x_adv = super().generate(x)
+        return self.v_model.enforce(x, x_adv)
