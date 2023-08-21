@@ -5,6 +5,7 @@ dataset: # path to data set file (CSV)
 constraints: # dictionary
 # *******************************************
 
+cls: xgb # target classifier
 attack: zoo # choice attack
 validate: false # enforce constrains during attack
 out: result # output directory
@@ -27,6 +28,14 @@ xgb:
     tree_method: exact
     objective: multi:softprob
 
+# Keras Deep Neural Network
+dnn:
+  layers: [ 60 ]
+  model_fit:
+    epochs: 80
+    batch_size: 50
+    shuffle: True
+    verbose: False
 
 # *******************************************
 # ATTACK CONFIGURATIONS

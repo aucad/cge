@@ -1,8 +1,9 @@
+import sys
 import yaml
 from pathlib import Path
 from argparse import ArgumentParser
 
-from exp import Experiment, AttackPicker
+from exp import Experiment, AttackPicker, ClsPicker
 from exp.preproc import pred_parse
 
 
@@ -23,6 +24,12 @@ def parse_args(parser: ArgumentParser):
         action='store',
         choices=AttackPicker.list_attacks(),
         help='evasion attack'
+    )
+    parser.add_argument(
+        '-c', '--cls',
+        action='store',
+        choices=ClsPicker.list_cls(),
+        help='classifier'
     )
     parser.add_argument(
         '-i', '--iter',
@@ -52,4 +59,13 @@ if __name__ == '__main__':
         args.attack if args.attack else config['attack']
     if args.iter:
         config[attack_name]['max_iter'] = args.iter
+    if args.cls:
+        config['cls'] = args.cls
+
+    # configuration checks:
+    if config['cls'] == ClsPicker.XGB and attack_name == AttackPicker.PDG:
+        print('Unsupported configuration:',
+              config['cls'], attack_name, '-> terminating')
+        sys.exit(0)
+
     Experiment(pred_parse(config)).run()
