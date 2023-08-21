@@ -47,5 +47,7 @@ dmypy.json
 result.json
 exp/__pycache__
 test/__pycache__
+*/__pycache__
 /result/
+.idea/
 sketch.py
