@@ -24,8 +24,9 @@ def attr_of(o, t):
 def fname(c):
     r = str(round(time.time() * 1000))[-3:]
     v = "" if c.validate else "REG_"
-    i = c.zoo['max_iter']
-    return os.path.join(c.out, f'{v}{c.name}_{i}_{r}.yaml')
+    a = c.attack
+    i = getattr(c, a)['max_iter']
+    return os.path.join(c.out, f'{v}{c.name}_{a}_{i}_{r}.yaml')
 
 
 def ensure_dir(fpath):

@@ -45,8 +45,10 @@ class ModelTraining:
         rest = dict([x for x in self.conf.items() if x[0] != 'params'])
         params = self.conf['params'] if 'params' in self.conf else {}
         self.model = xg_train(
-            evals=[(d_train, 'eval'), (d_train, 'train')], dtrain=d_train,
-            params={**params, 'num_class': self.n_classes}, **rest)
+            evals=[(d_train, 'eval'), (d_train, 'train')],
+            dtrain=d_train,
+            params={**params, 'num_class': self.n_classes},
+            **rest)
         sys.stdout = sys.__stdout__  # re-enable print
         self.classifier = XGBoostClassifier(
             model=self.model,

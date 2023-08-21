@@ -1,9 +1,11 @@
 SHELL := /bin/bash
 
 ITERS = 2 5
+ATTACKS = hsj apgd zoo
 VALID = V_DURING V_AFTER
 V_DURING := -v
 V_AFTER :=
+CONFIGS = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml')
 
 all: exp
 
@@ -11,9 +13,9 @@ dev: test lint
 
 .PHONY: exp
 exp:
-	@$(foreach f, $(shell find config/$(cat) -type f -iname '*.yaml'), \
+	@$(foreach f, $(CONFIGS), $(foreach a, $(ATTACKS), \
 	$(foreach v, $(VALID), $(foreach i, $(ITERS), \
-	python3 -m exp $(f) $($(v)) -i $(i) ; )))
+	python3 -m exp $(f) $($(v)) -i $(i) -a $(a) ; ))))
 
 test:
 	pytest --cov-report term-missing --cov=./exp test

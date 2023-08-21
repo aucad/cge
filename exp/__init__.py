@@ -21,8 +21,9 @@ from exp.validation import Validation
 from exp.result import Result, ModelScore, AttackScore, score_valid
 from exp.zoo import ZooConst
 from exp.PGD import PGDConst
+from exp.hopskip import HopSkipConst
 from exp.classifier import ModelTraining
-from exp.attack import AttackRunner
+from exp.attack import AttackRunner, AttackPicker
 from exp.experiment import Experiment
 
 
