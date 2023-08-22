@@ -2,6 +2,9 @@ name: UNSW-NB15
 dataset: data/unsw_nb15.csv
 desc: sampled from 175K training set
 
+dnn:
+  layers: [ 60, 60, 60, 60, 60 ]
+
 #This is UNSW Constraints
 constraints:
   proto_tcp: False

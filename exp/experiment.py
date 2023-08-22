@@ -5,7 +5,7 @@ from collections import namedtuple
 import numpy as np
 from sklearn.model_selection import KFold
 
-from exp import Result, Validation, AttackRunner, ModelTraining, \
+from exp import Result, Validation, AttackRunner, ClsPicker, \
     Loggable, score_valid, plot_graph
 from exp.utility import log, time_sec, write_result, fname, read_dataset
 
@@ -37,8 +37,9 @@ class Experiment(Loggable):
     def run(self):
         """Run an experiment of K folds."""
         c = self.config
+        cname = self.conf('cls')
         self.prepare_input_data()
-        self.cls = ModelTraining(self.conf('xgb'))
+        self.cls = ClsPicker.load(cname)(self.conf(cname))
         self.attack = AttackRunner(
             c.attack, c.validate, self.conf(c.attack))
         self.validation = Validation(c.constraints, self.attr_max)

@@ -6,3 +6,6 @@ pandas
 pyyaml
 networkx
 matplotlib
+keras~=2.11.0
+tensorflow-macos; platform_machine == 'arm64' and sys_platform == 'darwin'
+tensorflow-cpu; platform_machine != 'arm64' or sys_platform != 'darwin'

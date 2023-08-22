@@ -2,7 +2,7 @@ import yaml
 from pathlib import Path
 from argparse import ArgumentParser
 
-from exp import Experiment, AttackPicker
+from exp import Experiment, AttackPicker, ClsPicker
 from exp.preproc import pred_parse
 
 
@@ -25,6 +25,12 @@ def parse_args(parser: ArgumentParser):
         help='evasion attack'
     )
     parser.add_argument(
+        '-c', '--cls',
+        action='store',
+        choices=ClsPicker.list_cls(),
+        help='classifier'
+    )
+    parser.add_argument(
         '-i', '--iter',
         type=int,
         choices=range(0, 500),
@@ -33,6 +39,15 @@ def parse_args(parser: ArgumentParser):
         default=0
     )
     return parser.parse_args()
+
+
+def _check_params(config_):
+    if config_['cls'] == ClsPicker.XGB and \
+            attack_name == AttackPicker.PDG:
+        print('Unsupported configuration:',
+              config_['cls'], attack_name, '-> terminating')
+        return False
+    return True
 
 
 if __name__ == '__main__':
@@ -52,4 +67,8 @@ if __name__ == '__main__':
         args.attack if args.attack else config['attack']
     if args.iter:
         config[attack_name]['max_iter'] = args.iter
-    Experiment(pred_parse(config)).run()
+    if args.cls:
+        config['cls'] = args.cls
+
+    if _check_params(config):
+        Experiment(pred_parse(config)).run()

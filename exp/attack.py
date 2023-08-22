@@ -60,12 +60,21 @@ class AttackRunner:
     def can_validate(self):
         return issubclass(self.attack, Validatable)
 
+    @property
+    def maskable(self):
+        return issubclass(self.attack, HopSkipJump)
+
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
         aml_attack = self.attack(self.cls.classifier, **self.conf)
+        args = {'x': self.ori_x}
         if self.can_validate:
             aml_attack.v_model = v_model
-        self.adv_x = aml_attack.generate(x=self.ori_x)
+        if self.maskable:
+            args['mask'] = np.full_like(self.ori_x, 1)
+            for i in v_model.immutable:
+                args['mask'][:, i] = 0
+        self.adv_x = aml_attack.generate(**args)
         sys.stdout.write('\x1b[1A')
         sys.stdout.write('\x1b[2K')
         self.adv_y = np.array(self.cls.predict(
