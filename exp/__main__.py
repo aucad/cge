@@ -1,4 +1,3 @@
-import sys
 import yaml
 from pathlib import Path
 from argparse import ArgumentParser
@@ -42,6 +41,15 @@ def parse_args(parser: ArgumentParser):
     return parser.parse_args()
 
 
+def _check_params(config_):
+    if config_['cls'] == ClsPicker.XGB and \
+            attack_name == AttackPicker.PDG:
+        print('Unsupported configuration:',
+              config_['cls'], attack_name, '-> terminating')
+        return False
+    return True
+
+
 if __name__ == '__main__':
     BASE_CONFIG = './config/default.yaml'
     args = parse_args(ArgumentParser())
@@ -62,10 +70,5 @@ if __name__ == '__main__':
     if args.cls:
         config['cls'] = args.cls
 
-    # configuration checks:
-    if config['cls'] == ClsPicker.XGB and attack_name == AttackPicker.PDG:
-        print('Unsupported configuration:',
-              config['cls'], attack_name, '-> terminating')
-        sys.exit(0)
-
-    Experiment(pred_parse(config)).run()
+    if _check_params(config):
+        Experiment(pred_parse(config)).run()
