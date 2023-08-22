@@ -63,9 +63,10 @@ class AttackRunner:
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
         aml_attack = self.attack(self.cls.classifier, **self.conf)
+        args = {'x': self.ori_x}
         if self.can_validate:
             aml_attack.v_model = v_model
-        self.adv_x = aml_attack.generate(x=self.ori_x)
+        self.adv_x = aml_attack.generate(**args)
         sys.stdout.write('\x1b[1A')
         sys.stdout.write('\x1b[2K')
         self.adv_y = np.array(self.cls.predict(

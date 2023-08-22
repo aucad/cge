@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 ITERS = 2 5
-ATTACKS = hsj apgd zoo
+ATTACKS = hsj pgd zoo
 VALID = V_DURING V_AFTER
 V_DURING := -v
 V_AFTER :=

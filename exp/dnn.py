@@ -21,9 +21,11 @@ class DeepNeuralNetwork(ModelTraining):
         self.name = "Neural Network"
 
     def train(self):
-        layers = self.conf['layers']
+        n_layers = self.conf['layers']
         fit_args = self.conf['model_fit']
-        layers = [Dense(v, activation='relu') for v in layers] + \
+        model_args = self.conf['params']
+
+        layers = [Dense(v, activation='relu') for v in n_layers] + \
                  [Dense(self.n_classes, activation='softmax')]
         model = tf.keras.models.Sequential(layers)
         model.compile(
@@ -33,13 +35,14 @@ class DeepNeuralNetwork(ModelTraining):
         model.fit(
             self.train_x, self.train_y, **fit_args,
             callbacks=[EarlyStopping(monitor='loss', patience=5)])
-        self.classifier = \
-            KerasClassifier(model=model, clip_values=(0, 1))
+        self.classifier = KerasClassifier(
+            model=model, **model_args, clip_values=(0, 1))
+        self.model = self.classifier.model
         predictions = self.predict(self.test_x, self.test_y)
         self.score.calculate(self.test_y, predictions)
         return self
 
     def predict(self, x, y):
-        tmp = self.model.predict(x, y)
+        tmp = self.model.predict(x)
         ax = 1 if len(tmp.shape) == 2 else 0
         return tmp.argmax(axis=ax)

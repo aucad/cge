@@ -29,8 +29,11 @@ xgb:
     objective: multi:softprob
 
 # Keras Deep Neural Network
+# https://tinyurl.com/5bffyuev
 dnn:
   layers: [ 60 ]
+  params:
+    use_logits: True
   model_fit:
     epochs: 80
     batch_size: 50
@@ -43,32 +46,33 @@ dnn:
 # Zeroth-Order Optimization (ZOO)
 # https://tinyurl.com/mad2v59a
 zoo:
-  confidence: 0.25
-  learning_rate: 0.1
-  binary_search_steps: 10
-  initial_const: 0.001
-  abort_early: True
-  use_resize: False
-  use_importance: False
-  variable_h: 0.3
-  targeted: False
-  nb_parallel: 5
-  batch_size: 1
-  verbose: True
-  max_iter: 5
+  confidence: 0.25 # Confidence of adversarial examples
+  learning_rate: 0.1 # Smaller values produce better results, but are slower to converge.
+  max_iter: 5 # maximum number of iterations.
+  binary_search_steps: 10 # Number of times to adjust constant with binary search
+  initial_const: 0.001 # use to tune the relative importance of distance and confidence
+  abort_early: True # abandoned gradient descent when it gets stuck.
+  use_resize: False # use the resizing strategy from the paper
+  use_importance: False # use importance sampling when choosing coordinates to update.
+  nb_parallel: 5 # Number of coordinate updates to run in parallel.
+  variable_h: 0.3 #  Step size for numerical estimation of derivatives.
+  targeted: False # Should the attack target one specific class.
+  batch_size: 1 # size of batches on which adversarial samples are generated.
+  verbose: True # show progress bars.
 
 # Projected Gradient Descent (PGD)
 # https://tinyurl.com/b88f6djr
 pgd:
-  norm: none
-  eps: 0.3
-  eps_step: 0.1
-  random_eps: False
-  max_iter: 20
-  targeted: False
-  num_random_init: 0
-  batch_size: 1
-  verbose: True
+  norm: "inf"  # of the adversarial perturbation “inf”, 1 or 2.
+  eps: 0.3 # Maximum perturbation that the attacker can introduce.
+  eps_step: 0.1 # Attack step size (input variation) at each iteration.
+  random_eps: False # When True, epsilon is drawn randomly from truncated normal distribution.
+  decay: None # Decay factor for accumulating the velocity vector when using momentum.
+  max_iter: 20 # The maximum number of iterations.
+  targeted: False # attack is targeted (True) or untargeted (False).
+  num_random_init: 0 # Number of random initialisations within the epsilon ball.
+  batch_size: 1 # Size of the batch on which adversarial samples are generated.
+  verbose: True # Show progress bars.
 
 # HopSkipJump
 # https://tinyurl.com/bddm9byb

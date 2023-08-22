@@ -25,8 +25,9 @@ def fname(c):
     r = str(round(time.time() * 1000))[-3:]
     v = "" if c.validate else "REG_"
     a = c.attack
+    c = c.cls
     i = getattr(c, a)['max_iter']
-    return os.path.join(c.out, f'{v}{c.name}_{a}_{i}_{r}.yaml')
+    return os.path.join(c.out, f'{v}{c.name}_{c}_{a}_{i}_{r}.yaml')
 
 
 def ensure_dir(fpath):
