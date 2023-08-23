@@ -13,9 +13,8 @@ dev: test lint
 
 .PHONY: exp
 exp:
-	@$(foreach f, $(CONFIGS), $(foreach a, $(ATTACKS), \
-	$(foreach v, $(VALID), $(foreach i, $(ITERS), \
-	python3 -m exp $(f) $($(v)) -i $(i) -a $(a) ; ))))
+	@$(foreach f, $(CONFIGS), $(foreach a, $(ATTACKS), $(foreach i, $(ITERS), \
+	python3 -m exp $(f) $($(v)) -i $(i) -a $(a) -v ; )))
 
 test:
 	pytest --cov-report term-missing --cov=./exp test
