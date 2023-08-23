@@ -65,10 +65,7 @@ class AttackRunner:
         aml_attack = self.attack(self.cls.classifier, **self.conf)
         args = {'x': self.ori_x}
         if self.can_validate:
-            aml_attack.v_model = v_model
-            if isinstance(aml_attack, PGDConst):
-                aml_attack._attack.v_model = v_model
-
+            aml_attack.vhost().v_model = v_model
         self.adv_x = aml_attack.generate(**args)
         sys.stdout.write('\x1b[1A')
         sys.stdout.write('\x1b[2K')

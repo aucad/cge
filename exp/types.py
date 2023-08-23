@@ -24,6 +24,10 @@ class Validatable:
     """Base class for an attack with constraints"""
     v_model = None
 
+    def vhost(self):
+        """validation model owner"""
+        return self
+
 
 class Loggable(ABC):
     @abstractmethod
