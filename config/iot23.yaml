@@ -3,7 +3,10 @@ dataset: data/ctu_1-8-34.csv
 desc: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
 
 zoo:
-  confidence: 0.5
+  confidence: 0.8
+
+pgd:
+  num_random_init: 100
 
 constraints:
   proto=udp: False

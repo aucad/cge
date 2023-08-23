@@ -31,7 +31,7 @@ xgb:
 # Keras Deep Neural Network
 # https://tinyurl.com/5bffyuev
 dnn:
-  layers: [ 60 ]
+  layers: [ 60, 60 ]
   params:
     use_logits: True
   model_fit:
@@ -64,14 +64,14 @@ zoo:
 # https://tinyurl.com/b88f6djr
 pgd:
   norm: "inf"  # of the adversarial perturbation “inf”, 1 or 2.
-  eps: 0.3 # Maximum perturbation that the attacker can introduce.
+  eps: 1. # Maximum perturbation that the attacker can introduce.
   eps_step: 0.1 # Attack step size (input variation) at each iteration.
   random_eps: False # epsilon is drawn randomly from truncated normal distribution.
   decay: # Decay factor for accumulating the velocity vector when using momentum.
-  max_iter: 20 # The maximum number of iterations.
+  max_iter: 60 # The maximum number of iterations.
   targeted: False # attack is targeted (True) or untargeted (False).
-  num_random_init: 10 # Number of random initialisations within the epsilon ball.
-  batch_size: 64 # Size of the batch on which adversarial samples are generated.
+  num_random_init: 20 # Number of random initialisations within the epsilon ball.
+  batch_size: 2000 # Size of the batch on which adversarial samples are generated.
   verbose: True # Show progress bars.
 
 # HopSkipJump
