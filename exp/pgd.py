@@ -12,14 +12,13 @@ from art.summary_writer import SummaryWriter
 from exp import Validatable
 
 if TYPE_CHECKING:
-    from art.utils import CLASSIFIER_LOSS_GRADIENTS_TYPE, OBJECT_DETECTOR_TYPE
+    from art.utils import CLASSIFIER_LOSS_GRADIENTS_TYPE, \
+        OBJECT_DETECTOR_TYPE
 
 logger = logging.getLogger(__name__)
 
 
-class MyProjectedGradientDescentNumpy(
-    ProjectedGradientDescentNumpy, Validatable
-):
+class MyPGDNumpy(ProjectedGradientDescentNumpy, Validatable):
 
     def _compute(
             self,
@@ -35,11 +34,10 @@ class MyProjectedGradientDescentNumpy(
             decay: Optional[float] = None,
             momentum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
-        x_ori = x.copy()
-        batch = super()._compute(
+        x_adv = super()._compute(
             x, x_init, y, mask, eps, eps_step, project,
             random_init, batch_id_ext, decay, momentum)
-        return self.v_model.enforce(x_ori, batch)
+        return self.v_model.enforce(x, x_adv)
 
 
 class PGDConst(ProjectedGradientDescent, Validatable):
@@ -60,18 +58,13 @@ class PGDConst(ProjectedGradientDescent, Validatable):
             summary_writer: Union[str, bool, SummaryWriter] = False,
             verbose: bool = True,
     ):
-        super().__init__(estimator)
-        self._attack = MyProjectedGradientDescentNumpy(
-            estimator=estimator,
-            norm=norm,
-            eps=eps,
-            eps_step=eps_step,
-            decay=decay,
-            max_iter=max_iter,
-            targeted=targeted,
-            num_random_init=num_random_init,
-            batch_size=batch_size,
-            random_eps=random_eps,
-            summary_writer=summary_writer,
-            verbose=verbose,
-        )
+        args = (estimator, norm, eps, eps_step, decay, max_iter,
+                targeted, num_random_init, batch_size, random_eps,
+                summary_writer, verbose)
+
+        super().__init__(*args)
+        self._attack = MyPGDNumpy(*args)
+
+    def vhost(self):
+        """validation model will attach to attack"""
+        return self._attack
