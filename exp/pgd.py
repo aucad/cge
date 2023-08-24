@@ -66,5 +66,5 @@ class PGDConst(ProjectedGradientDescent, Validatable):
         self._attack = MyPGDNumpy(*args)
 
     def vhost(self):
-        """validation model will attach to attack"""
+        """attach validation model to attack"""
         return self._attack

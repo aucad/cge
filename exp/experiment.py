@@ -37,9 +37,8 @@ class Experiment(Loggable):
     def run(self):
         """Run an experiment of K folds."""
         c = self.config
-        cname = self.conf('cls')
         self.prepare_input_data()
-        self.cls = ClsPicker.load(cname)(self.conf(cname))
+        self.cls = ClsPicker.load(c.cls)(self.conf(c.cls))
         self.attack = AttackRunner(
             c.attack, c.validate, self.conf(c.attack))
         self.validation = Validation(c.constraints, self.attr_max)
