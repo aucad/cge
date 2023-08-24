@@ -37,9 +37,8 @@ class Experiment(Loggable):
     def run(self):
         """Run an experiment of K folds."""
         c = self.config
-        cname = self.conf('cls')
         self.prepare_input_data()
-        self.cls = ClsPicker.load(cname)(self.conf(cname))
+        self.cls = ClsPicker.load(c.cls)(self.conf(c.cls))
         self.attack = AttackRunner(
             c.attack, c.validate, self.conf(c.attack))
         self.validation = Validation(c.constraints, self.attr_max)
@@ -86,13 +85,13 @@ class Experiment(Loggable):
 
     def log(self):
         log('Dataset', self.config.dataset)
-        log('Record count', len(self.X))
         log('Classifier', self.cls.name)
+        log('Attack', self.attack.name)
+        log('Record count', len(self.X))
         log('Classes', len(np.unique(self.y)))
         log('Attributes', len(self.attrs))
         log('Constraints', len(self.validation.constraints.keys()))
         log('Immutable', len(self.validation.immutable))
-        log('Attack', self.attack.name)
         log('Attack max iter', self.attack.conf['max_iter'])
         log('Validation', self.config.validate)
         log('K-folds', self.config.folds)

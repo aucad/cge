@@ -15,14 +15,18 @@ CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], Union[bool, PREDICATE]]]
      validity, based on source feature values.
 """
 
-CONSTR_TXT = \
-    Union[Dict[int, Union[str, bool]], Dict[int, Tuple[List[int], str]]]
+CONSTR_TXT = Union[Dict[int, Union[str, bool]],
+                   Dict[int, Tuple[List[int], str]]]
 """Constraint type for experiment configuration files."""
 
 
 class Validatable:
     """Base class for an attack with constraints"""
     v_model = None
+
+    def vhost(self):
+        """validation model owner"""
+        return self
 
 
 class Loggable(ABC):

@@ -4,7 +4,7 @@ import numpy as np
 from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent, HopSkipJump
 
-from exp import ZooConst, PGDConst, HopSkipConst, \
+from exp import ZooConst, PGDConst, HopSkipJumpConst, \
     AttackScore, Validation, Validatable
 
 
@@ -29,7 +29,7 @@ class AttackPicker:
                 ProjectedGradientDescent
 
         if attack_name == AttackPicker.HSJ:
-            return HopSkipConst if apply_constr else HopSkipJump
+            return HopSkipJumpConst if apply_constr else HopSkipJump
 
 
 class AttackRunner:
@@ -63,13 +63,9 @@ class AttackRunner:
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
         aml_attack = self.attack(self.cls.classifier, **self.conf)
-        args = {'x': self.ori_x}
         if self.can_validate:
-            aml_attack.v_model = v_model
-            if isinstance(aml_attack, PGDConst):
-                aml_attack._attack.v_model = v_model
-
-        self.adv_x = aml_attack.generate(**args)
+            aml_attack.vhost().v_model = v_model
+        self.adv_x = aml_attack.generate(x=self.ori_x)
         sys.stdout.write('\x1b[1A')
         sys.stdout.write('\x1b[2K')
         self.adv_y = np.array(self.cls.predict(
