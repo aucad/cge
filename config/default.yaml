@@ -46,7 +46,7 @@ dnn:
 # Zeroth-Order Optimization (ZOO)
 # https://tinyurl.com/mad2v59a
 zoo:
-  confidence: 0.25 # Confidence of adversarial examples
+  confidence: 0.8 # Confidence of adversarial examples
   learning_rate: 0.1 # Smaller values produce better results, but are slower to converge.
   max_iter: 5 # maximum number of iterations.
   binary_search_steps: 10 # Number of times to adjust constant with binary search
@@ -55,7 +55,7 @@ zoo:
   use_resize: False # use the resizing strategy from the paper
   use_importance: False # use importance sampling when choosing coordinates to update.
   nb_parallel: 5 # Number of coordinate updates to run in parallel.
-  variable_h: 0.3 #  Step size for numerical estimation of derivatives.
+  variable_h: 0.8 #  Step size for numerical estimation of derivatives.
   targeted: False # Should the attack target one specific class.
   batch_size: 1 # size of batches on which adversarial samples are generated.
   verbose: True # show progress bars.

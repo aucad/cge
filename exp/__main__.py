@@ -53,6 +53,7 @@ def _check_params(config_):
 if __name__ == '__main__':
     BASE_CONFIG = './config/default.yaml'
     args = parse_args(ArgumentParser())
+
     # merge the default config, experiment config, from files
     with open(Path(BASE_CONFIG), 'r', encoding='utf-8') as open_yml:
         c = (yaml.safe_load(open_yml))
@@ -62,6 +63,7 @@ if __name__ == '__main__':
         c[k] = {**((c[k] or {}) if k in c else {}), **v} \
             if type(v) is dict else v
     config = {**c, 'config_path': args.config}
+
     # if defined, override file configs with command arguments
     if args.validate:
         config['validate'] = True

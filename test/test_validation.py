@@ -5,7 +5,7 @@ from exp.validation import Validation
 def test_no_constraints():
     ori = np.array([[1, 2, 3], [5, 6, 7]])
     adv = np.array([[6, 7, 1], [3, 1, 2]])
-    result = Validation({}, np.array([1] * ori.shape[0]))\
+    result = Validation({}, np.array([1] * ori.shape[0])) \
         .enforce(ori, adv)
     assert (result == adv).all()
 
@@ -40,7 +40,7 @@ def test_immutable_2():
     exp = np.array([[.5, .7, .4, .1, .9, .7], [.8, .3, .4, .5, .3, .1]])
     constraints = {2: ((2,), False), 5: ((5,), False)}
     ar = np.array([1] * ori.shape[0])
-    result = Validation(constraints, ar)\
+    result = Validation(constraints, ar) \
         .enforce(ori, adv)
     assert (result == exp).all()
 
@@ -50,7 +50,7 @@ def test_bin_feature():
     adv = np.array([[.8], [1.], [.4], [0.], [.2], [1.]])
     exp = np.array([[1.], [1.], [1.], [0.], [0.], [1.]])
     constraints = {0: ((0,), lambda x: x == 0 or x == 1)}
-    result = Validation(constraints, np.array([1]))\
+    result = Validation(constraints, np.array([1])) \
         .enforce(ori, adv)
     assert (result == exp).all()
 
@@ -73,9 +73,10 @@ def test_single_feature():
 
 
 def test_multi_feature():
-    ori = np.array([[1, 0, 0, 1, 0, 1, 1]])
-    adv = np.array([[0, 1, 1, 0, 0, 0, 0]])
-    exp = np.array([[1, 0, 0, 1, 0, 0, 1]])
+    ori = np.array([[1, 0, 0, 1, 0, 1, 1], [1, 0, 0, 1, 0, 1, 1]])
+    adv = np.array([[0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0, 1]])
+    exp = np.array([[1, 0, 0, 1, 0, 0, 1], [1, 0, 0, 1, 0, 0, 1]])
+
     constraints = {
         0: ((0, 1, 2), lambda arr: sum(arr) == 1),
         1: ((1, 0, 2,), lambda arr: sum(arr) == 1),
