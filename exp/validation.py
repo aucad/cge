@@ -45,9 +45,7 @@ class Validation:
             deps = list(self.desc[target])
             if deps and False in mask_bits:
                 invalid = np.array((np.where(mask_bits == 0)[0]))
-                vmap[np.ix_(invalid, range(0, len(vmap[0])))] = 0
-                # TODO: investigate
-                # vmap[np.ix_(invalid, deps)] = 0
+                vmap[np.ix_(invalid, deps)] = 0
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod

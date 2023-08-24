@@ -86,13 +86,13 @@ class Experiment(Loggable):
 
     def log(self):
         log('Dataset', self.config.dataset)
-        log('Record count', len(self.X))
         log('Classifier', self.cls.name)
+        log('Attack', self.attack.name)
+        log('Record count', len(self.X))
         log('Classes', len(np.unique(self.y)))
         log('Attributes', len(self.attrs))
         log('Constraints', len(self.validation.constraints.keys()))
         log('Immutable', len(self.validation.immutable))
-        log('Attack', self.attack.name)
         log('Attack max iter', self.attack.conf['max_iter'])
         log('Validation', self.config.validate)
         log('K-folds', self.config.folds)

@@ -24,7 +24,7 @@ from exp.result import Result, ModelScore, AttackScore, score_valid
 from exp.model import ModelTraining
 from exp.zoo import ZooConst
 from exp.pgd import PGDConst
-from exp.hopskip import HopSkipConst
+from exp.hopskip import HopSkipJumpConst
 from exp.xgb import XGBoost
 from exp.dnn import DeepNeuralNetwork
 from exp.classifier import ClsPicker

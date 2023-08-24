@@ -4,7 +4,7 @@ import numpy as np
 from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent, HopSkipJump
 
-from exp import ZooConst, PGDConst, HopSkipConst, \
+from exp import ZooConst, PGDConst, HopSkipJumpConst, \
     AttackScore, Validation, Validatable
 
 
@@ -29,7 +29,7 @@ class AttackPicker:
                 ProjectedGradientDescent
 
         if attack_name == AttackPicker.HSJ:
-            return HopSkipConst if apply_constr else HopSkipJump
+            return HopSkipJumpConst if apply_constr else HopSkipJump
 
 
 class AttackRunner:
