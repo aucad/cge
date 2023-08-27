@@ -1,0 +1,3 @@
+[submodule "constrained-attacks"]
+	path = constrained-attacks
+	url = https://github.com/serval-uni-lu/constrained-attacks
