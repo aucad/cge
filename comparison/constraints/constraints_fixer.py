@@ -2,15 +2,11 @@ from typing import List
 
 import numpy as np
 
-from comparison.constraints.constraints_executor import (
-    NumpyConstraintsExecutor,
-    get_feature_index,
-)
-from comparison.constraints.relation_constraint import (
-    BaseRelationConstraint,
-    EqualConstraint,
-    Feature,
-)
+from comparison.constraints.constraints_executor import \
+    NumpyConstraintsExecutor, get_feature_index
+
+from comparison.constraints.relation_constraint import \
+    BaseRelationConstraint, EqualConstraint, Feature
 
 
 class ConstraintsFixer:

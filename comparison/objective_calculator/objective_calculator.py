@@ -7,9 +7,7 @@ from joblib import Parallel, delayed
 from tqdm import tqdm
 
 from comparison.constraints.constraints import Constraints
-from comparison.constraints.constraints_checker import (
-    ConstraintChecker,
-)
+from comparison.constraints.constraints_checker import ConstraintChecker
 from comparison.utils import compute_distance
 
 numpy.set_printoptions(threshold=sys.maxsize)

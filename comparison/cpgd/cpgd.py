@@ -2,12 +2,9 @@ import numpy as np
 from art.attacks.evasion import ProjectedGradientDescent as PGD
 from art.estimators.classification import TensorFlowV2Classifier
 
-from comparison.attacks.cpgd.tf2_classifier import TF2Classifier
-from comparison.constraints.constraints import (
-    Constraints,
-    fix_feature_types,
-    get_feature_min_max,
-)
+from comparison.cpgd.tf2_classifier import TF2Classifier
+from comparison.constraints.constraints import \
+    Constraints, fix_feature_types, get_feature_min_max
 
 
 class CPGD:

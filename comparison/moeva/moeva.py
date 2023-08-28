@@ -11,15 +11,13 @@ from pymoo.factory import (
     get_reference_directions,
     get_termination,
 )
-from pymoo.operators.mixed_variable_operator import (
-    MixedVariableCrossover,
-    MixedVariableMutation,
-)
+from pymoo.operators.mixed_variable_operator import \
+    MixedVariableCrossover, MixedVariableMutation
 from pymoo.optimize import minimize
 from tqdm import tqdm
 
-from comparison.attacks.moeva.history_callback import HistoryCallback
-from comparison.attacks.moeva.operators import InitialStateSampling
+from comparison.moeva.history_callback import HistoryCallback
+from comparison.moeva.operators import InitialStateSampling
 from comparison.constraints.constraints import Constraints
 from comparison.utils import cut_in_batch
 

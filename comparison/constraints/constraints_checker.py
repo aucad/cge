@@ -3,18 +3,16 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from comparison.constraints.constraints import (
-    Constraints,
-    get_feature_min_max,
-)
-from comparison.constraints.constraints_executor import (
-    NumpyConstraintsExecutor,
-)
+from comparison.constraints.constraints import \
+    Constraints, get_feature_min_max
+from comparison.constraints.constraints_executor import \
+    NumpyConstraintsExecutor
 from comparison.constraints.relation_constraint import AndConstraint
 
 
 class ConstraintChecker:
-    def __init__(self, constraints: Constraints, tolerance: float = 0.0):
+    def __init__(self, constraints: Constraints,
+                 tolerance: float = 0.0):
         self.constraints = constraints
         self.tolerance = tolerance
 
@@ -37,7 +35,8 @@ class ConstraintChecker:
         int_type_mask = self.constraints.feature_types != "real"
         if int_type_mask.sum() > 0:
             type_ok = np.min(
-                (x_adv[:, int_type_mask] == np.round(x_adv[:, int_type_mask])),
+                (x_adv[:, int_type_mask] == np.round(
+                    x_adv[:, int_type_mask])),
                 axis=1,
             )
         else:
@@ -48,7 +47,8 @@ class ConstraintChecker:
         immutable_mask = ~self.constraints.mutable_features
         if immutable_mask.sum() > 0:
             mutable_ok = np.min(
-                (x[:, immutable_mask] == x_adv[:, immutable_mask]), axis=1
+                (x[:, immutable_mask] == x_adv[:, immutable_mask]),
+                axis=1
             )
         else:
             mutable_ok = np.ones(shape=x_adv.shape[:-1], dtype=np.bool)

@@ -12,9 +12,8 @@ import numpy as np
 from art.estimators.classification import TensorFlowV2Classifier
 
 from comparison.constraints.constraints import Constraints
-from comparison.constraints.constraints_executor import (
-    TensorFlowConstraintsExecutor,
-)
+from comparison.constraints.constraints_executor import \
+    TensorFlowConstraintsExecutor
 from comparison.constraints.relation_constraint import AndConstraint
 
 if TYPE_CHECKING:

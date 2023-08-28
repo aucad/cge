@@ -3,7 +3,6 @@ import tensorflow as tf
 
 from comparison.constraints.constraints_executor import \
     TensorFlowConstraintsExecutor
-
 from comparison.constraints.relation_constraint import AndConstraint
 from comparison.tests.url_constraints import get_url_constraints
 

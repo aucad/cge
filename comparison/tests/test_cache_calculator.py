@@ -2,7 +2,8 @@ import joblib
 import numpy as np
 from sklearn.pipeline import Pipeline
 
-from comparison.objective_calculator import ObjectiveCalculator
+from comparison.objective_calculator.objective_calculator \
+    import ObjectiveCalculator
 from comparison.tests.url_constraints import get_url_constraints
 
 

@@ -2,13 +2,10 @@ import numpy as np
 from pymoo.core.problem import Problem
 
 from comparison.classifier.classifier import Classifier
-from comparison.constraints.constraints import (
-    Constraints,
-    get_feature_min_max,
-)
-from comparison.constraints.constraints_executor import (
-    NumpyConstraintsExecutor,
-)
+from comparison.constraints.constraints import \
+    Constraints, get_feature_min_max
+from comparison.constraints.constraints_executor import \
+    NumpyConstraintsExecutor
 from comparison.constraints.relation_constraint import AndConstraint
 from comparison.utils import compute_distance
 
