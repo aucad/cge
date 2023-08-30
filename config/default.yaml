@@ -65,13 +65,13 @@ zoo:
 # https://tinyurl.com/b88f6djr
 pgd:
   norm: "inf"  # of the adversarial perturbation “inf”, 1 or 2.
-  eps: 0.3 # Maximum perturbation that the attacker can introduce.
-  eps_step: 0.01 # Attack step size (input variation) at each iteration.
+  eps: 0.4 # Maximum perturbation that the attacker can introduce.
+  eps_step: 0.1 # Attack step size (input variation) at each iteration.
   random_eps: False # epsilon is drawn randomly from truncated normal distribution.
   decay: # Decay factor for accumulating the velocity vector when using momentum.
   max_iter: 40 # The maximum number of iterations.
   targeted: False # attack is targeted (True) or untargeted (False).
-  num_random_init: 20 # Number of random initialisations within the epsilon ball.
+  num_random_init: 40 # Number of random initialisations within the epsilon ball.
   batch_size: 2000 # Size of the batch on which adversarial samples are generated.
   verbose: True # Show progress bars.
 
