@@ -1,7 +1,7 @@
 from typing import Dict, Tuple, Set
 
 import numpy as np
-from networkx import DiGraph, descendants
+from networkx import DiGraph, descendants, ancestors
 
 from exp import CONSTR_DICT, categorize
 
@@ -34,10 +34,7 @@ class Validation:
             inputs = adv[:, index] * self.scalars[index]
             mask_bits = np.vectorize(pred)(inputs)  # evaluate
             vmap[:, index] = mask_bits  # apply to mask
-        adv = adv * vmap + ref * (1 - vmap)
 
-        # evaluate multi-variate constraints
-        vmap = np.ones(ref.shape, dtype=np.ubyte)
         for target, (sources, pred) in self.multi_feat.items():
             in_, sf = adv[:, sources], self.scalars[list(sources)]
             mask_bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
@@ -45,9 +42,7 @@ class Validation:
             deps = list(self.desc[target])
             if deps and False in mask_bits:
                 invalid = np.array((np.where(mask_bits == 0)[0]))
-                vmap[np.ix_(invalid, range(0, len(vmap[0])))] = 0
-                # TODO: investigate
-                # vmap[np.ix_(invalid, deps)] = 0
+                vmap[np.ix_(invalid, deps)] = 0
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod
@@ -68,5 +63,6 @@ class Validation:
         nodes = list(set([s for s, _ in edges] + targets))
         g.add_nodes_from(nodes)
         g.add_edges_from(edges)
-        reachable = [(n, descendants(g, n)) for n in targets]
+        reachable = [(n, ancestors(g, n).union(descendants(g, n)))
+                     for n in targets]
         return g, dict(reachable)
