@@ -25,7 +25,7 @@ def plot_graph(v, c, a):
         ax = plt.figure(1).add_subplot(1, 1, 1)
         draw_networkx(
             v.dep_graph, pos=shell_layout(v.dep_graph),
-            with_labels=True, node_color=color_map, arrowstyle='->',
+            with_labels=True, node_color=color_map, arrowstyle='<->',
             font_size=8, font_weight='bold', ax=ax)
         legend1 = plt.legend(
             labels=[f'{k}: {a[k]}' for k in gn], loc='upper left',

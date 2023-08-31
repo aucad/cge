@@ -34,13 +34,16 @@ class Validation:
             inputs = adv[:, index] * self.scalars[index]
             mask_bits = np.vectorize(pred)(inputs)  # evaluate
             vmap[:, index] = mask_bits  # apply to mask
+        adv = adv * vmap + ref * (1 - vmap)
 
+        # evaluate multi-variate constraints
+        vmap = np.ones(ref.shape, dtype=np.ubyte)
         for target, (sources, pred) in self.multi_feat.items():
             in_, sf = adv[:, sources], self.scalars[list(sources)]
             mask_bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
             vmap[:, target] *= mask_bits
             deps = list(self.desc[target])
-            if deps and False in mask_bits:
+            if deps and False in mask_bits:  # propagate
                 invalid = np.array((np.where(mask_bits == 0)[0]))
                 vmap[np.ix_(invalid, deps)] = 0
         return adv * vmap + ref * (1 - vmap)
