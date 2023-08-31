@@ -51,3 +51,4 @@ test/__pycache__
 /result/
 .idea/
 sketch.py
+*.pyc
