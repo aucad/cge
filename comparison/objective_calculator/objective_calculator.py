@@ -1,6 +1,5 @@
 import sys
 
-import numpy
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
@@ -8,7 +7,7 @@ from tqdm import tqdm
 
 from .. import Constraints, ConstraintChecker, compute_distance
 
-numpy.set_printoptions(threshold=sys.maxsize)
+np.set_printoptions(threshold=sys.maxsize)
 
 
 class ObjectiveCalculator:

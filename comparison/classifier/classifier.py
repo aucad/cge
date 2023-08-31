@@ -24,7 +24,8 @@ class Classifier:
             self._classifier = classifier
         else:
             raise ValueError(
-                "The provided model does not have methods 'predict_proba'."
+                "The provided model does not have methods "
+                "'predict_proba'. "
             )
         self.set_n_jobs(n_jobs)
         self.set_verbose(verbose)
