@@ -5,10 +5,10 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from comparison.constraints.relation_constraint import \
-    AndConstraint, BaseRelationConstraint, Constant, ConstraintsNode, \
-    EqualConstraint, Feature, LessConstraint, LessEqualConstraint, \
-    MathOperation, OrConstraint, SafeDivision
+from .. import AndConstraint, BaseRelationConstraint, \
+    Constant, ConstraintsNode, EqualConstraint, Feature, \
+    LessConstraint, LessEqualConstraint, MathOperation, \
+    OrConstraint, SafeDivision
 
 EPS: npt.NDArray[Any] = np.array(0.000001)
 

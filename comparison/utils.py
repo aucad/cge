@@ -2,7 +2,6 @@ import numpy as np
 
 
 def mutate(x_original, x_mutation):
-
     if x_original.shape[:-1] != x_mutation.shape[:-1]:
         raise ValueError(
             f"X_original has shape: {x_original.shape}, "
@@ -23,7 +22,6 @@ def compute_distance(x_1, x_2, norm):
 
 
 def cut_in_batch(arr, n_desired_batch=1, batch_size=None):
-
     if batch_size is None:
         n_batch = min(n_desired_batch, len(arr))
     else:

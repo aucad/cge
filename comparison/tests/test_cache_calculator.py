@@ -2,9 +2,8 @@ import joblib
 import numpy as np
 from sklearn.pipeline import Pipeline
 
-from comparison.objective_calculator.objective_calculator \
-    import ObjectiveCalculator
-from comparison.tests.url_constraints import get_url_constraints
+from .. import ObjectiveCalculator
+from .url_constraints import get_url_constraints
 
 
 def test_cache_objective_calculation():
@@ -34,18 +33,18 @@ def test_cache_objective_calculation():
         norm=2,
         fun_distance_preprocess=preprocessing_pipeline.transform,
     )
-    # success_rate = objective_calculator.get_success_rate(
-    #     x_clean, y_clean, x_adv
-    # )
-    # for i in range(7):
-    #     assert 0 <= success_rate[i] and success_rate[i] <= 1.0
-    #
-    # assert success_rate[0] == 1.0
-    # assert success_rate[2] == 1.0
-    # assert success_rate[3] == success_rate[1]
-    # assert success_rate[4] == 1.0
-    # assert success_rate[5] == success_rate[1]
-    # assert success_rate[6] == success_rate[1]
-    #
-    # # Computed manually
-    # assert success_rate[1] == 0.1
+    success_rate = objective_calculator.get_success_rate(
+        x_clean, y_clean, x_adv
+    )
+    for i in range(7):
+        assert 0 <= success_rate[i] <= 1.0
+
+    assert success_rate[0] == 1.0
+    assert success_rate[2] == 1.0
+    assert success_rate[3] == success_rate[1]
+    assert success_rate[4] == 1.0
+    assert success_rate[5] == success_rate[1]
+    assert success_rate[6] == success_rate[1]
+
+    # Computed manually
+    assert success_rate[1] == 0.1

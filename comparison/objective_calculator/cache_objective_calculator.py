@@ -1,28 +1,23 @@
 import sys
 
-import numpy
 import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-from comparison.constraints.constraints import Constraints
-from comparison.constraints.constraints_checker import (
-    ConstraintChecker,
-)
-from comparison.utils import compute_distance
+from .. import compute_distance, Constraints, ConstraintChecker
 
-numpy.set_printoptions(threshold=sys.maxsize)
+np.set_printoptions(threshold=sys.maxsize)
 
 
 class ObjectiveCalculator:
     def __init__(
-        self,
-        classifier,
-        constraints: Constraints,
-        thresholds: dict,
-        norm=np.inf,
-        fun_distance_preprocess=lambda x: x,
-        n_jobs=1,
+            self,
+            classifier,
+            constraints: Constraints,
+            thresholds: dict,
+            norm=np.inf,
+            fun_distance_preprocess=lambda x: x,
+            n_jobs=1,
     ):
         """Calculate the objectives satisfaction according to a model
         and a set of constraints.
@@ -114,9 +109,11 @@ class ObjectiveCalculator:
             ]
         )
 
-        return np.array([constraint_violation, classification, distance])
+        return np.array(
+            [constraint_violation, classification, distance])
 
-    def get_objectives_eval(self, x_clean, y_clean, x_adv, recompute=False):
+    def get_objectives_eval(
+            self, x_clean, y_clean, x_adv, recompute=False):
         if self.objectives_eval is None or recompute:
             self.objectives_eval = self.compute_objectives_eval(
                 x_clean, y_clean, x_adv
@@ -128,8 +125,9 @@ class ObjectiveCalculator:
         misclassified = np.array(
             [
                 (
-                    objectives_eval[1][i]
-                    < self.thresholds["misclassification"][y_clean[i]]
+                        objectives_eval[1][i]
+                        < self.thresholds["misclassification"][
+                            y_clean[i]]
                 )
                 for i in range(len(y_clean))
             ]
@@ -148,37 +146,39 @@ class ObjectiveCalculator:
         )
 
     def get_objectives_respected(
-        self, x_clean, y_clean, x_adv, recompute=False
+            self, x_clean, y_clean, x_adv, recompute=False
     ):
         if self.objectives_respected is None or recompute:
             objectives_eval = self.get_objectives_eval(
                 x_clean, y_clean, x_adv, recompute
             )
-            self.objectives_respected = self.compute_objectives_respected(
-                objectives_eval, y_clean
-            )
+            self.objectives_respected = \
+                self.compute_objectives_respected(
+                    objectives_eval, y_clean)
         return self.objectives_respected
 
-    def get_success_rate(self, x_clean, y_clean, x_adv, recompute=False):
+    def get_success_rate(self, x_clean, y_clean, x_adv,
+                         recompute=False):
         objectives_respected = self.get_objectives_respected(
             x_clean, y_clean, x_adv, recompute
         )
         at_least_one_objectives_respected = np.max(
             objectives_respected, axis=2
         )
-        success_rate = np.mean(at_least_one_objectives_respected, axis=1)
+        success_rate = np.mean(at_least_one_objectives_respected,
+                               axis=1)
         return success_rate
 
     def _get_one_successful(
-        self,
-        x_clean,
-        y_clean,
-        x_adv,
-        objective_values,
-        objective_respected,
-        preferred_metrics="misclassification",
-        order="asc",
-        max_inputs=-1,
+            self,
+            x_clean,
+            y_clean,
+            x_adv,
+            objective_values,
+            objective_respected,
+            preferred_metrics="misclassification",
+            order="asc",
+            max_inputs=-1,
     ):
 
         metrics_to_index = {"misclassification": 1, "distance": 2}
@@ -206,15 +206,15 @@ class ObjectiveCalculator:
         return success_full_attacks
 
     def get_successful_attacks(
-        self,
-        x_clean,
-        y_clean,
-        x_adv,
-        preferred_metrics="misclassification",
-        order="asc",
-        max_inputs=-1,
-        return_index_success=False,
-        recompute=False,
+            self,
+            x_clean,
+            y_clean,
+            x_adv,
+            preferred_metrics="misclassification",
+            order="asc",
+            max_inputs=-1,
+            return_index_success=False,
+            recompute=False,
     ):
 
         successful_attacks = []
@@ -243,7 +243,8 @@ class ObjectiveCalculator:
 
         # Parallel run
         else:
-            processed_results = Parallel(n_jobs=self.n_jobs, prefer="threads")(
+            processed_results = Parallel(n_jobs=self.n_jobs,
+                                         prefer="threads")(
                 delayed(self._get_one_successful)(
                     x_clean[i],
                     y_clean[i],
@@ -274,15 +275,15 @@ class ObjectiveCalculator:
             return successful_attacks
 
     def get_successful_attacks_indexes(
-        self,
-        x_clean,
-        y_clean,
-        x_adv,
-        preferred_metrics="misclassification",
-        order="asc",
-        max_inputs=-1,
-        return_index_success=False,
-        recompute=False,
+            self,
+            x_clean,
+            y_clean,
+            x_adv,
+            preferred_metrics="misclassification",
+            order="asc",
+            max_inputs=-1,
+            return_index_success=False,
+            recompute=False,
     ):
 
         metrics_to_index = {"misclassification": 1, "distance": 2}
@@ -296,10 +297,12 @@ class ObjectiveCalculator:
         objectives_respected = objectives_respected[-1]
 
         objectives_values_sorted = np.argsort(
-            objectives_values[metrics_to_index[preferred_metrics]], axis=1
+            objectives_values[metrics_to_index[preferred_metrics]],
+            axis=1
         )
         if order == "desc":
-            objectives_values_sorted = objectives_values_sorted[..., ::-1]
+            objectives_values_sorted = objectives_values_sorted[...,
+                                       ::-1]
 
         x_i, x_j = [], []
         for i in range(objectives_values_sorted.shape[0]):

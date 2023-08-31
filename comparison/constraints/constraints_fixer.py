@@ -2,30 +2,29 @@ from typing import List
 
 import numpy as np
 
-from comparison.constraints.constraints_executor import \
-    NumpyConstraintsExecutor, get_feature_index
-
-from comparison.constraints.relation_constraint import \
+from .. import NumpyConstraintsExecutor, get_feature_index, \
     BaseRelationConstraint, EqualConstraint, Feature
 
 
 class ConstraintsFixer:
     def __init__(
-        self,
-        guard_constraints: List[BaseRelationConstraint],
-        fix_constraints: List[EqualConstraint],
-        feature_names=None,
+            self,
+            guard_constraints: List[BaseRelationConstraint],
+            fix_constraints: List[EqualConstraint],
+            feature_names=None,
     ):
         self.guard_constraints = guard_constraints
         self.fix_constraints = fix_constraints
         self.feature_names = feature_names
         for c in self.fix_constraints:
             if not isinstance(c, EqualConstraint):
-                raise ValueError("Fix constraints must be an EqualConstraint.")
+                raise ValueError(
+                    "Fix constraints must be an EqualConstraint.")
             else:
                 if not isinstance(c.left_operand, Feature):
                     raise ValueError(
-                        "Left operand of fix constraints must be a Feature."
+                        "Left operand of fix constraints must be a "
+                        "Feature. "
                     )
 
     def fix(self, x):
@@ -51,8 +50,8 @@ class ConstraintsFixer:
                 self.feature_names, fix_c.left_operand.feature_id
             )
 
-            # Value to be update.
-            # Known warning, not supposed to evaluate without constraint.
+            # Value to be update. Known warning, not supposed to
+            # evaluate without constraint.
             executor = NumpyConstraintsExecutor(
                 fix_c.right_operand, self.feature_names
             )

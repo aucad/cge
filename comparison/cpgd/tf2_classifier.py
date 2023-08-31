@@ -11,10 +11,7 @@ from typing import TYPE_CHECKING, Callable, List, Optional, Tuple, Union
 import numpy as np
 from art.estimators.classification import TensorFlowV2Classifier
 
-from comparison.constraints.constraints import Constraints
-from comparison.constraints.constraints_executor import \
-    TensorFlowConstraintsExecutor
-from comparison.constraints.relation_constraint import AndConstraint
+from .. import Constraints, TensorFlowConstraintsExecutor, AndConstraint
 
 if TYPE_CHECKING:
     # pylint: disable=C0412

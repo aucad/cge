@@ -3,11 +3,8 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from comparison.constraints.constraints import \
-    Constraints, get_feature_min_max
-from comparison.constraints.constraints_executor import \
-    NumpyConstraintsExecutor
-from comparison.constraints.relation_constraint import AndConstraint
+from .. import Constraints, get_feature_min_max, \
+    NumpyConstraintsExecutor, AndConstraint
 
 
 class ConstraintChecker:
@@ -40,7 +37,7 @@ class ConstraintChecker:
                 axis=1,
             )
         else:
-            type_ok = np.ones(shape=x_adv.shape[:-1], dtype=np.bool)
+            type_ok = np.ones(shape=x_adv.shape[:-1], dtype=bool)
         return type_ok
 
     def _check_mutable_constraints(self, x, x_adv):
@@ -51,7 +48,7 @@ class ConstraintChecker:
                 axis=1
             )
         else:
-            mutable_ok = np.ones(shape=x_adv.shape[:-1], dtype=np.bool)
+            mutable_ok = np.ones(shape=x_adv.shape[:-1], dtype=bool)
         return mutable_ok
 
     def check_constraints(self, x, x_adv) -> np.ndarray:

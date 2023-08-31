@@ -1,11 +1,7 @@
 import numpy as np
 import pytest
 
-from comparison.constraints.constraints_executor import \
-    EPS, NumpyConstraintsExecutor
-
-from comparison.constraints.relation_constraint import \
-    Constant, Feature
+from .. import EPS, NumpyConstraintsExecutor, Constant, Feature
 
 
 class TestRelationConstraint:

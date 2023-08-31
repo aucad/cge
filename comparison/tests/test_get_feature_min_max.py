@@ -1,7 +1,6 @@
 import numpy as np
 
-from comparison.constraints.constraints import \
-    Constraints, get_feature_min_max
+from .. import Constraints, get_feature_min_max
 
 
 def test_no_dynamic():

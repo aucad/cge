@@ -1,10 +1,7 @@
 from typing import List
 
-from comparison.constraints.constraints import \
-    get_constraints_from_file
-
-from comparison.constraints.relation_constraint import \
-    BaseRelationConstraint, Constant, Feature
+from .. import get_constraints_from_file, Constant, Feature, \
+    BaseRelationConstraint
 
 
 def get_url_relation_constraints() -> List[BaseRelationConstraint]:

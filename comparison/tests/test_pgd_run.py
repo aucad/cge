@@ -3,25 +3,20 @@ import numpy as np
 from sklearn.pipeline import Pipeline
 from keras.models import load_model
 
-from comparison.cpgd.cpgd import CPGD
-from comparison.classifier.tensorflow_classifier import \
-    TensorflowClassifier
-from comparison.objective_calculator.objective_calculator \
-    import ObjectiveCalculator
-from comparison.tests.url_constraints import get_url_constraints
+from .. import CPGD, TensorflowClassifier, ObjectiveCalculator
+from .url_constraints import get_url_constraints
 
 
 def test_run_pgd():
-
     constraints = get_url_constraints()
     x_clean = np.load(
         "./comparison/resources/baseline_X_test_candidates.npy")[
-        :10
-    ]
+              :10
+              ]
     y_clean = np.load(
         "./comparison/resources/baseline_y_test_candidates.npy")[
-        :10
-    ]
+              :10
+              ]
     model = TensorflowClassifier(
         load_model("./comparison/resources/baseline_nn.model")
     )
@@ -62,16 +57,15 @@ def test_run_pgd():
 
 
 def test_run_cpgd():
-
     constraints = get_url_constraints()
     x_clean = np.load(
         "./comparison/resources/baseline_X_test_candidates.npy")[
-        :10
-    ]
+              :10
+              ]
     y_clean = np.load(
         "./comparison/resources/baseline_y_test_candidates.npy")[
-        :10
-    ]
+              :10
+              ]
     model = TensorflowClassifier(
         load_model("./comparison/resources/baseline_nn.model")
     )

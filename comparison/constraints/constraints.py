@@ -6,8 +6,7 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 
-from comparison.constraints.relation_constraint import \
-    BaseRelationConstraint
+from .. import BaseRelationConstraint
 
 
 @dataclass

@@ -1,10 +1,7 @@
 import numpy as np
 import pytest
 
-from comparison.constraints.constraints_executor import \
-    EPS, NumpyConstraintsExecutor
-
-from comparison.constraints.relation_constraint import \
+from .. import EPS, NumpyConstraintsExecutor, \
     AndConstraint, Constant, EqualConstraint, Feature, \
     LessConstraint, LessEqualConstraint, MathOperation, \
     OrConstraint, SafeDivision
