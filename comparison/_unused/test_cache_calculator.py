@@ -2,8 +2,8 @@ import joblib
 import numpy as np
 from sklearn.pipeline import Pipeline
 
-from .. import ObjectiveCalculator
-from .url_constraints import get_url_constraints
+from comparison import ObjectiveCalculator
+from comparison._unused.url_constraints import get_url_constraints
 
 
 def test_cache_objective_calculation():

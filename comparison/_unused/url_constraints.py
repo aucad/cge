@@ -1,6 +1,6 @@
 from typing import List
 
-from .. import get_constraints_from_file, Constant, Feature, \
+from comparison import get_constraints_from_file, Constant, Feature, \
     BaseRelationConstraint
 
 

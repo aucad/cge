@@ -5,7 +5,7 @@ import pandas as pd
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-from .. import Constraints, ConstraintChecker, compute_distance
+from comparison import Constraints, ConstraintChecker, compute_distance
 
 np.set_printoptions(threshold=sys.maxsize)
 

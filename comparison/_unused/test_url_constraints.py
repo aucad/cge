@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
 
-from .. import TensorFlowConstraintsExecutor, AndConstraint
-from .url_constraints import get_url_constraints
+from comparison import TensorFlowConstraintsExecutor, AndConstraint
+from comparison._unused.url_constraints import get_url_constraints
 
 
 def test_tf_constraints():
