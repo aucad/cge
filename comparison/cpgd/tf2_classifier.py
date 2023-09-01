@@ -1,4 +1,3 @@
-import logging
 from typing import TYPE_CHECKING, Callable, List, Optional, Tuple, Union
 
 import numpy as np
@@ -12,8 +11,6 @@ if TYPE_CHECKING:
     from art.defences.postprocessor import Postprocessor
     from art.defences.preprocessor import Preprocessor
     from art.utils import CLIP_VALUES_TYPE, PREPROCESSING_TYPE
-
-logger = logging.getLogger(__name__)
 
 
 class TF2Classifier(TensorFlowV2Classifier):
@@ -206,7 +203,7 @@ class TF2Classifier(TensorFlowV2Classifier):
                 else:
                     loss = self._loss_object(y_input, predictions)
 
-                loss_constraints = 0# self.constraint_loss(x_input)
+                loss_constraints = 0  # self.constraint_loss(x_input)
 
                 loss = loss - loss_constraints
 
