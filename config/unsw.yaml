@@ -3,7 +3,10 @@ dataset: data/unsw_nb15.csv
 desc: sampled from 175K training set
 
 dnn:
-  layers: [ 60, 60, 60, 60, 60 ]
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  feat_file: "comparison/feature_unsw.csv"
 
 #This is UNSW Constraints
 constraints:

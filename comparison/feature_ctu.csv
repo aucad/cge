@@ -17,4 +17,3 @@ orig_pkts,int,True,0,5110
 orig_ip_bytes,int,True,0,204400
 resp_pkts,int,True,0,184
 resp_ip_bytes,int,True,0,168910
-label,int,True,0,1

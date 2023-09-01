@@ -28,17 +28,16 @@ xgb:
     tree_method: exact
     objective: multi:softprob
 
-# Keras Deep Neural Network
-# https://tinyurl.com/5bffyuev
+# TensorFlow v2 (Keras) DNN Classifier
+# https://tinyurl.com/52znjp9f
+# https://keras.io/api/models/model_training_apis/#fit-method
 dnn:
-  layers: [ 60, 60 ]
-  params:
-    use_logits: True
+  layers: [ 64 ]
   model_fit:
-    epochs: 80
-    batch_size: 64
-    shuffle: True
-    verbose: False
+    epochs: 80 # Number of epochs to train the model.
+    batch_size: 64 # Integer or None. Number of samples per gradient update.
+    shuffle: True # shuffle the training data before each epoch
+    verbose: 0 # 0 = silent, 1 = progress bar, 2 = one line per epoch.
 
 # *******************************************
 # ATTACK CONFIGURATIONS
@@ -55,8 +54,7 @@ zoo:
   use_resize: False # use the resizing strategy from the paper
   use_importance: False # use importance sampling when choosing coordinates to update.
   nb_parallel: 5 # Number of coordinate updates to run in parallel.
-  variable_h: 0.6
-  #  Step size for numerical estimation of derivatives.
+  variable_h: 0.6 #  Step size for numerical estimation of derivatives.
   targeted: False # Should the attack target one specific class.
   batch_size: 1 # size of batches on which adversarial samples are generated.
   verbose: True # show progress bars.
@@ -68,7 +66,7 @@ pgd:
   eps: 0.4 # Maximum perturbation that the attacker can introduce.
   eps_step: 0.1 # Attack step size (input variation) at each iteration.
   random_eps: False # epsilon is drawn randomly from truncated normal distribution.
-  decay: # Decay factor for accumulating the velocity vector when using momentum.
+  decay: # Decay factor, for accumulating the velocity vector when using momentum.
   max_iter: 40 # The maximum number of iterations.
   targeted: False # attack is targeted (True) or untargeted (False).
   num_random_init: 40 # Number of random initialisations within the epsilon ball.
@@ -87,3 +85,13 @@ hsj:
   init_size: 100 # Max trials for initial generation of adversarial examples.
   norm: 2 # Order of the norm. Possible values: "inf" or 2.
 
+# CPGD Comparison attack
+# https://github.com/serval-uni-lu/constrained-attacks
+cpgd:
+  feat_file: # path to features.csv
+  args:
+    norm: 2 # "inf", 1, or 2
+    eps: 0.2 # Maximum perturbation that the attacker can introduce.
+    eps_step: 0.1 # Attack step size (input variation) at each iteration.
+    verbose: 1  # Show progress bars
+    enable_constraints: False

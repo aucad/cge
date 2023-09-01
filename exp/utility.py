@@ -3,9 +3,15 @@ import time
 import yaml
 import re
 from typing import List
+from collections import namedtuple
 
 import numpy as np
 import pandas as pd
+
+
+def to_namedtuple(d: dict):
+    c_keys = ",".join(list(d.keys()))
+    return namedtuple('exp', c_keys)(**d)
 
 
 def attr_fmt(attr: List[str]):

@@ -11,6 +11,10 @@ zoo:
 pgd:
   num_random_init: 100
 
+cpgd:
+  feat_file: "comparison/feature_ctu.csv"
+
+
 constraints:
   proto=udp: False
   proto=tcp: False

@@ -40,7 +40,7 @@ class ZooConst(ZooAttack, Validatable):
 
             # Run with 1 specific binary search step
             best_dist, best_label, best_attack = self._generate_bss(x_batch, y_batch, c_current)
-            best_attack = self.v_model.enforce(x_batch, best_attack)
+            best_attack = self.v_model.enforce(x_batch, best_attack)  # NEW!
 
             # Update best results so far
             o_best_attack[best_dist < o_best_dist] = best_attack[best_dist < o_best_dist]

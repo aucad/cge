@@ -13,9 +13,7 @@ from exp.utility import log, time_sec, write_result, fname, read_dataset
 class Experiment(Loggable):
     """Run adversarial experiment"""
 
-    def __init__(self, conf: dict):
-        c_keys = ",".join(list(conf.keys()))
-        self.config = (namedtuple('exp', c_keys)(**conf))
+    def __init__(self, conf: namedtuple):
         self.X = None
         self.y = None
         self.cls = None
@@ -28,6 +26,7 @@ class Experiment(Loggable):
         self.start = 0
         self.end = 0
         self.inv_idx = None
+        self.config = conf
 
     def conf(self, key: str):
         """Try get configration key."""
@@ -87,7 +86,7 @@ class Experiment(Loggable):
         log('Dataset', self.config.dataset)
         log('Classifier', self.cls.name)
         log('Attack', self.attack.name)
-        log('Record count', len(self.X))
+        log('Records', len(self.X))
         log('Classes', len(np.unique(self.y)))
         log('Attributes', len(self.attrs))
         log('Constraints', len(self.validation.constraints.keys()))

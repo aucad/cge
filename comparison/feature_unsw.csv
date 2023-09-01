@@ -1,15 +1,15 @@
 feature,type,mutable,min,max
-dur,real,True,0, 59.999989
-proto_tcp,int,False,0, 1.0
-proto_udp,int,False,0, 1.0
-proto_other,int,False,0,1.0
-service_none,int,False,0, 1.0
-service_http,int,False,0, 1.0
-service_dns,int,False,0,1.0
-service_other,int,False,0, 1.0
-state_FIN,int,False,0, 1.0
-state_INT,int,False,0, 1.0
-state_other,int,False,0,1.0
+dur,real,True,0,60
+proto_tcp,int,False,0,1
+proto_udp,int,False,0,1
+proto_other,int,False,0,1
+service_none,int,False,0,1
+service_http,int,False,0,1
+service_dns,int,False,0,1
+service_other,int,False,0,1
+state_FIN,int,False,0,1
+state_INT,int,False,0,1
+state_other,int,False,0,1
 sbytes,real,True,0,10508068.0
 dbytes,real,True,0, 7085342.0
 rate,real,True,0,1000000.003
@@ -17,18 +17,17 @@ sloss,real,True,0, 3993.0
 dloss,real,True,0, 2627.0
 sjit,real,True,0, 1460480.016
 djit,real,True,0, 199572.8686
-swin,real,True,0, 255.0
+swin,int,True,0, 255.0
 stcpb,real,True,0, 4294729542.0
 dtcpb,real,True,0, 4294383134.0
-dwin,real,True,0, 255.0
+dwin,int,True,0, 255.0
 smean,real,True,0, 1499.0
 dmean,real,True,0, 1458.0
 trans_depth,real,True,0, 2.0
-ct_srv_src,real,True,0, 63.0
-ct_dst_ltm,real,True,0, 50.0
-ct_src_dport_ltm,real,True,0, 50.0
-ct_dst_sport_ltm,real,True,0, 46.0
-ct_dst_src_ltm,real,True,0, 63.0
-ct_src_ltm,real,True,0,50.0
-ct_srv_dst,real,True,0,62.0
-label,int,True,0, 1
+ct_srv_src,int,True,0, 63.0
+ct_dst_ltm,int,True,0, 50.0
+ct_src_dport_ltm,int,True,0, 50.0
+ct_dst_sport_ltm,int,True,0, 46.0
+ct_dst_src_ltm,int,True,0, 63.0
+ct_src_ltm,int,True,0,50.0
+ct_srv_dst,int,True,0,62.0

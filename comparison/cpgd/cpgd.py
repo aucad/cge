@@ -8,17 +8,17 @@ from .. import TF2Classifier, Constraints, fix_feature_types, \
 
 class CPGD:
     def __init__(
-            self,
-            classifier,
-            constraints: Constraints,
-            norm=None,
-            eps=0.3,
-            eps_step=0.1,
-            save_history=None,
-            seed=None,
-            n_jobs=-1,
-            verbose=1,
-            enable_constraints=True,
+        self,
+        classifier,
+        constraints: Constraints,
+        norm=None,
+        eps=0.3,
+        eps_step=0.1,
+        save_history=None,
+        seed=None,
+        n_jobs=-1,
+        verbose=1,
+        enable_constraints=True,
     ) -> None:
         self.classifier = classifier
         self.constraints = constraints
@@ -66,7 +66,7 @@ class CPGD:
             eps=self.eps,
             eps_step=self.eps_step,
             targeted=False,
-            norm=2,
+            norm=self.norm,
         )
         x_adv = attack.generate(
             scaler.transform(x_clean),

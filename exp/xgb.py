@@ -4,11 +4,10 @@ from os import devnull
 from art.estimators.classification import XGBoostClassifier
 from xgboost import DMatrix, train as xg_train
 
-from exp import ModelTraining
+from exp import TargetModel
 
 
-class XGBoost(ModelTraining):
-    """Wrapper for training XGBoost."""
+class XGBoost(TargetModel):
 
     def __init__(self, conf):
         super().__init__(conf)
