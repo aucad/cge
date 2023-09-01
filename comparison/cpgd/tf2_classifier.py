@@ -15,25 +15,26 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class TF2Classifier(TensorFlowV2Classifier):
     def __init__(
-        self,
-        model: Callable,
-        nb_classes: int,
-        input_shape: Tuple[int, ...],
-        constraints: Constraints,
-        scaler,
-        loss_object: Optional["tf.keras.losses.Loss"] = None,
-        train_step: Optional[Callable] = None,
-        channels_first: bool = False,
-        clip_values: Optional["CLIP_VALUES_TYPE"] = None,
-        preprocessing_defences: Union[
-            "Preprocessor", List["Preprocessor"], None
-        ] = None,
-        postprocessing_defences: Union[
-            "Postprocessor", List["Postprocessor"], None
-        ] = None,
-        preprocessing: "PREPROCESSING_TYPE" = (0.0, 1.0),
+            self,
+            model: Callable,
+            nb_classes: int,
+            input_shape: Tuple[int, ...],
+            constraints: Constraints,
+            scaler,
+            loss_object: Optional["tf.keras.losses.Loss"] = None,
+            train_step: Optional[Callable] = None,
+            channels_first: bool = False,
+            clip_values: Optional["CLIP_VALUES_TYPE"] = None,
+            preprocessing_defences: Union[
+                "Preprocessor", List["Preprocessor"], None
+            ] = None,
+            postprocessing_defences: Union[
+                "Postprocessor", List["Postprocessor"], None
+            ] = None,
+            preprocessing: "PREPROCESSING_TYPE" = (0.0, 1.0),
     ) -> None:
         """
         Initialization specific to TensorFlow v2 models.
@@ -98,12 +99,12 @@ class TF2Classifier(TensorFlowV2Classifier):
         return violations
 
     def compute_loss(  # pylint: disable=W0221
-        self,
-        x: Union[np.ndarray, "tf.Tensor"],
-        y: Union[np.ndarray, "tf.Tensor"],
-        reduction: str = "none",
-        training_mode: bool = False,
-        **kwargs,
+            self,
+            x: Union[np.ndarray, "tf.Tensor"],
+            y: Union[np.ndarray, "tf.Tensor"],
+            reduction: str = "none",
+            training_mode: bool = False,
+            **kwargs,
     ) -> np.ndarray:
         """
         Compute the loss.
@@ -156,11 +157,11 @@ class TF2Classifier(TensorFlowV2Classifier):
         return loss.numpy()
 
     def loss_gradient(  # pylint: disable=W0221
-        self,
-        x: Union[np.ndarray, "tf.Tensor"],
-        y: Union[np.ndarray, "tf.Tensor"],
-        training_mode: bool = False,
-        **kwargs,
+            self,
+            x: Union[np.ndarray, "tf.Tensor"],
+            y: Union[np.ndarray, "tf.Tensor"],
+            training_mode: bool = False,
+            **kwargs,
     ) -> Union[np.ndarray, "tf.Tensor"]:
         """
         Compute the gradient of the loss function w.r.t. `x`.
@@ -205,7 +206,7 @@ class TF2Classifier(TensorFlowV2Classifier):
                 else:
                     loss = self._loss_object(y_input, predictions)
 
-                loss_constraints = self.constraint_loss(x_input)
+                loss_constraints = 0# self.constraint_loss(x_input)
 
                 loss = loss - loss_constraints
 

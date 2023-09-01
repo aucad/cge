@@ -28,17 +28,16 @@ xgb:
     tree_method: exact
     objective: multi:softprob
 
-# Keras Deep Neural Network
-# https://tinyurl.com/5bffyuev
+# TensorFlow v2 (Keras) DNN Classifier
+# https://tinyurl.com/52znjp9f
+# https://keras.io/api/models/model_training_apis/#fit-method
 dnn:
   layers: [ 64 ]
-  params:
-    use_logits: True
   model_fit:
-    epochs: 80
-    batch_size: 64
-    shuffle: True
-    verbose: False
+    epochs: 80 # Number of epochs to train the model.
+    batch_size: 64 # Integer or None. Number of samples per gradient update.
+    shuffle: True # shuffle the training data before each epoch
+    verbose: 0 # 0 = silent, 1 = progress bar, 2 = one line per epoch.
 
 # *******************************************
 # ATTACK CONFIGURATIONS

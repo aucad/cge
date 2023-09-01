@@ -20,7 +20,7 @@ from exp.types import Loggable, Validatable, CONSTR_DICT, CONSTR_TXT
 from exp.preproc import categorize
 from exp.validation import Validation
 from exp.result import Result, ModelScore, AttackScore, score_valid
-from exp.model import ModelTraining
+from exp.model import TargetModel
 from exp.xgb import XGBoost
 from exp.dnn import DeepNeuralNetwork
 from exp.classifier import ClsPicker

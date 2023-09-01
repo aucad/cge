@@ -5,20 +5,21 @@ from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent, HopSkipJump
 
 from comparison import cpgd_apply_predict, CPGD
-from exp import ZooConst, PGDConst, HopSkipJumpConst, \
-    AttackScore, Validation, Validatable
+from exp import ZooConst, PGDConst, HopSkipJumpConst, AttackScore, \
+    Validation, Validatable
 
 
 class AttackPicker:
     ZOO = 'zoo'
-    PDG = 'pgd'
     HSJ = 'hsj'
+    PDG = 'pgd'
     CPGD = 'cpgd'
 
     @staticmethod
     def list_attacks():
-        return sorted([AttackPicker.ZOO, AttackPicker.PDG,
-                       AttackPicker.HSJ, AttackPicker.CPGD])
+        return sorted([
+            AttackPicker.ZOO, AttackPicker.PDG,
+            AttackPicker.HSJ, AttackPicker.CPGD])
 
     @staticmethod
     def load_attack(attack_name, apply_constr: bool):
@@ -76,11 +77,10 @@ class AttackRunner:
             if self.can_validate:
                 aml_attack.vhost().v_model = v_model
             self.adv_x = aml_attack.generate(x=self.ori_x)
-            sys.stdout.write('\x1b[1A')
-            sys.stdout.write('\x1b[2K')
             self.adv_y = np.array(self.cls.predict(
                 self.adv_x, self.ori_y).flatten())
-
+        sys.stdout.write('\x1b[1A')
+        sys.stdout.write('\x1b[2K')
         self.score.calculate(
             self, v_model.constraints, v_model.scalars)
         return self
