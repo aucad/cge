@@ -1,15 +1,16 @@
 """
-Implementation of constrained adversarial attacks using CPGD from.
+Implementation of constrained adversarial attacks using CPGD.
 This implementation uses a different constraint validation strategy,
-and the constraint checking is built into the attack. For details,
+and the constraint checking is built into the attack. See:
 
-see paper: https://arxiv.org/abs/2112.01156
-and code: https://github.com/serval-uni-lu/constrained-attacks
+Paper: https://arxiv.org/abs/2112.01156
+Source code: https://github.com/serval-uni-lu/constrained-attacks
+Paper experiments: https://github.com/serval-uni-lu/moeva2-ijcai22-replication
 
 The comparison implementation is in comparison/ under its own license.
 Minor modifications were applied to make it compatible with more
-recent versions of Python and adversarial-robustness-toolkit than
-listed in the original distribution.
+recent versions of Python, adversarial-robustness-toolkit than the
+original distribution.
 """
 
 import numpy as np
