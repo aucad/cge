@@ -3,7 +3,7 @@ from typing import Dict, Callable, Tuple, Union, List
 
 PREDICATE = \
     Union[Callable[[float], bool], Callable[[Tuple[float, ...]], bool]]
-"""Predicate is a function from R -> bool."""
+"""Predicate is a function from R+ -> bool."""
 
 CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], Union[bool, PREDICATE]]]
 """Constraints dictionary type.
@@ -12,7 +12,7 @@ CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], Union[bool, PREDICATE]]]
    The value is a tuple, containing:
    - a non-empty tuple of source feature indices.
    - a predicate (lambda function) to evaluate target feature
-     validity, based on source feature values.
+     validity, based on source feature values, or boolean False.
 """
 
 CONSTR_TXT = Union[Dict[int, Union[str, bool]],

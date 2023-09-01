@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from exp import ModelScore
 
 
-class ModelTraining(ABC):
+class TargetModel(ABC):
 
     def __init__(self, conf):
         self.name = None

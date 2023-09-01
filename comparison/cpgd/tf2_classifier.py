@@ -1,4 +1,3 @@
-import logging
 from typing import TYPE_CHECKING, Callable, List, Optional, Tuple, Union
 
 import numpy as np
@@ -12,8 +11,6 @@ if TYPE_CHECKING:
     from art.defences.postprocessor import Postprocessor
     from art.defences.preprocessor import Preprocessor
     from art.utils import CLIP_VALUES_TYPE, PREPROCESSING_TYPE
-
-logger = logging.getLogger(__name__)
 
 
 class TF2Classifier(TensorFlowV2Classifier):
@@ -67,13 +64,12 @@ class TF2Classifier(TensorFlowV2Classifier):
             nb_classes,
             input_shape,
             loss_object,
-            None,  # optimizer
             train_step,
             channels_first,
             clip_values,
             # preprocessing_defences,
             # postprocessing_defences,
-            # preprocessing,
+            preprocessing,
         )
 
     def unscale_features(self, inputs):
@@ -141,11 +137,9 @@ class TF2Classifier(TensorFlowV2Classifier):
 
         if tf.executing_eagerly():
             x_preprocessed_tf = tf.convert_to_tensor(x_preprocessed)
-            predictions = self.model(x_preprocessed_tf,
-                                     training=training_mode)
+            predictions = self.model(x_preprocessed_tf, training=training_mode)
             if self._reduce_labels:
-                loss = self._loss_object(np.argmax(y, axis=1),
-                                         predictions)
+                loss = self._loss_object(np.argmax(y, axis=1), predictions)
             else:
                 loss = self._loss_object(y, predictions)
 
@@ -200,8 +194,7 @@ class TF2Classifier(TensorFlowV2Classifier):
                     x_input = x_grad
                     y_input = y_preprocessed
 
-                predictions = self.model(x_input,
-                                         training=training_mode)
+                predictions = self.model(x_input, training=training_mode)
 
                 if self._reduce_labels:
                     loss = self._loss_object(
@@ -210,7 +203,7 @@ class TF2Classifier(TensorFlowV2Classifier):
                 else:
                     loss = self._loss_object(y_input, predictions)
 
-                loss_constraints = self.constraint_loss(x_input)
+                loss_constraints = 0  # self.constraint_loss(x_input)
 
                 loss = loss - loss_constraints
 

@@ -24,4 +24,4 @@ class HopSkipJumpConst(HopSkipJump, Validatable):
         # adjust shape: 1d -> 2d -> 1d
         return self.v_model.enforce(
             np.array([original_sample]),
-            np.array([x_adv]))[0]
+            np.array([x_adv]))[0]  # NEW

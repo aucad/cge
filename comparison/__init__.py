@@ -16,3 +16,4 @@ from .constraints.constraints_checker import ConstraintChecker
 from .cpgd.tf2_classifier import TF2Classifier
 from .cpgd.tf_classifier import TensorflowClassifier
 from .cpgd.cpgd import CPGD
+from comparison.__main__ import cpgd_apply_predict
