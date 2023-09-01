@@ -1,8 +1,12 @@
-import os
-import warnings
+"""
+Implementation of constrained adversarial attacks.
+The relevant code is under constraints/ and cpgd/ and
+licensed under MIT license.
 
-warnings.filterwarnings('ignore')
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+see: https://github.com/serval-uni-lu/constrained-attacks
+paper: https://arxiv.org/abs/2112.01156
+"""
+
 
 from .constraints.relation_constraint import \
     AndConstraint, BaseRelationConstraint, Constant, ConstraintsNode, \

@@ -203,7 +203,7 @@ class TF2Classifier(TensorFlowV2Classifier):
                 else:
                     loss = self._loss_object(y_input, predictions)
 
-                loss_constraints = 0  # self.constraint_loss(x_input)
+                loss_constraints = self.constraint_loss(x_input)
 
                 loss = loss - loss_constraints
 

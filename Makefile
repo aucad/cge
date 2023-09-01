@@ -1,15 +1,15 @@
 SHELL := /bin/bash
 
 ITERS = 2 5
-ATTACKS = hsj pgd zoo
-CONFIGS = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml')
+ATTACKS = hsj pgd zoo cpgd
+CONFIGS = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name 'test.yaml')
 
 all: exp
 
 dev: test lint
 
 exp:
-	@$(foreach f, $(CONFIGS), $(foreach a, $(ATTACKS), $(foreach i, $(ITERS), \
+	$(foreach f, $(CONFIGS), $(foreach a, $(ATTACKS), $(foreach i, $(ITERS), \
 	python3 -m exp $(f) $($(v)) -i $(i) -a $(a) -v ; )))
 
 test:

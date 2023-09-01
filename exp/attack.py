@@ -51,7 +51,6 @@ class AttackRunner:
         self.adv_y = None
         self.score = None
         self.conf = conf or {}
-        self.apply_constr = constr
 
     def reset(self, cls):
         self.cls = cls
@@ -70,8 +69,7 @@ class AttackRunner:
         """Generate adversarial examples and score."""
         if issubclass(self.attack, CPGD):
             self.adv_x, self.adv_y = cpgd_apply_predict(
-                self.cls.model, self.ori_x, self.ori_y,
-                self.apply_constr, **self.conf)
+                self.cls.model, self.ori_x, self.ori_y, **self.conf)
         else:
             aml_attack = self.attack(self.cls.classifier, **self.conf)
             if self.can_validate:
