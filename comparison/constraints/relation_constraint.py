@@ -1,9 +1,11 @@
 from __future__ import annotations
-from typing import List, Union, Any
+
+import typing
+from typing import List, Union
 
 
 def _check_min_operands_length(
-        expected: int, operands: List[Any]
+    expected: int, operands: List[typing.Any]
 ) -> None:
     if len(operands) < expected:
         raise ValueError(
@@ -12,7 +14,7 @@ def _check_min_operands_length(
 
 
 class ConstraintsNode:
-    def accept(self, visitor: Any) -> Any:
+    def accept(self, visitor: typing.Any) -> typing.Any:
         return visitor.visit(self)
 
 
@@ -39,7 +41,7 @@ class Value(ConstraintsNode):
     def __le__(self, other: Value) -> BaseRelationConstraint:
         return LessEqualConstraint(self, other)
 
-    def __eq__(self, other: object) -> Any:
+    def __eq__(self, other: object) -> typing.Any:
         if isinstance(other, Value):
             return EqualConstraint(self, other)
         else:
@@ -67,8 +69,7 @@ class MathOperation(Value):
 
 
 class SafeDivision(Value):
-    def __init__(
-            self, dividend: Value, divisor: Value, fill_value: Value):
+    def __init__(self, dividend: Value, divisor: Value, fill_value: Value):
         self.dividend = dividend
         self.divisor = divisor
         self.fill_value = fill_value
@@ -78,12 +79,10 @@ class SafeDivision(Value):
 
 
 class BaseRelationConstraint(ConstraintsNode):
-    def __or__(self, other: BaseRelationConstraint)\
-            -> BaseRelationConstraint:
+    def __or__(self, other: BaseRelationConstraint) -> BaseRelationConstraint:
         return OrConstraint([self, other])
 
-    def __and__(self, other: BaseRelationConstraint)\
-            -> BaseRelationConstraint:
+    def __and__(self, other: BaseRelationConstraint) -> BaseRelationConstraint:
         return AndConstraint([self, other])
 
 

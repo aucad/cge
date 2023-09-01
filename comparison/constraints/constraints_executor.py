@@ -5,16 +5,25 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from .. import AndConstraint, BaseRelationConstraint, \
-    Constant, ConstraintsNode, EqualConstraint, Feature, \
-    LessConstraint, LessEqualConstraint, MathOperation, \
-    OrConstraint, SafeDivision
+from ..constraints.relation_constraint import (
+    AndConstraint,
+    BaseRelationConstraint,
+    Constant,
+    ConstraintsNode,
+    EqualConstraint,
+    Feature,
+    LessConstraint,
+    LessEqualConstraint,
+    MathOperation,
+    OrConstraint,
+    SafeDivision,
+)
 
 EPS: npt.NDArray[Any] = np.array(0.000001)
 
 
 def get_feature_index(
-        feature_names: npt.ArrayLike, feature_id: typing.Union[int, str]
+    feature_names: npt.ArrayLike, feature_id: typing.Union[int, str]
 ) -> int:
     if isinstance(feature_id, str):
         if feature_names is None:
@@ -45,19 +54,20 @@ class ConstraintsVisitor:
 
 
 class NumpyConstraintsVisitor(ConstraintsVisitor):
+
     str_operator_to_result = {
         "+": lambda left, right: left + right,
         "-": lambda left, right: left - right,
         "*": lambda left, right: left * right,
         "/": lambda left, right: left / right,
-        "**": lambda left, right: left ** right,
+        "**": lambda left, right: left**right,
     }
 
     def __init__(
-            self,
-            constraint: BaseRelationConstraint,
-            x: npt.NDArray[Any],
-            feature_names: npt.ArrayLike = None,
+        self,
+        constraint: BaseRelationConstraint,
+        x: npt.NDArray[Any],
+        feature_names: npt.ArrayLike = None,
     ) -> None:
         self.constraint = constraint
         self.x = x
@@ -65,13 +75,12 @@ class NumpyConstraintsVisitor(ConstraintsVisitor):
 
     @staticmethod
     def get_zeros_np(
-            operands: typing.List[npt.NDArray[Any]],
+        operands: typing.List[npt.NDArray[Any]],
     ) -> npt.NDArray[Any]:
         i = np.argmax([op.ndim for op in operands])
         return np.zeros(operands[i].shape, dtype=operands[i].dtype)
 
-    def visit(self, constraint_node: ConstraintsNode) -> npt.NDArray[
-        Any]:
+    def visit(self, constraint_node: ConstraintsNode) -> npt.NDArray[Any]:
 
         # ------------ Values
         if isinstance(constraint_node, Constant):
@@ -109,13 +118,11 @@ class NumpyConstraintsVisitor(ConstraintsVisitor):
 
         # ------ Binary
         elif isinstance(constraint_node, OrConstraint):
-            operands = [e.accept(self) for e in
-                        constraint_node.operands]
+            operands = [e.accept(self) for e in constraint_node.operands]
             return np.min(operands, axis=0)
 
         elif isinstance(constraint_node, AndConstraint):
-            operands = [e.accept(self) for e in
-                        constraint_node.operands]
+            operands = [e.accept(self) for e in constraint_node.operands]
             return np.sum(operands, axis=0)
 
         # ------ Comparison
@@ -123,16 +130,13 @@ class NumpyConstraintsVisitor(ConstraintsVisitor):
             left_operand = constraint_node.left_operand.accept(self)
             right_operand = constraint_node.right_operand.accept(self)
             zeros = self.get_zeros_np([left_operand, right_operand])
-            return np.max([zeros, (left_operand - right_operand)],
-                          axis=0)
+            return np.max([zeros, (left_operand - right_operand)], axis=0)
 
         elif isinstance(constraint_node, LessConstraint):
-            left_operand = constraint_node.left_operand.accept(
-                self) + EPS
+            left_operand = constraint_node.left_operand.accept(self) + EPS
             right_operand = constraint_node.right_operand.accept(self)
             zeros = self.get_zeros_np([left_operand, right_operand])
-            return np.max([zeros, (left_operand - right_operand)],
-                          axis=0)
+            return np.max([zeros, (left_operand - right_operand)], axis=0)
 
         elif isinstance(constraint_node, EqualConstraint):
             left_operand = constraint_node.left_operand.accept(self)
@@ -148,9 +152,9 @@ class NumpyConstraintsVisitor(ConstraintsVisitor):
 
 class NumpyConstraintsExecutor:
     def __init__(
-            self,
-            constraint: BaseRelationConstraint,
-            feature_names: npt.ArrayLike = None,
+        self,
+        constraint: BaseRelationConstraint,
+        feature_names: npt.ArrayLike = None,
     ):
         self.constraint = constraint
         self.feature_names = feature_names
@@ -167,10 +171,10 @@ class TensorFlowConstraintsVisitor(ConstraintsVisitor):
     # import tensorflow as tf
 
     def __init__(
-            self,
-            constraint: BaseRelationConstraint,
-            x: "tf.Tensor",
-            feature_names: npt.ArrayLike = None,
+        self,
+        constraint: BaseRelationConstraint,
+        x: "tf.Tensor",
+        feature_names: npt.ArrayLike = None,
     ):
         self.constraint = constraint
         self.x = x
@@ -200,8 +204,7 @@ class TensorFlowConstraintsVisitor(ConstraintsVisitor):
 
         # ------------ Values
         if isinstance(constraint_node, Constant):
-            return tf.constant(constraint_node.constant,
-                               dtype=tf.float32)
+            return tf.constant(constraint_node.constant, dtype=tf.float32)
 
         elif isinstance(constraint_node, Feature):
             feature_index = get_feature_index(
@@ -224,16 +227,14 @@ class TensorFlowConstraintsVisitor(ConstraintsVisitor):
 
         # ------ Binary
         elif isinstance(constraint_node, OrConstraint):
-            operands = [e.accept(self) for e in
-                        constraint_node.operands]
+            operands = [e.accept(self) for e in constraint_node.operands]
             local_min = operands[0]
             for i in range(1, len(operands)):
                 local_min = tf.minimum(local_min, operands[i])
             return local_min
 
         elif isinstance(constraint_node, AndConstraint):
-            operands = [e.accept(self) for e in
-                        constraint_node.operands]
+            operands = [e.accept(self) for e in constraint_node.operands]
             local_sum = operands[0]
             for i in range(1, len(operands)):
                 local_sum = local_sum + operands[i]
@@ -247,8 +248,7 @@ class TensorFlowConstraintsVisitor(ConstraintsVisitor):
             return tf.maximum(zeros, (left_operand - right_operand))
 
         elif isinstance(constraint_node, LessConstraint):
-            left_operand = constraint_node.left_operand.accept(
-                self) + EPS
+            left_operand = constraint_node.left_operand.accept(self) + EPS
             right_operand = constraint_node.right_operand.accept(self)
             zeros = self.get_zeros_tf([left_operand, right_operand])
             return tf.maximum(zeros, (left_operand - right_operand))
@@ -270,9 +270,9 @@ class TensorFlowConstraintsExecutor:
     # import tensorflow as tf
 
     def __init__(
-            self,
-            constraint: BaseRelationConstraint,
-            feature_names: npt.ArrayLike = None,
+        self,
+        constraint: BaseRelationConstraint,
+        feature_names: npt.ArrayLike = None,
     ):
         self.constraint = constraint
         self.feature_names = feature_names

@@ -24,7 +24,7 @@ python3 -m exp --help
 
 ### Development instructions
 
-First ensure all dev dependencies are installed
+First install all dev dependencies:
 
 ```
 pip install -r requirements-dev.txt

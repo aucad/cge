@@ -4,12 +4,12 @@ import numpy as np
 from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent, HopSkipJump
 
-from comparison import cpgd_apply_predict, CPGD
 from exp import ZooConst, PGDConst, HopSkipJumpConst, AttackScore, \
-    Validation, Validatable
+    Validation, Validatable, cpgd_apply_predict, CPGD
 
 
 class AttackPicker:
+    """Lists all runnable attacks."""
     ZOO = 'zoo'
     HSJ = 'hsj'
     PDG = 'pgd'
@@ -39,7 +39,7 @@ class AttackPicker:
 
 
 class AttackRunner:
-    """Wrapper for adversarial attack"""
+    """Wrapper for running an adversarial attack"""
 
     def __init__(self, kind: str, constr: bool, conf):
         self.attack = AttackPicker.load_attack(kind, constr)
@@ -51,6 +51,7 @@ class AttackRunner:
         self.adv_y = None
         self.score = None
         self.conf = conf or {}
+        self.constr = constr
 
     def reset(self, cls):
         self.cls = cls
@@ -69,7 +70,8 @@ class AttackRunner:
         """Generate adversarial examples and score."""
         if issubclass(self.attack, CPGD):
             self.adv_x, self.adv_y = cpgd_apply_predict(
-                self.cls.model, self.ori_x, self.ori_y, **self.conf)
+                self.cls.model, self.ori_x, self.ori_y,
+                self.constr, **self.conf)
         else:
             aml_attack = self.attack(self.cls.classifier, **self.conf)
             if self.can_validate:
