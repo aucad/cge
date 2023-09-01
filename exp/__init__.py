@@ -15,7 +15,6 @@ import warnings
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-import exp.utility
 from exp.plot import plot_graph
 from exp.types import Loggable, Validatable, CONSTR_DICT, CONSTR_TXT
 from exp.preproc import categorize

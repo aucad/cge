@@ -3,6 +3,7 @@ from art.estimators.classification import KerasClassifier
 from keras.layers import Dense
 from keras.losses import SparseCategoricalCrossentropy
 from keras.metrics import SparseCategoricalAccuracy
+from keras.models import Sequential
 from keras.callbacks import EarlyStopping
 from keras.optimizers import Adam
 
@@ -25,7 +26,7 @@ class DeepNeuralNetwork(ModelTraining):
 
         layers = [Dense(v, activation='relu') for v in n_layers] + \
                  [Dense(self.n_classes, activation='softmax')]
-        model = tf.keras.models.Sequential(layers)
+        model = Sequential(layers)
         model.compile(
             optimizer=Adam(),
             loss=SparseCategoricalCrossentropy(),

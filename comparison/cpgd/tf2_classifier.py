@@ -71,9 +71,9 @@ class TF2Classifier(TensorFlowV2Classifier):
             train_step,
             channels_first,
             clip_values,
-            # preprocessing_defences,
-            # postprocessing_defences,
-            # preprocessing,
+            preprocessing_defences,
+            postprocessing_defences,
+            preprocessing,
         )
 
     def unscale_features(self, inputs):

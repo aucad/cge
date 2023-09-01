@@ -31,4 +31,3 @@ ct_dst_sport_ltm,int,True,0, 46.0
 ct_dst_src_ltm,int,True,0, 63.0
 ct_src_ltm,int,True,0,50.0
 ct_srv_dst,int,True,0,62.0
-label,int,True,0, 1

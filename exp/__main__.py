@@ -1,21 +1,12 @@
+import sys
+
 import yaml
 from pathlib import Path
 from argparse import ArgumentParser
 
 from exp import Experiment, AttackPicker, ClsPicker
 from exp.preproc import pred_parse
-
-
-def compare(c):
-    ex = Experiment(c)
-    c = ex.config
-    ex.prepare_input_data()
-    cls = ClsPicker.load(c.cls)(ex.conf(c.cls))
-    for fold_num, indices in enumerate(ex.folds):
-        data = ex.X.copy(), ex.y.copy()
-        cls.reset(*data, *indices).train()
-        ex.result.append(cls.score)
-        cls.score.log()
+from exp.utility import to_namedtuple
 
 
 def parse_args(parser: ArgumentParser):
@@ -53,21 +44,24 @@ def parse_args(parser: ArgumentParser):
     return parser.parse_args()
 
 
-def _check_params(config_):
-    if config_['cls'] == ClsPicker.XGB and \
-            attack_name == AttackPicker.PDG:
-        print('Unsupported configuration:',
-              config_['cls'], attack_name, '-> terminating')
-        return False
+def check_params(conf):
+    def invalid(*msg):
+        print(*msg, '-> terminating')
+        sys.exit(0)
+
+    if conf.cls == ClsPicker.XGB and conf.attack in \
+            [AttackPicker.PDG, AttackPicker.CPGD]:
+        invalid('Unsupported configuration:', conf.cls, conf.attack)
+    if conf.attack == AttackPicker.CPGD and not conf.cpgd['feat_file']:
+        invalid('Missing required configuration "cpgd.feat_file"')
     return True
 
 
-if __name__ == '__main__':
-    BASE_CONFIG = './config/default.yaml'
-    args = parse_args(ArgumentParser())
+def build_config(args):
+    base_config = './config/default.yaml'
 
     # merge the default config, experiment config, from files
-    with open(Path(BASE_CONFIG), 'r', encoding='utf-8') as open_yml:
+    with open(Path(base_config), 'r', encoding='utf-8') as open_yml:
         c = (yaml.safe_load(open_yml))
     with open(Path(args.config), 'r', encoding='utf-8') as open_yml:
         params = (yaml.safe_load(open_yml))
@@ -85,8 +79,12 @@ if __name__ == '__main__':
         config[attack_name]['max_iter'] = args.iter
     if args.cls:
         config['cls'] = args.cls
-    ex_args = pred_parse(config)
+    config = to_namedtuple(pred_parse(config))
+    check_params(config)
+    return config
 
-    if _check_params(config):
-        Experiment(ex_args).run()
 
+if __name__ == '__main__':
+    args_ = parse_args(ArgumentParser())
+    config_ = build_config(args_)
+    Experiment(config_).run()

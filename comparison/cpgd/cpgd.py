@@ -79,4 +79,6 @@ class CPGD:
         # Fix datatypes
         x_adv = x_adv[:, np.newaxis, :]
         x_adv = fix_feature_types(self.constraints, x_clean, x_adv)
+
+        x_adv = np.squeeze(x_adv)  # remove the added axis
         return x_adv
