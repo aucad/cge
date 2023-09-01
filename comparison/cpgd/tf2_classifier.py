@@ -15,26 +15,25 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
 class TF2Classifier(TensorFlowV2Classifier):
     def __init__(
-            self,
-            model: Callable,
-            nb_classes: int,
-            input_shape: Tuple[int, ...],
-            constraints: Constraints,
-            scaler,
-            loss_object: Optional["tf.keras.losses.Loss"] = None,
-            train_step: Optional[Callable] = None,
-            channels_first: bool = False,
-            clip_values: Optional["CLIP_VALUES_TYPE"] = None,
-            preprocessing_defences: Union[
-                "Preprocessor", List["Preprocessor"], None
-            ] = None,
-            postprocessing_defences: Union[
-                "Postprocessor", List["Postprocessor"], None
-            ] = None,
-            preprocessing: "PREPROCESSING_TYPE" = (0.0, 1.0),
+        self,
+        model: Callable,
+        nb_classes: int,
+        input_shape: Tuple[int, ...],
+        constraints: Constraints,
+        scaler,
+        loss_object: Optional["tf.keras.losses.Loss"] = None,
+        train_step: Optional[Callable] = None,
+        channels_first: bool = False,
+        clip_values: Optional["CLIP_VALUES_TYPE"] = None,
+        preprocessing_defences: Union[
+            "Preprocessor", List["Preprocessor"], None
+        ] = None,
+        postprocessing_defences: Union[
+            "Postprocessor", List["Postprocessor"], None
+        ] = None,
+        preprocessing: "PREPROCESSING_TYPE" = (0.0, 1.0),
     ) -> None:
         """
         Initialization specific to TensorFlow v2 models.
@@ -67,12 +66,11 @@ class TF2Classifier(TensorFlowV2Classifier):
             nb_classes,
             input_shape,
             loss_object,
-            None,  # optimizer
             train_step,
             channels_first,
             clip_values,
-            preprocessing_defences,
-            postprocessing_defences,
+            # preprocessing_defences,
+            # postprocessing_defences,
             preprocessing,
         )
 
@@ -100,12 +98,12 @@ class TF2Classifier(TensorFlowV2Classifier):
         return violations
 
     def compute_loss(  # pylint: disable=W0221
-            self,
-            x: Union[np.ndarray, "tf.Tensor"],
-            y: Union[np.ndarray, "tf.Tensor"],
-            reduction: str = "none",
-            training_mode: bool = False,
-            **kwargs,
+        self,
+        x: Union[np.ndarray, "tf.Tensor"],
+        y: Union[np.ndarray, "tf.Tensor"],
+        reduction: str = "none",
+        training_mode: bool = False,
+        **kwargs,
     ) -> np.ndarray:
         """
         Compute the loss.
@@ -141,11 +139,9 @@ class TF2Classifier(TensorFlowV2Classifier):
 
         if tf.executing_eagerly():
             x_preprocessed_tf = tf.convert_to_tensor(x_preprocessed)
-            predictions = self.model(x_preprocessed_tf,
-                                     training=training_mode)
+            predictions = self.model(x_preprocessed_tf, training=training_mode)
             if self._reduce_labels:
-                loss = self._loss_object(np.argmax(y, axis=1),
-                                         predictions)
+                loss = self._loss_object(np.argmax(y, axis=1), predictions)
             else:
                 loss = self._loss_object(y, predictions)
 
@@ -160,11 +156,11 @@ class TF2Classifier(TensorFlowV2Classifier):
         return loss.numpy()
 
     def loss_gradient(  # pylint: disable=W0221
-            self,
-            x: Union[np.ndarray, "tf.Tensor"],
-            y: Union[np.ndarray, "tf.Tensor"],
-            training_mode: bool = False,
-            **kwargs,
+        self,
+        x: Union[np.ndarray, "tf.Tensor"],
+        y: Union[np.ndarray, "tf.Tensor"],
+        training_mode: bool = False,
+        **kwargs,
     ) -> Union[np.ndarray, "tf.Tensor"]:
         """
         Compute the gradient of the loss function w.r.t. `x`.
@@ -200,8 +196,7 @@ class TF2Classifier(TensorFlowV2Classifier):
                     x_input = x_grad
                     y_input = y_preprocessed
 
-                predictions = self.model(x_input,
-                                         training=training_mode)
+                predictions = self.model(x_input, training=training_mode)
 
                 if self._reduce_labels:
                     loss = self._loss_object(

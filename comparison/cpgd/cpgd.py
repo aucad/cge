@@ -8,17 +8,17 @@ from .. import TF2Classifier, Constraints, fix_feature_types, \
 
 class CPGD:
     def __init__(
-            self,
-            classifier,
-            constraints: Constraints,
-            norm=None,
-            eps=0.3,
-            eps_step=0.1,
-            save_history=None,
-            seed=None,
-            n_jobs=-1,
-            verbose=1,
-            enable_constraints=True,
+        self,
+        classifier,
+        constraints: Constraints,
+        norm=None,
+        eps=0.3,
+        eps_step=0.1,
+        save_history=None,
+        seed=None,
+        n_jobs=-1,
+        verbose=1,
+        enable_constraints=True,
     ) -> None:
         self.classifier = classifier
         self.constraints = constraints
@@ -79,6 +79,4 @@ class CPGD:
         # Fix datatypes
         x_adv = x_adv[:, np.newaxis, :]
         x_adv = fix_feature_types(self.constraints, x_clean, x_adv)
-
-        x_adv = np.squeeze(x_adv)  # remove the added axis
         return x_adv
