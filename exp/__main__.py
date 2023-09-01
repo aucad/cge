@@ -6,6 +6,18 @@ from exp import Experiment, AttackPicker, ClsPicker
 from exp.preproc import pred_parse
 
 
+def compare(c):
+    ex = Experiment(c)
+    c = ex.config
+    ex.prepare_input_data()
+    cls = ClsPicker.load(c.cls)(ex.conf(c.cls))
+    for fold_num, indices in enumerate(ex.folds):
+        data = ex.X.copy(), ex.y.copy()
+        cls.reset(*data, *indices).train()
+        ex.result.append(cls.score)
+        cls.score.log()
+
+
 def parse_args(parser: ArgumentParser):
     """Setup available program arguments."""
     parser.add_argument(
@@ -73,6 +85,8 @@ if __name__ == '__main__':
         config[attack_name]['max_iter'] = args.iter
     if args.cls:
         config['cls'] = args.cls
+    ex_args = pred_parse(config)
 
     if _check_params(config):
-        Experiment(pred_parse(config)).run()
+        Experiment(ex_args).run()
+

@@ -1,11 +1,13 @@
 import numpy as np
+from sklearn.metrics import accuracy_score, precision_score,\
+    recall_score, f1_score
 
 from exp import Loggable, CONSTR_DICT, categorize
 from exp.utility import sdiv, log, logr, logrd, attr_of
 
 
 def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT, scalars):
-    """Record validity scoring"""
+    """Adversarial example validity scoring"""
     immutable, single_ft, multi_ft = categorize(cd)
     invalid = np.array([], dtype=int)
     for ft_i in immutable:
@@ -34,18 +36,14 @@ class ModelScore(Loggable):
         self.recall = 0
         self.f_score = 0
 
-    def calculate(self, true_labels, predictions, positive=0):
+    def calculate(self, true_labels, predictions):
         """Calculate classifier performance metrics."""
+        true_labels = np.array(true_labels)
         prd = np.array([round(p, 0) for p in predictions], dtype=int)
-        lbl = np.array(true_labels)
-        tp_tn = int(np.sum(prd == lbl))
-        tp_fp = int(np.sum(prd == positive))
-        tp_fn = int(np.sum(lbl == positive))
-        tp = len(np.where((prd == lbl) & (lbl == positive))[0])
-        self.accuracy = sdiv(tp_tn, len(lbl), -1, False)
-        self.precision = p = sdiv(tp, tp_fp, 1, False)
-        self.recall = r = sdiv(tp, tp_fn, 1, False)
-        self.f_score = sdiv(2 * p * r, p + r, 0, False)
+        self.accuracy = accuracy_score(true_labels, prd)
+        self.precision = precision_score(true_labels, prd)
+        self.recall = recall_score(true_labels, prd)
+        self.f_score = f1_score(true_labels, prd)
 
     def log(self):
         for a in attr_of(self, (int, float)):

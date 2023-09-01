@@ -35,7 +35,6 @@ if __name__ == '__main__':
     y_clean = np.load(Y_CLEAN)[:32]
     constr = get_constraints_from_file(
         FEATURES, get_url_relation_constraints())
-
     model = TensorflowClassifier(load_model(MODEL))
     preprocessing_pipeline = joblib.load(JOBLIB)
     model_pipeline = Pipeline(steps=[
