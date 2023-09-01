@@ -1,12 +1,10 @@
 import tensorflow as tf
-
+from art.estimators.classification import KerasClassifier
 from keras.layers import Dense
 from keras.losses import SparseCategoricalCrossentropy
 from keras.metrics import SparseCategoricalAccuracy
 from keras.callbacks import EarlyStopping
-from keras.optimizers import SGD
-
-from art.estimators.classification import KerasClassifier
+from keras.optimizers import Adam
 
 from exp import ModelTraining
 
@@ -29,7 +27,7 @@ class DeepNeuralNetwork(ModelTraining):
                  [Dense(self.n_classes, activation='softmax')]
         model = tf.keras.models.Sequential(layers)
         model.compile(
-            optimizer=SGD(),
+            optimizer=Adam(),
             loss=SparseCategoricalCrossentropy(),
             metrics=[SparseCategoricalAccuracy()])
         model.fit(
