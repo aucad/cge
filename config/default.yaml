@@ -35,7 +35,7 @@ dnn:
   layers: [ 64 ]
   model_fit:
     epochs: 80 # Number of epochs to train the model.
-    batch_size: 64 # Integer or None. Number of samples per gradient update.
+    batch_size: 32 # Integer or None. Number of samples per gradient update.
     shuffle: True # shuffle the training data before each epoch
     verbose: 0 # 0 = silent, 1 = progress bar, 2 = one line per epoch.
 
