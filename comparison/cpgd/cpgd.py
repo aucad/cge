@@ -2,8 +2,12 @@ import numpy as np
 from art.attacks.evasion import ProjectedGradientDescent as PGD
 from art.estimators.classification import TensorFlowV2Classifier
 
-from .. import TF2Classifier, Constraints, fix_feature_types, \
-    get_feature_min_max
+from ..cpgd.tf2_classifier import TF2Classifier
+from ..constraints.constraints import (
+    Constraints,
+    fix_feature_types,
+    get_feature_min_max,
+)
 
 
 class CPGD:
@@ -49,7 +53,7 @@ class CPGD:
                 input_shape=x_clean.shape[1:],
                 nb_classes=2,
                 loss_object=tf_model.loss,
-                clip_values=(xl, xu),
+                # clip_values=(xl, xu),
             )
         else:
             tf_model_atk = TensorFlowV2Classifier(
@@ -57,7 +61,7 @@ class CPGD:
                 input_shape=x_clean.shape[1:],
                 nb_classes=2,
                 loss_object=tf_model.loss,
-                clip_values=(xl, xu),
+                # clip_values=(xl, xu),
             )
 
         # Generate inputs
@@ -66,7 +70,7 @@ class CPGD:
             eps=self.eps,
             eps_step=self.eps_step,
             targeted=False,
-            norm=self.norm,
+            norm=2,
         )
         x_adv = attack.generate(
             scaler.transform(x_clean),

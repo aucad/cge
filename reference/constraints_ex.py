@@ -1,8 +1,3 @@
-from typing import List
-
-from . import Constant, Feature, BaseRelationConstraint
-
-
 def get_url_relation_constraints() -> List[BaseRelationConstraint]:
     def apply_if_a_supp_zero_than_b_supp_zero(a: Feature, b: Feature):
         return (Constant(0) <= a) or (Constant(0) < b)

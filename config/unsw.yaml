@@ -6,7 +6,7 @@ dnn:
   layers: [ 64, 64, 32 ]
 
 cpgd:
-  feat_file: "comparison/feature_unsw.csv"
+  feat_file: "data/feature_unsw.csv"
 
 #This is UNSW Constraints
 constraints:
