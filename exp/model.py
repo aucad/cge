@@ -28,7 +28,7 @@ class ModelTraining(ABC):
 
     @property
     def n_classes(self):
-        return len(list(set(list(self.train_y))))
+        return max(2, len(list(set(list(self.train_y)))))
 
     @abstractmethod
     def predict(self, x, y):

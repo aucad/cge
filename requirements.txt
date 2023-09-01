@@ -1,4 +1,4 @@
-adversarial-robustness-toolbox
+adversarial-robustness-toolbox>=1.15
 xgboost
 numpy
 Pillow
