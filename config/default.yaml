@@ -90,11 +90,8 @@ hsj:
 cpgd:
   feat_file: # path to features.csv
   args:
-    norm: 2
-    eps: 0.2
-    eps_step: 0.1
-    save_history:
-    seed:
-    n_jobs: -1
-    verbose: 1
+    norm: 2 # "inf", 1, or 2
+    eps: 0.2 # Maximum perturbation that the attacker can introduce.
+    eps_step: 0.1 # Attack step size (input variation) at each iteration.
+    verbose: 1  # Show progress bars
     enable_constraints: False

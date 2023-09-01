@@ -66,7 +66,7 @@ class CPGD:
             eps=self.eps,
             eps_step=self.eps_step,
             targeted=False,
-            norm=2,
+            norm=self.norm,
         )
         x_adv = attack.generate(
             scaler.transform(x_clean),
