@@ -31,7 +31,30 @@ def get_unsw_constraints() -> List[BaseRelationConstraint]:
     # TODO: implement
     # there must be at least two constraints to compute loss
     # see example in reference/constraints_ex.py
-    pass
+    def apply_const_on_tcpfields(a: Feature, b: Feature, c: Feature, d: Feature, e: Feature, f: Feature,
+                                 g: Feature, h: Feature):
+        return (((a != Constant(1)) or (d == Constant(255) or e == Constant(255)) or (c == Constant(0) and
+                  e == Constant(0)) or h == Constant(1)) and (a == Constant(1) or (d == Constant(0) and e == Constant(0)
+                  and f == Constant(0) and g == Constant(0))))
+
+     def apply_const_on_dur(a: Feature, b: Feature):
+         return (a == Constant(0) or b == Constant(0))
+
+    def apply_const_on_dur_dbyte(a: Feature, b: Feature, c: Feature):
+        return (a > Constant(0) or b == Constant(1) or c == Constant(0))
+
+     # if proto != tcp, then all tcp fields should be 0
+     g1 = apply_const_on_tcpfields(Feature(1), Feature(11), Feature(12), Feature(18), Feature(21), Feature(19),
+                                  Feature(20), Feature(8))
+
+      # if dur=0, then dbytes=0
+     g2 = apply_const_on_dur(Feature(0), Feature(12))
+
+     # if dur > 0 and stat=INT, then dbytes = 0
+     g3 = apply_const_on_dur_dbyte(Feature(0), Feature(9), Feature(12))
+
+     return [g1, g2, g3]
+
 
 
 def get_iot_constraints() -> List[BaseRelationConstraint]:
