@@ -16,47 +16,24 @@ Run all experiments for all configuration options:
 make all
 ```
 
-For more detailed help, run
+Usage help:
 
 ```
 python3 -m exp --help
 ```
 
-### Workflow
+### Experiment workflow
 
 ```
-             ○      
-             │      
-      ┌──────┴─────┐ 
-      │ parse args │
-      └──────┬─────┘             
-             │
-   ┌─────────┴────────┐
-   │ setup experiment │
-   └─────────┬────────┘
-             │
-     preprocess input
-  init classifier, attack
-  create validation model
-             │
-    ┌────────┴───────┐             
-    │ run experiment │
-    │    k times:    │
-    └────────┬───────┘
-             │
-        train model
-       apply attack 
-      evaluate/score
-             │
-    ┌────────┴───────┐             
-    │ end experiment │
-    └────────┬───────┘
-             │
-     ┌───────┴──────┐             
-     │ write result │
-     └───────┬──────┘
-             │
-             ◎
+    __main__.py       experiment.py
+   ┌───────────┐     ┌────────────┐      ┌────────────┐      ┌────────────┐
+○──┤   parse   ├─────┤   setup    ├──────┤    run     ├──────┤    end     ├──◎
+   │   args    │     │ experiment │      │ experiment │      │ experiment │
+   └───────────┘     └────────────┘      └────────────┘      └────────────┘
+    from config      - preprocess         k times:           - write result
+    +cmd args        - init model         1. train model     - plot graph
+                     - init attack        2. attack
+                     - init validation    3. eval+score
 ```
 
 
