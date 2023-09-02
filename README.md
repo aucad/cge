@@ -24,7 +24,7 @@ python3 -m exp --help
 
 ### Experiment workflow
 
-```
+<pre>
     __main__.py       experiment.py
    ┌───────────┐     ┌────────────┐      ┌────────────┐      ┌────────────┐
 ○──┤   parse   ├─────┤   setup    ├──────┤    run     ├──────┤    end     ├──◎
@@ -34,7 +34,7 @@ python3 -m exp --help
     +cmd args        - init model         1. train model     - plot graph
                      - init attack        2. attack
                      - init validation    3. eval+score
-```
+</pre>
 
 
 ### Development instructions
@@ -47,8 +47,8 @@ pip install -r requirements-dev.txt
 
 Available code quality checks
 
-```
+<pre>
 make test    -- Run unit tests
 make lint    -- Run linter
 make dev     -- Test and lint, all at once
-```
+</pre>
