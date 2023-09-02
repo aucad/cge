@@ -40,10 +40,10 @@ class ModelScore(Loggable):
         """Calculate classifier performance metrics."""
         true_labels = np.array(true_labels)
         prd = np.array([round(p, 0) for p in predictions], dtype=int)
-        self.accuracy = accuracy_score(true_labels, prd)
-        self.precision = precision_score(true_labels, prd)
-        self.recall = recall_score(true_labels, prd)
-        self.f_score = f1_score(true_labels, prd)
+        self.accuracy = float(accuracy_score(true_labels, prd))
+        self.precision = float(precision_score(true_labels, prd))
+        self.recall = float(recall_score(true_labels, prd))
+        self.f_score = float(f1_score(true_labels, prd))
 
     def log(self):
         for a in attr_of(self, (int, float)):
