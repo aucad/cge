@@ -13,18 +13,19 @@ recent versions of Python, adversarial-robustness-toolkit than the
 original distribution.
 """
 
+from typing import List
+
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
-from typing import List
 
+from comparison.constraints.constraints import get_constraints_from_file
 from comparison.constraints.relation_constraint import \
     Feature, BaseRelationConstraint
-from comparison.constraints.constraints import get_constraints_from_file
-from comparison.cpgd.tf_classifier import TensorflowClassifier
 from comparison.cpgd.cpgd import CPGD
+from comparison.cpgd.tf_classifier import TensorflowClassifier
 
 
 def get_unsw_constraints() -> List[BaseRelationConstraint]:

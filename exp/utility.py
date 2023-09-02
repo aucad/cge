@@ -1,12 +1,18 @@
 import os
-import time
-import yaml
 import re
-from typing import List
+import sys
+import time
 from collections import namedtuple
+from typing import List
 
 import numpy as np
 import pandas as pd
+import yaml
+
+
+def clear_console_lines():
+    sys.stdout.write('\x1b[1A')
+    sys.stdout.write('\x1b[2K')
 
 
 def to_namedtuple(d: dict):
@@ -27,7 +33,7 @@ def attr_of(o, t):
     return [x for x in dir(o) if isinstance(getattr(o, x), t)]
 
 
-def fname(c):
+def file_name(c):
     r = str(round(time.time() * 1000))[-3:]
     v = "" if c.validate else "REG_"
     a, s, n = c.attack, c.cls, c.name
@@ -61,7 +67,7 @@ def logr(label: str, n: float, d: float):
     return log(label, f'{a} of {b} - {r:.1f} %')
 
 
-def logrd(label: str, n: float, d: float):
+def logd(label: str, n: float, d: float):
     logr(label, n / 100, d / 100)
 
 

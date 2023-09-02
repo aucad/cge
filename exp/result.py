@@ -3,7 +3,7 @@ from sklearn.metrics import accuracy_score, precision_score, \
     recall_score, f1_score
 
 from exp import Loggable, CONSTR_DICT, categorize
-from exp.utility import sdiv, log, logr, logrd, attr_of
+from exp.utility import sdiv, log, logr, logd, attr_of
 
 
 def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT, scalars):
@@ -60,14 +60,15 @@ class AttackScore(Loggable):
         self.n_valid = 0
         self.n_valid_evades = 0
 
-    def calculate(self, attack, constraints, amax):
+    def calculate(self, attack, constraints, attr_max):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
         original = attack.cls.predict(ori_x, ori_y)
         correct = np.where(ori_y == original)[0]
         evades = np.where(adv_y != original)[0]
         self.evasions = np.intersect1d(evades, correct)
-        self.n_valid, inv_idx = score_valid(ori_x, adv_x, constraints, amax)
+        self.n_valid, inv_idx = \
+            score_valid(ori_x, adv_x, constraints, attr_max)
         self.valid_evades = np.setdiff1d(self.evasions, inv_idx)
         self.n_evasions = len(self.evasions)
         self.n_valid_evades = len(self.valid_evades)
@@ -114,7 +115,7 @@ class Result(Loggable):
         log('Precision', f'{self.precision.avg :.2f} %')
         log('Recall', f'{self.recall.avg :.2f} %')
         log('F-score', f'{self.f_score.avg :.2f} %')
-        logrd('Evasions', self.n_evasions.avg, self.n_records.avg)
-        logrd('Valid', self.n_valid.avg, self.n_records.avg)
-        logrd('Valid Evasions',
-              self.n_valid_evades.avg, self.n_records.avg)
+        logd('Evasions', self.n_evasions.avg, self.n_records.avg)
+        logd('Valid', self.n_valid.avg, self.n_records.avg)
+        logd('Valid Evasions',
+             self.n_valid_evades.avg, self.n_records.avg)

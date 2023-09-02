@@ -1,11 +1,10 @@
-import sys
-
 import numpy as np
 from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent, HopSkipJump
 
 from exp import ZooConst, PGDConst, HopSkipJumpConst, AttackScore, \
     Validation, Validatable, cpgd_apply_predict, CPGD
+from exp.utility import clear_console_lines
 
 
 class AttackPicker:
@@ -79,8 +78,7 @@ class AttackRunner:
             self.adv_x = aml_attack.generate(x=self.ori_x)
             self.adv_y = np.array(self.cls.predict(
                 self.adv_x, self.ori_y).flatten())
-        sys.stdout.write('\x1b[1A')
-        sys.stdout.write('\x1b[2K')
+        clear_console_lines()
         self.score.calculate(
             self, v_model.constraints, v_model.scalars)
         return self

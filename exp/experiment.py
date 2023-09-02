@@ -7,7 +7,7 @@ from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ClsPicker, \
     Loggable, score_valid, plot_graph
-from exp.utility import log, time_sec, write_result, fname, read_dataset
+from exp.utility import log, time_sec, write_result, file_name, read_dataset
 
 
 class Experiment(Loggable):
@@ -58,7 +58,7 @@ class Experiment(Loggable):
 
         self.result.log()
         plot_graph(self.validation, c, self.attrs)
-        write_result(fname(c), self.to_dict())
+        write_result(file_name(c), self.to_dict())
 
     def prepare_input_data(self):
         np.seterr(divide='ignore', invalid='ignore')

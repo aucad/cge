@@ -1,12 +1,13 @@
 from art.estimators.classification import TensorFlowV2Classifier
+from keras.callbacks import EarlyStopping
 from keras.layers import Dense
 from keras.losses import SparseCategoricalCrossentropy
 from keras.metrics import SparseCategoricalAccuracy
 from keras.models import Sequential
-from keras.callbacks import EarlyStopping
 from keras.optimizers import Adam
 
 from exp import TargetModel
+from exp.utility import clear_console_lines
 
 
 class DeepNeuralNetwork(TargetModel):
@@ -18,7 +19,6 @@ class DeepNeuralNetwork(TargetModel):
     def train(self):
         n_layers = self.conf['layers']
         fit_args = self.conf['model_fit']
-
         layers = [Dense(v, activation='relu') for v in n_layers] + \
                  [Dense(self.n_classes, activation='softmax')]
         model = Sequential(layers)
@@ -38,6 +38,7 @@ class DeepNeuralNetwork(TargetModel):
         self.model = self.classifier.model
         predictions = self.predict(self.test_x, self.test_y)
         self.score.calculate(self.test_y, predictions)
+        clear_console_lines()
         return self
 
     def predict(self, x, y):

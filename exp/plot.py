@@ -12,8 +12,7 @@ def plot_graph(v, c, a):
     gn = sorted(v.dep_graph.nodes)
     if len(gn) > 0:
         fn = os.path.join(c.out, f'__graph_{c.name}.pdf')
-        meaning = ['any-value', 'immutable', 'single-feat',
-                   'multi-feat']
+        lbl = ['any-value', 'immutable', 'single-feat', 'multi-feat']
         colors = ['#00E676', '#CFD8DC', '#00BCD4', '#FFC107']
         color_map = [
             colors[1] if n in v.immutable else
@@ -23,8 +22,9 @@ def plot_graph(v, c, a):
         ensure_dir(fn)
         ax = plt.figure(1).add_subplot(1, 1, 1)
         draw_networkx(
-            v.dep_graph, pos=shell_layout(v.dep_graph),
-            with_labels=True, node_color=color_map, arrowstyle='-',
+            v.dep_graph.to_undirected(),
+            pos=shell_layout(v.dep_graph),
+            with_labels=True, node_color=color_map,
             font_size=8, font_weight='bold', ax=ax)
         legend1 = plt.legend(
             labels=[f'{k}: {a[k]}' for k in gn], loc='upper left',
@@ -32,7 +32,7 @@ def plot_graph(v, c, a):
             bbox_to_anchor=(.92, 1.02), frameon=False)
         leg_colors = [i for i in sorted(list(set(
             [colors.index(c) for c in color_map])))]
-        pairs = [(Patch(fill=True, color=colors[i]), meaning[i])
+        pairs = [(Patch(fill=True, color=colors[i]), lbl[i])
                  for i, _ in enumerate(colors) if i in leg_colors]
         legend2 = plt.legend(
             *zip(*pairs), frameon=False, borderpad=0,

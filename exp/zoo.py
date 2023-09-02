@@ -10,6 +10,7 @@ from exp import Validatable
 logger = logging.getLogger(__name__)
 
 
+# noinspection DuplicatedCode,GrazieInspection
 class ZooConst(ZooAttack, Validatable):
 
     def _generate_batch(self, x_batch: np.ndarray, y_batch: np.ndarray) -> np.ndarray:

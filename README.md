@@ -16,11 +16,49 @@ Run all experiments for all configuration options:
 make all
 ```
 
-Help running the experiments
+For more detailed help, run
 
 ```
 python3 -m exp --help
 ```
+
+### Workflow
+
+```
+             ○      
+             │      
+      ┌──────┴─────┐ 
+      │ parse args │
+      └──────┬─────┘             
+             │
+   ┌─────────┴────────┐
+   │ setup experiment │
+   └─────────┬────────┘
+             │
+     preprocess input
+  init classifier, attack
+  create validation model
+             │
+    ┌────────┴───────┐             
+    │ run experiment │
+    │    k times:    │
+    └────────┬───────┘
+             │
+        train model
+       apply attack 
+      evaluate/score
+             │
+    ┌────────┴───────┐             
+    │ end experiment │
+    └────────┬───────┘
+             │
+     ┌───────┴──────┐             
+     │ write result │
+     └───────┬──────┘
+             │
+             ◎
+```
+
 
 ### Development instructions
 
