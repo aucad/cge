@@ -55,6 +55,10 @@ def get_unsw_constraints() -> List[BaseRelationConstraint]:
 
      return [g1, g2, g3]
 
+def get_unsw_constraints():
+    return get_constraints_from_file(
+      "./comparison/data/feature_unsw.csv",
+        get_unsw_constraints() )
 
 
 def get_iot_constraints() -> List[BaseRelationConstraint]:
