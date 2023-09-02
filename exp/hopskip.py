@@ -1,6 +1,7 @@
 from typing import Optional
 
 import numpy as np
+# noinspection PyPackageRequirements
 from art.attacks.evasion import HopSkipJump
 
 from exp import Validatable

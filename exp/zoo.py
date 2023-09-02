@@ -3,6 +3,7 @@
 import logging
 
 import numpy as np
+# noinspection PyPackageRequirements
 from art.attacks.evasion import ZooAttack
 
 from exp import Validatable
@@ -10,9 +11,10 @@ from exp import Validatable
 logger = logging.getLogger(__name__)
 
 
-# noinspection DuplicatedCode,GrazieInspection
+# noinspection DuplicatedCode,GrazieInspection,PyPep8
 class ZooConst(ZooAttack, Validatable):
 
+    # noinspection PyPep8
     def _generate_batch(self, x_batch: np.ndarray, y_batch: np.ndarray) -> np.ndarray:
         """
         Run the attack on a batch of images and labels.

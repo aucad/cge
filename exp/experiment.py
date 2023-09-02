@@ -7,7 +7,8 @@ from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ClsPicker, \
     Loggable, score_valid, plot_graph
-from exp.utility import log, time_sec, write_result, file_name, read_dataset
+from exp.utility import log, time_sec, write_result, file_name, \
+    read_dataset
 
 
 class Experiment(Loggable):

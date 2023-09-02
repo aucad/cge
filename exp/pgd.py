@@ -5,13 +5,16 @@ import logging
 from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
+# noinspection PyPackageRequirements
 from art.attacks.evasion import ProjectedGradientDescent, \
     ProjectedGradientDescentNumpy
+# noinspection PyPackageRequirements
 from art.summary_writer import SummaryWriter
 
 from exp import Validatable
 
 if TYPE_CHECKING:
+    # noinspection PyPackageRequirements
     from art.utils import CLASSIFIER_LOSS_GRADIENTS_TYPE, \
         OBJECT_DETECTOR_TYPE
 

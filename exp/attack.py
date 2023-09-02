@@ -1,4 +1,5 @@
 import numpy as np
+# noinspection PyPackageRequirements
 from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent, HopSkipJump
 

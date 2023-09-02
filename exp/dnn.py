@@ -1,3 +1,4 @@
+# noinspection PyPackageRequirements
 from art.estimators.classification import TensorFlowV2Classifier
 from keras.callbacks import EarlyStopping
 from keras.layers import Dense

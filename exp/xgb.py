@@ -1,6 +1,7 @@
 import sys
 from os import devnull
 
+# noinspection PyPackageRequirements
 from art.estimators.classification import XGBoostClassifier
 from xgboost import DMatrix, train as xg_train
 

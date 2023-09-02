@@ -44,7 +44,8 @@ class Validation:
         vmap = np.ones(ref.shape, dtype=np.ubyte)
         for target, (sources, pred) in self.multi_feat.items():
             in_, sf = adv[:, sources], self.scalars[list(sources)]
-            mask_bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
+            mask_bits = np.apply_along_axis(
+                pred, 1, np.multiply(in_, sf))
             vmap[:, target] *= mask_bits
             if False in mask_bits:  # propagate
                 deps = list(self.desc[target]) \
