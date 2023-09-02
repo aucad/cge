@@ -5,7 +5,7 @@ Pillow
 pandas
 pyyaml
 networkx
-sklearn
+scikit-learn
 matplotlib
 keras~=2.11.0
 tensorflow-macos; platform_machine == 'arm64' and sys_platform == 'darwin'
