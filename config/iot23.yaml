@@ -16,33 +16,23 @@ cpgd:
 
 
 constraints:
-  proto=udp: False
-  proto=tcp: False
-  proto=icmp: False
-  conn_state=S0: False
-  conn_state=SF: False
-  conn_state=other: False
-  history=D: False
-  history=Dd: False
-  history=S: False
-  history=other: False
-  orig_ip_bytes: >
-    orig_pkts <= orig_ip_bytes
-    and (proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
-  resp_ip_bytes: >
-    resp_pkts <= resp_ip_bytes
-    and (conn_state=S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
-    and (proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
-  orig_pkts: >
-    orig_pkts <= orig_ip_bytes
-    and (proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20)
-    and (proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_state=other != 1)
-    and (proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF == 1))
-    and (proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_state=SF == 1)
-  resp_pkts: >
-    resp_pkts <= resp_ip_bytes
-    and (conn_state=S0 != 1 or (resp_pkts == resp_ip_bytes == 0))
-    and (proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20)
-    and (proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_state=other != 1)
-    and (proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF == 1))
-    and (proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_state=SF == 1)
+  immutable:
+    - proto=udp
+    - proto=tcp
+    - proto=icmp
+    - conn_state=S0
+    - conn_state=SF
+    - conn_state=other
+    - history=D
+    - history=Dd
+    - history=S
+    - history=other
+  predicates:
+    - orig_pkts <= orig_ip_bytes
+    - resp_pkts <= resp_ip_bytes
+    - conn_state=S0 != 1 or resp_pkts == resp_ip_bytes == 0
+    - proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20
+    - proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20
+    - proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_state=other != 1
+    - proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF == 1)
+    - proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_state=SF == 1

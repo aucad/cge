@@ -3,6 +3,7 @@
 import logging
 
 import numpy as np
+# noinspection PyPackageRequirements
 from art.attacks.evasion import ZooAttack
 
 from exp import Validatable

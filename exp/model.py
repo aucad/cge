@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from exp import ModelScore
 
 
-class TargetModel(ABC):
+class BaseModel(ABC):
 
     def __init__(self, conf):
         self.name = None
@@ -30,10 +30,19 @@ class TargetModel(ABC):
     def n_classes(self):
         return max(2, len(list(set(list(self.train_y)))))
 
+    def train(self):
+        self.train_steps()
+        predictions = self.predict(self.test_x, self.test_y)
+        self.score.calculate(self.test_y, predictions)
+        return self
+
+    def to_dict(self):
+        return {'name': self.name, 'config': self.conf}
+
     @abstractmethod
     def predict(self, x, y):
         pass
 
     @abstractmethod
-    def train(self):
+    def train_steps(self):
         pass

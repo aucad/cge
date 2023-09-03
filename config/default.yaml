@@ -1,89 +1,102 @@
-# *******************************************
-# Each experiment must define the following:
-name: # dataset display name
-dataset: # path to data set file (CSV)
-constraints: # dictionary
-# *******************************************
+# ----------------------------------------------------------------
+# ------------------ EXPERIMENT CONFIGURATIONS ------------------- 
+# ----------------------------------------------------------------
+
+# Each data set must define the following:
+name: # display name
+dataset: # path to a CSV file
+desc: # (optional) details or notes
+constraints: # dictionary of constraints
+  immutable: # list of immutable attributes
+  predicates: # list of predicates
+
+# ============================
+# GENERAL
+# ============================
 
 cls: xgb # target classifier
 attack: zoo # choice attack
 validate: false # enforce constrains during attack
 out: result # output directory
 folds: 5 # K-folds (min: 2)
-desc: # optional details or experiment notes
+reset_strategy: 2 # all=1, deps=2
 
-
-# *******************************************
-# CLASSIFIER CONFIGURATIONS
+# ============================
+# CLASSIFIERS
+# ============================
 
 # XGBoost Classifier
 # https://tinyurl.com/4xdnf9vs
+# https://tinyurl.com/nhz2v9y9
 xgb:
-  num_boost_round: 20
+  train:
+    num_boost_round: 20 # Number of boosting iterations
   params:
-    eta: 0.3
-    gamma: 0
-    max_depth: 6
-    min_child_weight: 1
-    tree_method: exact
-    objective: multi:softprob
+    eta: 0.3 # step size shrinkage to prevent overfitting
+    gamma: 0 # min loss reduction required to make a further partition on a leaf node
+    max_depth: 6 # Maximum depth of a tree
+    min_child_weight: 1 # Minimum sum of instance weight (hessian) needed in a child
+    tree_method: exact # tree construction algorithm used in XGBoost
+    objective: multi:softprob #  same as softmax, but output a vector of ndata * nclass
 
 # TensorFlow v2 (Keras) DNN Classifier
 # https://tinyurl.com/52znjp9f
-# https://keras.io/api/models/model_training_apis/#fit-method
+# https://tinyurl.com/y58ruwx9
 dnn:
-  layers: [ 64 ]
+  layers: [ 64 ] # comma-separated list of number of neurons
   model_fit:
-    epochs: 80 # Number of epochs to train the model.
-    batch_size: 32 # Integer or None. Number of samples per gradient update.
+    epochs: 80 # Number of epochs to train the model
+    batch_size: 32 # Integer or None. Number of samples per gradient update
     shuffle: True # shuffle the training data before each epoch
-    verbose: 0 # 0 = silent, 1 = progress bar, 2 = one line per epoch.
+    verbose: 0 # 0 = silent, 1 = progress bar, 2 = one line per epoch
 
-# *******************************************
-# ATTACK CONFIGURATIONS
+
+# ============================
+# ATTACKS
+# ============================
 
 # Zeroth-Order Optimization (ZOO)
 # https://tinyurl.com/mad2v59a
 zoo:
   confidence: 0.8 # Confidence of adversarial examples
-  learning_rate: 0.1 # Smaller values produce better results, but are slower to converge.
-  max_iter: 60 # maximum number of iterations.
+  learning_rate: 0.1 # Smaller values produce better results, but are slower to converge
+  max_iter: 60 # maximum number of iterations
   binary_search_steps: 10 # Number of times to adjust constant with binary search
   initial_const: 0.001 # use to tune the relative importance of distance and confidence
-  abort_early: True # abandoned gradient descent when it gets stuck.
+  abort_early: True # abandoned gradient descent when it gets stuck
   use_resize: False # use the resizing strategy from the paper
-  use_importance: False # use importance sampling when choosing coordinates to update.
-  nb_parallel: 5 # Number of coordinate updates to run in parallel.
-  variable_h: 0.6 #  Step size for numerical estimation of derivatives.
-  targeted: False # Should the attack target one specific class.
-  batch_size: 1 # size of batches on which adversarial samples are generated.
-  verbose: True # show progress bars.
+  use_importance: False # use importance sampling when choosing coordinates to update
+  nb_parallel: 5 # Number of coordinate updates to run in parallel
+  variable_h: 0.6 #  Step size for numerical estimation of derivatives
+  targeted: False # Should the attack target one specific class
+  batch_size: 1 # size of batches on which adversarial samples are generated
+  verbose: True # show progress bars
 
 # Projected Gradient Descent (PGD)
 # https://tinyurl.com/b88f6djr
 pgd:
-  norm: "inf"  # of the adversarial perturbation “inf”, 1 or 2.
-  eps: 0.4 # Maximum perturbation that the attacker can introduce.
-  eps_step: 0.1 # Attack step size (input variation) at each iteration.
-  random_eps: False # epsilon is drawn randomly from truncated normal distribution.
-  decay: # Decay factor, for accumulating the velocity vector when using momentum.
-  max_iter: 40 # The maximum number of iterations.
-  targeted: False # attack is targeted (True) or untargeted (False).
-  num_random_init: 40 # Number of random initialisations within the epsilon ball.
-  batch_size: 2000 # Size of the batch on which adversarial samples are generated.
-  verbose: True # Show progress bars.
+  norm: "inf"  # of the adversarial perturbation “inf”, 1 or 2
+  eps: 0.4 # Maximum perturbation that the attacker can introduce
+  eps_step: 0.1 # Attack step size (input variation) at each iteration
+  random_eps: False # epsilon is drawn randomly from truncated normal distribution
+  decay: # Decay factor, for accumulating the velocity vector when using momentum
+  max_iter: 40 # The maximum number of iterations
+  targeted: False # attack is targeted (True) or untargeted (False)
+  num_random_init: 40 # Number of random initialisations within the epsilon ball
+  batch_size: 2000 # Size of the batch on which adversarial samples are generated
+  verbose: True # Show progress bars
 
 # HopSkipJump
 # https://tinyurl.com/bddm9byb
 hsj:
-  max_iter: 10 # Maximum number of iterations.
-  verbose: True # Show progress bars.
-  batch_size: 64 # size of the batch used by the estimator during inference.
-  targeted: False # should the attack target one specific class.
-  max_eval: 1000 # Max evaluations for estimating gradient.
-  init_eval: 100 # Initial number of evaluations for estimating gradient.
-  init_size: 100 # Max trials for initial generation of adversarial examples.
-  norm: 2 # Order of the norm. Possible values: "inf" or 2.
+  max_iter: 10 # Maximum number of iterations
+  verbose: True # Show progress bars
+  batch_size: 64 # size of the batch used by the estimator during inference
+  targeted: False # should the attack target one specific class
+  max_eval: 1000 # Max evaluations for estimating gradient
+  init_eval: 100 # Initial number of evaluations for estimating gradient
+  init_size: 100 # Max trials for initial generation of adversarial examples
+  norm: 2 # Order of the norm. Possible values: "inf" or 2
 
 # CPGD Comparison attack
 # https://github.com/serval-uni-lu/constrained-attacks
@@ -91,7 +104,7 @@ cpgd:
   feat_file: # path to features.csv
   args:
     norm: 2 # "inf", 1, or 2
-    eps: 0.2 # Maximum perturbation that the attacker can introduce.
-    eps_step: 0.1 # Attack step size (input variation) at each iteration.
+    eps: 0.2 # Maximum perturbation that the attacker can introduce
+    eps_step: 0.1 # Attack step size (input variation) at each iteration
     verbose: 1  # Show progress bars
     enable_constraints: False
