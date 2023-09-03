@@ -1,0 +1,11 @@
+name: URL
+dataset: data/url.csv
+desc: URL dataset from Hannousse and Yahiouche (2021)
+
+cpgd:
+  feat_file: "data/_feature_url.csv"
+
+#constraints:
+#  immutable:
+#  predicates:
+
