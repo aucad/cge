@@ -120,7 +120,7 @@ class Experiment(Loggable):
             'constraints': list(self.validation.constraints.keys()),
             'immutable': self.validation.immutable,
             'configuration': self.conf('str_constraints'),
-            'mutable': self.conf('str_func'),
+            'mutable': self.conf('p_config'),
             'dependencies': dict([
                 (k, list(v)) for k, v in
                 self.validation.desc.items() if len(v) > 0])},

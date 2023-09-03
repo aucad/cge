@@ -6,29 +6,25 @@ from exp.utility import read_dataset
 
 def categorize(cd: CONSTR_DICT):
     immutable = [k for k, (_, P) in cd.items() if P is False]
-    single_ft = dict([
-        (t, P) for (t, (s, P)) in cd.items() if (t,) == s and P])
-    multi_ft = dict([
-        x for x in cd.items()
-        if x[0] not in single_ft and x[0] not in immutable])
-    return immutable, single_ft, multi_ft
+    mutable = dict([x for x in cd.items() if x[0] not in immutable])
+    return immutable, mutable
+
+
+def find_free_var(attrs):
+    available_lowercase = \
+        [c for c in list(map(chr, range(ord('a'), ord('z') + 1)))
+         if c not in attrs]
+    if not available_lowercase:
+        raise ValueError('attribute conflict; try rename attributes')
+    return available_lowercase[0]
 
 
 def fmt(text, *attrs):
-    option_1 = ('x', lambda v: 'x')
-    option_2 = ('a', lambda v: f'a[{attrs.index(v)}]')
-    param, fmt_str = option_1 if len(attrs) == 1 else option_2
+    wchar = find_free_var(attrs)
+    param, fmt_str = (wchar, lambda v: f'{wchar}[{attrs.index(v)}]')
     for t in sorted(attrs, key=len, reverse=True):
         text = text.replace(t, fmt_str(t))
     return f'lambda {param}: {text}'.strip()
-
-
-def parse_pred(conf) -> CONSTR_DICT:
-    single = [(k, ((k,), eval(v),))
-              for k, v in conf.items() if isinstance(v, str)]
-    multi = [(k, (tuple([k] + v[0]), eval(v[1]),))
-             for k, v in conf.items() if len(v) == 2]
-    return {**dict(single), **dict(multi)}
 
 
 def pred_convert(items: Dict[str, str], attr: List[str]):
@@ -39,25 +35,19 @@ def pred_convert(items: Dict[str, str], attr: List[str]):
     for a in [a for a in both if attr.index(a) not in imm]:
         s = [a] + [t for t in attr if t != a and t in items[a]]
         value = fmt(items[a], *s)
-        f_dict[attr.index(a)] = value if len(s) == 1 \
-            else ([attr.index(x) for x in s[1:]], value)
-    result = {**imm, **parse_pred(f_dict)}
-    return result, f_dict
+        sources = [attr.index(x) for x in s]
+        f_dict[attr.index(a)] = (sources, value)
+    mut = [(k, (tuple(s), eval(v),)) for k, (s, v) in f_dict.items()]
+    result = {**imm, **dict(mut)}
+    return result, [[list(s), v] for s, v in f_dict.values()]
 
 
 def pred_parse(config):
-    c_key = 'constraints'
-    if c_key in config.keys():
-        attrs, _ = read_dataset(config['dataset'])
-        config['str_' + c_key] = dict(
-            [(str(k), str(v).strip()) for (k, v) in
-             config[c_key].items()])
-        if config[c_key] is not None:
-            config[c_key], str_c = \
-                pred_convert(config[c_key], attrs)
-        else:
-            config[c_key], str_c = {}, {}
-        config['str_func'] = dict(
-            [(k, v if isinstance(v, str) else list(v))
-             for k, v in str_c.items()])
+    ck = 'constraints'
+    if ck in config.keys() and config[ck]:
+        (attrs, _), c = read_dataset(config['dataset']), config[ck]
+        config[f'str_{ck}'] = dict([
+            (str(k), str(v).strip(),) for k, v in c.items()])
+        config[ck], str_c = pred_convert(c, attrs)
+        config['p_config'] = str_c
     return config

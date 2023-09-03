@@ -7,18 +7,12 @@ from exp.utility import sdiv, log, logr, logd, attr_of
 
 def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CD, scalars):
     """Adversarial example validity scoring"""
-    immutable, single_ft, multi_ft = categorize(cd)
+    immutable, mutable = categorize(cd)
     invalid = np.array([], dtype=int)
     for ft_i in immutable:
         correct, modified = ori[:, ft_i], adv[:, ft_i]
-        wrong = np.where(np.subtract(correct, modified) != 0)[0]
-        invalid = np.union1d(invalid, wrong)
-    for ft_i in single_ft:
-        pred, in_, scale = cd[ft_i][1], adv[:, ft_i], scalars[ft_i]
-        bits = np.vectorize(pred)(in_ * scale)
-        wrong = np.where(bits == 0)[0]
-        invalid = np.union1d(invalid, wrong)
-    for (sources, pred) in [cd[ft_i] for ft_i in multi_ft]:
+        invalid = np.where(np.subtract(correct, modified) != 0)[0]
+    for (sources, pred) in [cd[ft_i] for ft_i in mutable]:
         in_, sf = adv[:, sources], scalars[list(sources)]
         inputs = np.multiply(in_, sf)
         bits = np.apply_along_axis(pred, 1, inputs)

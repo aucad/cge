@@ -8,7 +8,7 @@ from keras.models import Sequential
 from keras.optimizers import Adam
 
 from exp import TargetModel
-from exp.utility import clear_console_lines
+from exp.utility import clear_console_line
 
 
 class DeepNeuralNetwork(TargetModel):
@@ -39,7 +39,7 @@ class DeepNeuralNetwork(TargetModel):
         self.model = self.classifier.model
         predictions = self.predict(self.test_x, self.test_y)
         self.score.calculate(self.test_y, predictions)
-        clear_console_lines()
+        clear_console_line()
         return self
 
     def predict(self, x, y):

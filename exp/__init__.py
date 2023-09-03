@@ -16,10 +16,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # noinspection PyPep8
 from exp.plot import plot_graph
-from exp.types import Loggable, Validatable, CONSTR_DICT, CONSTR_TXT
+from exp.types import Loggable, Validatable, CONSTR_DICT
 from exp.preproc import categorize
 from exp.validation import Validation
-from exp.cpgd import CPGD, cpgd_apply_predict
+from exp.cpgd import CPGD, cpgd_apply_and_predict
 from exp.result import Result, ModelScore, AttackScore, score_valid
 from exp.model import TargetModel
 from exp.xgb import XGBoost

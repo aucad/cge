@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Callable, Tuple, Union, List
+from typing import Dict, Callable, Tuple, Union
 
-PREDICATE = \
-    Union[Callable[[float], bool], Callable[[Tuple[float, ...]], bool]]
-"""Predicate is a function from R+ -> bool."""
+PREDICATE = Callable[[Tuple[float, ...]], bool]
+"""Predicate is a function from R -> bool."""
 
-CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], Union[bool, PREDICATE]]]
+CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], Union[PREDICATE, bool]]]
 """Constraints dictionary type.
 
    The key is the index of the target feature.
@@ -14,10 +13,6 @@ CONSTR_DICT = Dict[int, Tuple[Tuple[int, ...], Union[bool, PREDICATE]]]
    - a predicate (lambda function) to evaluate target feature
      validity, based on source feature values, or boolean False.
 """
-
-CONSTR_TXT = Union[Dict[int, Union[str, bool]],
-                   Dict[int, Tuple[List[int], str]]]
-"""Constraint type for experiment configuration files."""
 
 
 class Validatable:

@@ -10,7 +10,7 @@ import pandas as pd
 import yaml
 
 
-def clear_console_lines():
+def clear_console_line():
     sys.stdout.write('\x1b[1A')
     sys.stdout.write('\x1b[2K')
 

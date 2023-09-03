@@ -5,8 +5,9 @@ from networkx import DiGraph, descendants, ancestors
 
 from exp import CONSTR_DICT, categorize
 
-STRATEGY_SIMPLE = 0
-STRATEGY_FINE = 1
+# reset strategy
+ALL = 0
+DEP = 1
 
 
 class Validation:
@@ -16,9 +17,8 @@ class Validation:
         self.constraints = constraints or {}
         self.scalars = attr_max
         self.dep_graph, self.desc = self.desc_graph(self.constraints)
-        self.immutable, self.single_feat, self.multi_feat = \
-            categorize(self.constraints)
-        self.strategy = STRATEGY_FINE
+        self.immutable, self.mutable = categorize(self.constraints)
+        self.reset = DEP
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
         """Enforce feature constraints.
@@ -30,29 +30,22 @@ class Validation:
         Returns:
             Valid adversarial records wrt. constraints.
         """
-        # initialize validation map
         vmap = np.ones(ref.shape, dtype=np.ubyte)
         for i in self.immutable:
             vmap[:, i] = 0
-        for index, pred in self.single_feat.items():
-            inputs = adv[:, index] * self.scalars[index]
-            mask_bits = np.vectorize(pred)(inputs)  # evaluate
-            vmap[:, index] = mask_bits  # apply to vmap
         adv = adv * vmap + ref * (1 - vmap)
 
-        # evaluate multi-variate constraints
+        # mutable constraints
         vmap = np.ones(ref.shape, dtype=np.ubyte)
-        for target, (sources, pred) in self.multi_feat.items():
+        nodes = range(ref.shape[1]) if self.reset == ALL else None
+        for target, (sources, pred) in self.mutable.items():
             in_, sf = adv[:, sources], self.scalars[list(sources)]
-            mask_bits = np.apply_along_axis(
-                pred, 1, np.multiply(in_, sf))
-            vmap[:, target] *= mask_bits
-            if False in mask_bits:  # propagate
-                deps = list(self.desc[target]) \
-                    if self.strategy == STRATEGY_FINE \
-                    else range(vmap.shape[1])
-                invalid = np.array((np.where(mask_bits == 0)[0]))
-                vmap[np.ix_(invalid, deps)] = 0
+            val_in = np.multiply(in_, sf)
+            bits = np.apply_along_axis(pred, 1, val_in)  # evaluate
+            invalid = np.array((np.where(bits == 0)[0]))
+            deps = nodes or list(self.desc[target])
+            vmap[:, target] *= bits
+            vmap[np.ix_(invalid, deps)] = 0  # apply
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod

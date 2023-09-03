@@ -10,4 +10,3 @@ constraints:
   proto=udp: "proto=udp == 0 or proto=udp == 1"
   duration: "duration <= 23.0 or (150 <= duration <= 200) or duration > 300"
   orig_bytes: "proto=udp == 0 or (orig_bytes <= resp_bytes)"
-  orig_pkts: "proto=udp == 0 or orig_pkts > resp_pkts"

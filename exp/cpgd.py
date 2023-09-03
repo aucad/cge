@@ -92,7 +92,7 @@ def get_scaler(path: str):
     return _scaler
 
 
-def cpgd_apply_predict(
+def cpgd_apply_and_predict(
         keras_nn: Sequential, x: np.ndarray, y: np.ndarray,
         enable_constr: bool, feat_file: str, **config
 ):

@@ -4,8 +4,8 @@ from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent, HopSkipJump
 
 from exp import ZooConst, PGDConst, HopSkipJumpConst, AttackScore, \
-    Validation, Validatable, cpgd_apply_predict, CPGD
-from exp.utility import clear_console_lines
+    Validation, Validatable, cpgd_apply_and_predict, CPGD
+from exp.utility import clear_console_line
 
 
 class AttackPicker:
@@ -69,9 +69,10 @@ class AttackRunner:
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
         if issubclass(self.attack, CPGD):
-            self.adv_x, self.adv_y = cpgd_apply_predict(
+            self.adv_x, self.adv_y = cpgd_apply_and_predict(
                 self.cls.model, self.ori_x, self.ori_y,
                 self.constr, **self.conf)
+            clear_console_line()
         else:
             aml_attack = self.attack(self.cls.classifier, **self.conf)
             if self.can_validate:
@@ -79,7 +80,8 @@ class AttackRunner:
             self.adv_x = aml_attack.generate(x=self.ori_x)
             self.adv_y = np.array(self.cls.predict(
                 self.adv_x, self.ori_y).flatten())
-        clear_console_lines()
+        clear_console_line()
+
         self.score.calculate(
             self, v_model.constraints, v_model.scalars)
         return self
