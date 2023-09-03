@@ -36,10 +36,16 @@ def parse_args(parser: ArgumentParser):
     parser.add_argument(
         '-i', '--iter',
         type=int,
-        choices=range(0, 500),
-        metavar="1-500",
-        help='max attack iterations',
-        default=0
+        choices=range(0, 501),
+        metavar="0-500",
+        help='max attack iterations, 0=default',
+        default=-1
+    )
+    parser.add_argument(
+        '-r', '--reset',
+        type=int,
+        choices=[1, 2],
+        help='reset strategy: 1=all, 2=dependencies'
     )
     return parser.parse_args()
 
@@ -57,14 +63,16 @@ def check_params(conf):
     return True
 
 
+def read_yaml(file_path):
+    with open(Path(file_path), 'r', encoding='utf-8') as open_yml:
+        return yaml.safe_load(open_yml)
+
+
 def build_config(args):
-    base_config = './config/default.yaml'
+    c = read_yaml('./config/default.yaml')
+    params = read_yaml(args.config)
 
     # merge the default config, experiment config, from files
-    with open(Path(base_config), 'r', encoding='utf-8') as open_yml:
-        c = (yaml.safe_load(open_yml))
-    with open(Path(args.config), 'r', encoding='utf-8') as open_yml:
-        params = (yaml.safe_load(open_yml))
     for k, v in params.items():
         c[k] = {**((c[k] or {}) if k in c else {}), **v} \
             if type(v) is dict else v
@@ -75,10 +83,11 @@ def build_config(args):
         config['validate'] = True
     attack_name = config['attack'] = \
         args.attack if args.attack else config['attack']
-    if args.iter:
+    if args.iter > -1:
         config[attack_name]['max_iter'] = args.iter
-    if args.cls:
-        config['cls'] = args.cls
+    config['cls'] = args.cls or config['cls']
+    if args.reset > 0:
+        config['reset_strategy'] = args.reset
     config = to_namedtuple(pred_parse(config))
     check_params(config)
     return config

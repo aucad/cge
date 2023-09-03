@@ -1,7 +1,7 @@
 from typing import List
 
 from exp import CONSTR_DICT
-from exp.utility import read_dataset
+from exp.utility import read_dataset, first_available
 
 
 def categorize(cd: CONSTR_DICT):
@@ -10,18 +10,7 @@ def categorize(cd: CONSTR_DICT):
     return immutable, mutable
 
 
-def first_available(taken):
-    cmap = [c for c in list(map(chr, range(ord('a'), ord('z') + 1)))]
-    for c_ in [c for c in cmap if c not in taken]:
-        return c_
-    nested = [[f'{c}{d}' for c in cmap] for d in cmap]
-    for cd in [c for lst in nested for c in lst if c not in taken]:
-        return cd
-    raise ValueError('attribute conflict; try rename attributes')
-
-
-def fmt(text, *attrs):
-    wchar = first_available(attrs)
+def fmt(text, wchar, *attrs):
     param, fmt_str = (wchar, lambda v: f'{wchar}[{attrs.index(v)}]')
     for t in sorted(attrs, key=len, reverse=True):
         text = text.replace(t, fmt_str(t))
@@ -29,22 +18,20 @@ def fmt(text, *attrs):
 
 
 def pred_convert(imm: List[str], pred: List[str], attr: List[str]):
-    imm = [(k, ((k,), False))
-           for k in [attr.index(a) for a in imm or []]]
-    fd, mut = {}, {}
+    imm = [(k, ((k,), False)) for k in map(attr.index, imm or [])]
+    fd, mut, wchar = {}, {}, first_available(attr)
     for p in (pred or []):
         s = [t for t in attr if t in p]
-        value, a = fmt(p, *s), first_available(fd.keys())
-        sources = [attr.index(x) for x in s]
-        mut[a] = (tuple(sources), eval(value),)
-        fd[a] = {'attrs': list(sources), 'exec': value, 'config': p}
+        a = first_available(list(fd.keys()))
+        v = fmt(p, wchar, *s)
+        sources = list(map(attr.index, s))
+        mut[a] = (tuple(sources), eval(v),)
+        fd[a] = {'attrs': sources, 'exec': v, 'config': p}
     return {**dict(imm), **dict(mut)}, fd
 
 
 def pred_parse(config):
-    ck = 'constraints'
-    if ck in config.keys() and config[ck]:
-        (attrs, _) = read_dataset(config['dataset'])
-        config[ck], config['p_config'] = pred_convert(
-            config[ck]['immutable'], config[ck]['predicates'], attrs)
+    ck, attrs = 'constraints', read_dataset(config['dataset'])[0]
+    config[ck], config['p_config'] = pred_convert(
+        config[ck]['immutable'], config[ck]['predicates'], attrs)
     return config

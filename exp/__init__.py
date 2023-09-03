@@ -19,12 +19,12 @@ from exp.plot import plot_graph
 from exp.types import Validatable, CONSTR_DICT
 from exp.preproc import categorize
 from exp.validation import Validation
-from exp.cpgd import CPGD, cpgd_apply_and_predict
-from exp.result import Result, ModelScore, AttackScore, score_valid
-from exp.model import TargetModel
+from exp.scoring import Result, ModelScore, AttackScore, score_valid
+from exp.model import BaseModel
 from exp.xgb import XGBoost
 from exp.dnn import DeepNeuralNetwork
 from exp.classifier import ClsPicker
+from exp.cpgd import CPGD, cpgd_apply_and_predict
 from exp.zoo import ZooConst
 from exp.pgd import PGDConst
 from exp.hopskip import HopSkipJumpConst

@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MyPGDNumpy(ProjectedGradientDescentNumpy, Validatable):
+class PGDNumpyConstr(ProjectedGradientDescentNumpy, Validatable):
 
     def _compute(
             self,
@@ -66,7 +66,7 @@ class PGDConst(ProjectedGradientDescent, Validatable):
                 summary_writer, verbose)
 
         super().__init__(*args)
-        self._attack = MyPGDNumpy(*args)
+        self._attack = PGDNumpyConstr(*args)
 
     def vhost(self):
         """attach validation model to attack"""

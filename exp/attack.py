@@ -1,11 +1,13 @@
+import sys
+
 import numpy as np
 # noinspection PyPackageRequirements
 from art.attacks.evasion import ZooAttack, \
-    ProjectedGradientDescent, HopSkipJump
+    ProjectedGradientDescent as Pgd, HopSkipJump
 
 from exp import ZooConst, PGDConst, HopSkipJumpConst, AttackScore, \
     Validation, Validatable, cpgd_apply_and_predict, CPGD
-from exp.utility import clear_console_line
+from exp.utility import upper_attrs
 
 
 class AttackPicker:
@@ -17,23 +19,16 @@ class AttackPicker:
 
     @staticmethod
     def list_attacks():
-        return sorted([
-            AttackPicker.ZOO, AttackPicker.PDG,
-            AttackPicker.HSJ, AttackPicker.CPGD])
+        return upper_attrs(AttackPicker)
 
     @staticmethod
     def load_attack(attack_name, apply_constr: bool):
-
         if attack_name == AttackPicker.ZOO:
             return ZooConst if apply_constr else ZooAttack
-
         if attack_name == AttackPicker.PDG:
-            return PGDConst if apply_constr else \
-                ProjectedGradientDescent
-
+            return PGDConst if apply_constr else Pgd
         if attack_name == AttackPicker.HSJ:
             return HopSkipJumpConst if apply_constr else HopSkipJump
-
         if attack_name == AttackPicker.CPGD:
             return CPGD
 
@@ -44,6 +39,7 @@ class AttackRunner:
     def __init__(self, kind: str, constr: bool, conf):
         self.attack = AttackPicker.load_attack(kind, constr)
         self.name = self.attack.__name__
+        self.constr = constr
         self.cls = None
         self.ori_x = None
         self.ori_y = None
@@ -51,15 +47,14 @@ class AttackRunner:
         self.adv_y = None
         self.score = None
         self.conf = conf or {}
-        self.constr = constr
 
     def reset(self, cls):
         self.cls = cls
+        self.score = AttackScore()
         self.ori_y = cls.test_y.copy()
         self.ori_x = cls.test_x.copy()
         self.adv_x = None
         self.adv_y = None
-        self.score = AttackScore()
         return self
 
     @property
@@ -72,7 +67,6 @@ class AttackRunner:
             self.adv_x, self.adv_y = cpgd_apply_and_predict(
                 self.cls.model, self.ori_x, self.ori_y,
                 self.constr, **self.conf)
-            clear_console_line()
         else:
             aml_attack = self.attack(self.cls.classifier, **self.conf)
             if self.can_validate:
@@ -80,7 +74,8 @@ class AttackRunner:
             self.adv_x = aml_attack.generate(x=self.ori_x)
             self.adv_y = np.array(self.cls.predict(
                 self.adv_x, self.ori_y).flatten())
-        clear_console_line()
+        sys.stdout.write('\x1b[1A')
+        sys.stdout.write('\x1b[2K')
 
         self.score.calculate(
             self, v_model.constraints, v_model.scalars)

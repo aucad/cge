@@ -7,42 +7,34 @@ from keras.metrics import SparseCategoricalAccuracy
 from keras.models import Sequential
 from keras.optimizers import Adam
 
-from exp import TargetModel
-from exp.utility import clear_console_line
+from exp import BaseModel
 
 
-class DeepNeuralNetwork(TargetModel):
+class DeepNeuralNetwork(BaseModel):
 
     def __init__(self, conf):
         super().__init__(conf)
         self.name = "Neural Network"
 
-    def train(self):
-        n_layers = self.conf['layers']
-        fit_args = self.conf['model_fit']
-        layers = [Dense(v, activation='relu') for v in n_layers] + \
-                 [Dense(self.n_classes, activation='softmax')]
-        model = Sequential(layers)
-        model.compile(
+    def predict(self, x, y):
+        tmp = self.model.predict(x, verbose=0)
+        return tmp.argmax(axis=1 if len(tmp.shape) == 2 else 0)
+
+    def train_steps(self):
+        n_layers, fit = self.conf['layers'], self.conf['model_fit']
+        self.model = Sequential(
+            [Dense(v, activation='relu') for v in n_layers] +
+            [Dense(self.n_classes, activation='softmax')])
+        self.model.compile(
             optimizer=Adam(),
             loss=SparseCategoricalCrossentropy(),
             metrics=[SparseCategoricalAccuracy()])
-        model.fit(
-            self.train_x, self.train_y, **fit_args,
+        self.model.fit(
+            self.train_x, self.train_y, **fit,
             callbacks=[EarlyStopping(monitor='loss', patience=5)])
         self.classifier = TensorFlowV2Classifier(
-            model=model,
+            model=self.model,
             nb_classes=self.n_classes,
-            loss_object=model.loss,
+            loss_object=self.model.loss,
             input_shape=self.train_x.shape[1:],
             clip_values=(0, 1))
-        self.model = self.classifier.model
-        predictions = self.predict(self.test_x, self.test_y)
-        self.score.calculate(self.test_y, predictions)
-        clear_console_line()
-        return self
-
-    def predict(self, x, y):
-        tmp = self.model.predict(x)
-        ax = 1 if len(tmp.shape) == 2 else 0
-        return tmp.argmax(axis=ax)

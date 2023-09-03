@@ -5,10 +5,10 @@ from os import devnull
 from art.estimators.classification import XGBoostClassifier
 from xgboost import DMatrix, train as xg_train
 
-from exp import TargetModel
+from exp import BaseModel
 
 
-class XGBoost(TargetModel):
+class XGBoost(BaseModel):
 
     def __init__(self, conf):
         super().__init__(conf)
@@ -18,22 +18,17 @@ class XGBoost(TargetModel):
         tmp = self.model.predict(DMatrix(x, y))
         return tmp.argmax(axis=1 if len(tmp.shape) == 2 else 0)
 
-    def train(self):
+    def train_steps(self):
+        t_args, params = self.conf['train'], self.conf['params']
         d_train = DMatrix(self.train_x, self.train_y)
         sys.stdout = open(devnull, 'w')  # hide print
-        rest = dict([x for x in self.conf.items() if x[0] != 'params'])
-        params = self.conf['params'] if 'params' in self.conf else {}
         self.model = xg_train(
+            dtrain=d_train, **(t_args or {}),
             evals=[(d_train, 'eval'), (d_train, 'train')],
-            dtrain=d_train,
-            params={**params, 'num_class': self.n_classes},
-            **rest)
+            params={**(params or {}), 'num_class': self.n_classes})
         sys.stdout = sys.__stdout__  # re-enable print
         self.classifier = XGBoostClassifier(
             model=self.model,
-            **{'clip_values': (0, 1),
-               'nb_features': self.train_x.shape[1],
-               'nb_classes': self.n_classes})
-        predictions = self.predict(self.test_x, self.test_y)
-        self.score.calculate(self.test_y, predictions)
-        return self
+            clip_values=(0, 1),
+            nb_features=self.train_x.shape[1],
+            nb_classes=self.n_classes)

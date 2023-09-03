@@ -1,8 +1,8 @@
 import os
 import re
-import sys
 import time
 from collections import namedtuple
+from itertools import product
 from typing import List
 
 import numpy as np
@@ -10,14 +10,16 @@ import pandas as pd
 import yaml
 
 
-def clear_console_line():
-    sys.stdout.write('\x1b[1A')
-    sys.stdout.write('\x1b[2K')
-
-
 def to_namedtuple(d: dict):
-    c_keys = ",".join(list(d.keys()))
-    return namedtuple('exp', c_keys)(**d)
+    return namedtuple('exp', (",".join(list(d.keys()))))(**d)
+
+
+def first_available(taken: List[str], init: List[str] = None):
+    """first lowercase char sequence that doesn't occur in taken"""
+    cmap = [c for c in list(map(chr, range(ord('a'), ord('z') + 1)))]
+    cmap = [f'{c}{d}' for c, d in product(cmap, init)] if init else cmap
+    first = [c for c in cmap if c not in taken]
+    return first[0] if first else first_available(taken, cmap)
 
 
 def attr_fmt(attr: List[str]):
@@ -31,6 +33,11 @@ def read_dataset(dataset_path):
 
 def attr_of(o, t):
     return [x for x in dir(o) if isinstance(getattr(o, x), t)]
+
+
+def upper_attrs(cname):
+    upper_str = [x for x in attr_of(cname, str) if x.isupper()]
+    return sorted([getattr(cname, x) for x in upper_str])
 
 
 def file_name(c):
@@ -47,7 +54,7 @@ def ensure_dir(fpath):
         os.makedirs(dir_path)
 
 
-def write_result(fn, content):
+def write_yaml(fn, content):
     ensure_dir(fn)
     with open(fn, "w") as outfile:
         yaml.dump(content, outfile, default_flow_style=None)

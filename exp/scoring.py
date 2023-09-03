@@ -14,10 +14,8 @@ def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CD, scalars):
         invalid = np.where(np.subtract(correct, modified) != 0)[0]
     for (sources, pred) in [cd[ft_i] for ft_i in mutable]:
         in_, sf = adv[:, sources], scalars[list(sources)]
-        inputs = np.multiply(in_, sf)
-        bits = np.apply_along_axis(pred, 1, inputs)
-        wrong = np.where(bits == 0)[0]
-        invalid = np.union1d(invalid, wrong)
+        bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
+        invalid = np.union1d(invalid, np.where(bits == 0)[0])
     return ori.shape[0] - invalid.shape[0], invalid
 
 
@@ -103,7 +101,7 @@ class Result:
                      for a in attr_of(self, Result.AvgList)])
 
     def log(self):
-        print('=' * 52, '\nAVERAGE')
+        print('=' * 50, '\nAVERAGE')
         log('Accuracy', f'{self.accuracy.avg :.2f} %')
         log('Precision', f'{self.precision.avg :.2f} %')
         log('Recall', f'{self.recall.avg :.2f} %')

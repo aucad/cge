@@ -78,8 +78,8 @@ def test_mutable_feature2():
     exp = np.array([[1, 0, 0, 1, 0, 1, 1], [1, 0, 0, 1, 0, 0, 1]])
     constraints = {
         'A': ((0, 1, 2), lambda arr: sum(arr) == 1),
-        'B': ((0, 3), lambda arr: arr[0] == 0 or arr[1] == 1),
-        'C': ((4, 5), lambda arr: arr[0] == 0 or arr[1] == 0),
+        'B': ((0, 3), lambda arr: arr[0] == 0  or arr[1] == 1),
+        'C': ((4, 5), lambda arr: arr[0] == 0  or arr[1] == 0),
         'D': ((4, 6), lambda arr: arr[0] == 0 and arr[1] == 1)
     }
     ar = np.array([max(ori[:, i]) for i in range(ori.shape[1])])

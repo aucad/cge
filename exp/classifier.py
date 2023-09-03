@@ -1,4 +1,5 @@
 from exp import DeepNeuralNetwork, XGBoost
+from exp.utility import upper_attrs
 
 
 class ClsPicker:
@@ -7,7 +8,7 @@ class ClsPicker:
 
     @staticmethod
     def list_cls():
-        return sorted([ClsPicker.XGB, ClsPicker.DNN])
+        return upper_attrs(ClsPicker)
 
     @staticmethod
     def load(name):

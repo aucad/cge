@@ -7,7 +7,7 @@ from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ClsPicker, \
     score_valid, plot_graph
-from exp.utility import log, time_sec, write_result, file_name, \
+from exp.utility import log, time_sec, write_yaml, file_name, \
     read_dataset
 
 
@@ -41,7 +41,8 @@ class Experiment:
         self.cls = ClsPicker.load(c.cls)(self.conf(c.cls))
         self.attack = AttackRunner(
             c.attack, c.validate, self.conf(c.attack))
-        self.validation = Validation(c.constraints, self.attr_max)
+        self.validation = Validation(
+            c.constraints, self.attr_max, c.reset_strategy)
         self.log()
 
         self.start = time.time_ns()
@@ -59,7 +60,7 @@ class Experiment:
 
         self.result.log()
         plot_graph(self.validation, c, self.attrs)
-        write_result(file_name(c), self.to_dict())
+        write_yaml(file_name(c), self.to_dict())
 
     def prepare_input_data(self):
         np.seterr(divide='ignore', invalid='ignore')
@@ -96,30 +97,30 @@ class Experiment:
         log('Validation', self.config.validate)
         log('K-folds', self.config.folds)
 
+    # noinspection PyTypeChecker
     def to_dict(self) -> dict:
-        # noinspection PyTypeChecker
         return {'experiment': {
             'dataset': self.config.dataset,
             'description': self.config.desc,
             'config': self.config.config_path,
             'k_folds': self.config.folds,
-            'duration_sec': time_sec(self.start, self.end),
-        }, 'classifier': {
-            'name': self.cls.name,
             'n_records': len(self.X),
             'n_classes': len(np.unique(self.y)),
             'n_attributes': len(self.attrs),
             'attrs': dict(enumerate(self.attrs)),
-            'config': self.cls.conf,
-            'class_distribution': dict([
-                tuple(map(int, x)) for x in
-                zip(*np.unique(self.y, return_counts=True))]),
-            'attr_range': dict(enumerate(map(float, self.attr_max))),
+            'attr_ranges': dict(enumerate(self.attr_max.tolist())),
+            'class_distribution': dict(
+                [map(int, x) for x in
+                 zip(*np.unique(self.y, return_counts=True))]),
+            'duration_sec': time_sec(self.start, self.end),
+            'capture_time': time.time_ns(),
         }, 'validation': {
-            'constraints': len(self.validation.constraints.keys()),
+            'n_constraints': len(self.validation.constraints),
             'immutable': self.validation.immutable,
             'predicates': self.conf('p_config'),
-            'dependencies': dict(self.validation.desc.items())
+            'dependencies': dict(self.validation.desc.items()),
+            'reset_strategy': self.config.reset_strategy,
         }, 'invalid_rows': self.inv_idx.tolist(),
+            'classifier': {**self.cls.to_dict()},
             'attack': {**self.attack.to_dict()},
             'folds': {**self.result.to_dict()}}
