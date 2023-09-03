@@ -86,7 +86,7 @@ def build_config(args):
     if args.iter > -1:
         config[attack_name]['max_iter'] = args.iter
     config['cls'] = args.cls or config['cls']
-    if args.reset > 0:
+    if args.reset and int(args.reset) > 0:
         config['reset_strategy'] = args.reset
     config = to_namedtuple(pred_parse(config))
     check_params(config)

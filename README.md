@@ -25,15 +25,15 @@ python3 -m exp --help
 ### Experiment workflow
 
 <pre>
-    __main__.py       experiment.py
+    __main__.py                          experiment.py
    ┌───────────┐     ┌────────────┐      ┌────────────┐      ┌────────────┐
 ○──┤   parse   ├─────┤   setup    ├──────┤    run     ├──────┤    end     ├──◎
    │   args    │     │ experiment │      │ experiment │      │ experiment │
    └───────────┘     └────────────┘      └────────────┘      └────────────┘
-    from config      - preprocess         k times:           - write result
-    +cmd args        - init model         1. train model     - plot graph
-                     - init attack        2. attack
-                     - init validation    3. eval+score
+    from config      * preprocess         k times:           * write result
+    & cmd args       * init model         1. train model     * plot graph
+                     * init attack        2. attack
+                     * init validation    3. score
 </pre>
 
 

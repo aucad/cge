@@ -26,7 +26,7 @@ def pred_convert(imm: List[str], pred: List[str], attr: List[str]):
         v = fmt(p, wchar, *s)
         sources = list(map(attr.index, s))
         mut[a] = (tuple(sources), eval(v),)
-        fd[a] = {'attrs': sources, 'exec': v, 'config': p}
+        fd[a] = {'attrs': dict(zip(sources, s)), 'exec': v, 'text': p}
     return {**dict(imm), **dict(mut)}, fd
 
 

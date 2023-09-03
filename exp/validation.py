@@ -5,20 +5,22 @@ from networkx import Graph, add_path, descendants, ancestors
 
 from exp import CONSTR_DICT, categorize
 
-# reset strategy
-ALL, DEP = 1, 2
+ALL, DEP = 1, 2  # reset strategy
 
 
 class Validation:
     """Constraint validation implementation."""
 
-    def __init__(self, constraints: CONSTR_DICT, attr_max, mode=2):
+    def __init__(
+            self, constraints: CONSTR_DICT, attr_max: np.ndarray,
+            mode=DEP
+    ):
         """Initialize validation model
 
         Arguments:
-            constraints: Constraints dictionary
-            attr_max: ordered list of attr max values
-            mode: reset strategy
+            constraints - Constraints dictionary
+            attr_max - ordered list of attribute max values
+            mode - reset strategy
         """
         self.constraints = constraints or {}
         self.scalars = attr_max

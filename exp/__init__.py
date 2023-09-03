@@ -16,6 +16,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # noinspection PyPep8
 from exp.plot import plot_graph
+from exp.machine import machine_details
 from exp.types import Validatable, CONSTR_DICT
 from exp.preproc import categorize
 from exp.validation import Validation

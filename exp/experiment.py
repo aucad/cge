@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ClsPicker, \
-    score_valid, plot_graph
+    score_valid, plot_graph, machine_details
 from exp.utility import log, time_sec, write_yaml, file_name, \
     read_dataset
 
@@ -69,7 +69,7 @@ class Experiment:
         self.y = rows[:, -1].astype(int).flatten()
         self.attr_max = np.ones(self.X.shape[1])
         for i in range(self.X.shape[1]):
-            self.attr_max[i] = mx = max(self.X[:, i])
+            self.attr_max[i] = mx = max(0.00001, max(self.X[:, i]))
             self.X[:, i] = np.nan_to_num(self.X[:, i] / mx)
         self.inv_idx = score_valid(
             self.X, self.X, self.config.constraints, self.attr_max)[1]
@@ -112,14 +112,16 @@ class Experiment:
             'class_distribution': dict(
                 [map(int, x) for x in
                  zip(*np.unique(self.y, return_counts=True))]),
+            'system': machine_details(),
+            'capture_utc': time.time_ns(),
             'duration_sec': time_sec(self.start, self.end),
-            'capture_time': time.time_ns(),
+            'start': self.start, 'end': self.end,
         }, 'validation': {
             'n_constraints': len(self.validation.constraints),
             'immutable': self.validation.immutable,
             'predicates': self.conf('p_config'),
             'dependencies': dict(self.validation.desc.items()),
-            'reset_strategy': self.config.reset_strategy,
+            'reset_strategy': self.config.reset_strategy
         }, 'invalid_rows': self.inv_idx.tolist(),
             'classifier': {**self.cls.to_dict()},
             'attack': {**self.attack.to_dict()},
