@@ -3,10 +3,12 @@ dataset: data/ctu_44-1.csv
 desc: IoT23 Malware-Capture-44-1
 
 constraints:
-  conn_state=SF: False
-  conn_state=S0: False
-  conn_state=OTH: False
-  conn_state=S1: False
-  proto=udp: "proto=udp == 0 or proto=udp == 1"
-  duration: "duration <= 23.0 or (150 <= duration <= 200) or duration > 300"
-  orig_bytes: "proto=udp == 0 or (orig_bytes <= resp_bytes)"
+  immutable:
+    - conn_state=SF
+    - conn_state=S0
+    - conn_state=OTH
+    - conn_state=S1
+  predicates:
+    - proto=udp == 0 or proto=udp == 1
+    - duration <= 23.0 or 150 <= duration <= 200 or duration > 300
+    - proto=udp == 0 or orig_bytes <= resp_bytes

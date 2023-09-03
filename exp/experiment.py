@@ -6,12 +6,12 @@ import numpy as np
 from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ClsPicker, \
-    Loggable, score_valid, plot_graph
+    score_valid, plot_graph
 from exp.utility import log, time_sec, write_result, file_name, \
     read_dataset
 
 
-class Experiment(Loggable):
+class Experiment:
     """Run adversarial experiment"""
 
     def __init__(self, conf: namedtuple):
@@ -97,6 +97,7 @@ class Experiment(Loggable):
         log('K-folds', self.config.folds)
 
     def to_dict(self) -> dict:
+        # noinspection PyTypeChecker
         return {'experiment': {
             'dataset': self.config.dataset,
             'description': self.config.desc,
@@ -111,18 +112,14 @@ class Experiment(Loggable):
             'attrs': dict(enumerate(self.attrs)),
             'config': self.cls.conf,
             'class_distribution': dict([
-                (int(k), int(v)) for k, v in
+                tuple(map(int, x)) for x in
                 zip(*np.unique(self.y, return_counts=True))]),
-            'attr_range': dict([
-                (k, float(v)) for k, v in enumerate(self.attr_max)]),
+            'attr_range': dict(enumerate(map(float, self.attr_max))),
         }, 'validation': {
-            'original_invalid_rows': self.inv_idx.tolist(),
-            'constraints': list(self.validation.constraints.keys()),
+            'constraints': len(self.validation.constraints.keys()),
             'immutable': self.validation.immutable,
-            'configuration': self.conf('str_constraints'),
-            'mutable': self.conf('p_config'),
-            'dependencies': dict([
-                (k, list(v)) for k, v in
-                self.validation.desc.items() if len(v) > 0])},
+            'predicates': self.conf('p_config'),
+            'dependencies': dict(self.validation.desc.items())
+        }, 'invalid_rows': self.inv_idx.tolist(),
             'attack': {**self.attack.to_dict()},
             'folds': {**self.result.to_dict()}}

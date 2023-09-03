@@ -1,7 +1,7 @@
 import numpy as np
 import sklearn.metrics as skm
 
-from exp import Loggable, CONSTR_DICT as CD, categorize
+from exp import CONSTR_DICT as CD, categorize
 from exp.utility import sdiv, log, logr, logd, attr_of
 
 
@@ -21,7 +21,7 @@ def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CD, scalars):
     return ori.shape[0] - invalid.shape[0], invalid
 
 
-class ModelScore(Loggable):
+class ModelScore:
 
     def __init__(self):
         self.accuracy = 0
@@ -43,7 +43,7 @@ class ModelScore(Loggable):
             log(a.capitalize(), f'{getattr(self, a) * 100:.2f} %')
 
 
-class AttackScore(Loggable):
+class AttackScore:
 
     def __init__(self):
         self.evasions = None
@@ -73,7 +73,7 @@ class AttackScore(Loggable):
         logr('Valid+Evades', self.n_valid_evades, self.n_records)
 
 
-class Result(Loggable):
+class Result:
     class AvgList(list):
 
         @property

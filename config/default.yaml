@@ -1,16 +1,18 @@
-# ================================================================
-# DATA SET CONFIGS
-# ================================================================
-# Specific to each data set, define the following:
+# ----------------------------------------------------------------
+# ------------------ EXPERIMENT CONFIGURATIONS ------------------- 
+# ----------------------------------------------------------------
 
+# Each data set must define the following:
 name: # display name
 dataset: # path to a CSV file
-constraints: # dictionary of type exp/types.py#CONSTR_TXT
-desc: # (optional) details or experiment notes
+desc: # (optional) details or notes
+constraints: # dictionary of constraints
+  immutable: # list of immutable attributes
+  predicates: # list of predicates
 
-# ================================================================
-# GENERAL SETUP
-# ================================================================
+# ============================
+# GENERAL
+# ============================
 
 cls: xgb # target classifier
 attack: zoo # choice attack
@@ -18,9 +20,10 @@ validate: false # enforce constrains during attack
 out: result # output directory
 folds: 5 # K-folds (min: 2)
 
-# ================================================================
-# CLASSIFIER CONFIGURATIONS
-# ================================================================
+
+# ============================
+# CLASSIFIERS
+# ============================
 
 # XGBoost Classifier
 # https://tinyurl.com/4xdnf9vs
@@ -46,9 +49,10 @@ dnn:
     shuffle: True # shuffle the training data before each epoch
     verbose: 0 # 0 = silent, 1 = progress bar, 2 = one line per epoch
 
-# ================================================================
-# ATTACK CONFIGURATIONS
-# ================================================================
+
+# ============================
+# ATTACKS
+# ============================
 
 # Zeroth-Order Optimization (ZOO)
 # https://tinyurl.com/mad2v59a

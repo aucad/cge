@@ -75,15 +75,12 @@ def test_mutable_feature1():
 def test_mutable_feature2():
     ori = np.array([[1, 0, 0, 1, 0, 1, 1], [1, 0, 0, 1, 0, 1, 1]])
     adv = np.array([[0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0, 1]])
-    exp = np.array([[1, 0, 0, 1, 0, 0, 1], [1, 0, 0, 1, 0, 0, 1]])
-
+    exp = np.array([[1, 0, 0, 1, 0, 1, 1], [1, 0, 0, 1, 0, 0, 1]])
     constraints = {
-        0: ((0, 1, 2), lambda arr: sum(arr) == 1),
-        1: ((1, 0, 2), lambda arr: sum(arr) == 1),
-        2: ((2, 0, 1), lambda arr: sum(arr) == 1),
-        3: ((3, 0), lambda arr: arr[1] == 0 or arr[0] == 1),
-        5: ((5, 4), lambda arr: arr[1] == 0 or arr[0] == 0),
-        6: ((6, 4), lambda arr: arr[1] == 1 and arr[0] == 0)
+        'A': ((0, 1, 2), lambda arr: sum(arr) == 1),
+        'B': ((0, 3), lambda arr: arr[0] == 0 or arr[1] == 1),
+        'C': ((4, 5), lambda arr: arr[0] == 0 or arr[1] == 0),
+        'D': ((4, 6), lambda arr: arr[0] == 0 and arr[1] == 1)
     }
     ar = np.array([max(ori[:, i]) for i in range(ori.shape[1])])
     result = Validation(constraints, ar).enforce(ori, adv)
