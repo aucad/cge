@@ -1,17 +1,25 @@
 import os
-import time
-import yaml
 import re
-from typing import List
+import time
 from collections import namedtuple
+from itertools import product
+from typing import List
 
 import numpy as np
 import pandas as pd
+import yaml
 
 
 def to_namedtuple(d: dict):
-    c_keys = ",".join(list(d.keys()))
-    return namedtuple('exp', c_keys)(**d)
+    return namedtuple('exp', (",".join(list(d.keys()))))(**d)
+
+
+def first_available(taken: List[str], init: List[str] = None):
+    """first lowercase char sequence that doesn't occur in taken"""
+    cmap = [c for c in list(map(chr, range(ord('a'), ord('z') + 1)))]
+    cmap = [f'{c}{d}' for c, d in product(cmap, init)] if init else cmap
+    first = [c for c in cmap if c not in taken]
+    return first[0] if first else first_available(taken, cmap)
 
 
 def attr_fmt(attr: List[str]):
@@ -27,7 +35,12 @@ def attr_of(o, t):
     return [x for x in dir(o) if isinstance(getattr(o, x), t)]
 
 
-def fname(c):
+def upper_attrs(cname):
+    upper_str = [x for x in attr_of(cname, str) if x.isupper()]
+    return sorted([getattr(cname, x) for x in upper_str])
+
+
+def file_name(c):
     r = str(round(time.time() * 1000))[-3:]
     v = "" if c.validate else "REG_"
     a, s, n = c.attack, c.cls, c.name
@@ -41,7 +54,7 @@ def ensure_dir(fpath):
         os.makedirs(dir_path)
 
 
-def write_result(fn, content):
+def write_yaml(fn, content):
     ensure_dir(fn)
     with open(fn, "w") as outfile:
         yaml.dump(content, outfile, default_flow_style=None)
@@ -61,7 +74,7 @@ def logr(label: str, n: float, d: float):
     return log(label, f'{a} of {b} - {r:.1f} %')
 
 
-def logrd(label: str, n: float, d: float):
+def logd(label: str, n: float, d: float):
     logr(label, n / 100, d / 100)
 
 

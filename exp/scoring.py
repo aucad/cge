@@ -1,34 +1,25 @@
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, \
-    recall_score, f1_score
+import sklearn.metrics as skm
 
-from exp import Loggable, CONSTR_DICT, categorize
-from exp.utility import sdiv, log, logr, logrd, attr_of
+from exp import CONSTR_DICT as CD, categorize
+from exp.utility import sdiv, log, logr, logd, attr_of
 
 
-def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CONSTR_DICT, scalars):
+def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CD, scalars):
     """Adversarial example validity scoring"""
-    immutable, single_ft, multi_ft = categorize(cd)
+    immutable, mutable = categorize(cd)
     invalid = np.array([], dtype=int)
     for ft_i in immutable:
         correct, modified = ori[:, ft_i], adv[:, ft_i]
-        wrong = np.where(np.subtract(correct, modified) != 0)[0]
-        invalid = np.union1d(invalid, wrong)
-    for ft_i in single_ft:
-        pred, in_, scale = cd[ft_i][1], adv[:, ft_i], scalars[ft_i]
-        bits = np.vectorize(pred)(in_ * scale)
-        wrong = np.where(bits == 0)[0]
-        invalid = np.union1d(invalid, wrong)
-    for (sources, pred) in [cd[ft_i] for ft_i in multi_ft]:
+        invalid = np.where(np.subtract(correct, modified) != 0)[0]
+    for (sources, pred) in [cd[ft_i] for ft_i in mutable]:
         in_, sf = adv[:, sources], scalars[list(sources)]
-        inputs = np.multiply(in_, sf)
-        bits = np.apply_along_axis(pred, 1, inputs)
-        wrong = np.where(bits == 0)[0]
-        invalid = np.union1d(invalid, wrong)
+        bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
+        invalid = np.union1d(invalid, np.where(bits == 0)[0])
     return ori.shape[0] - invalid.shape[0], invalid
 
 
-class ModelScore(Loggable):
+class ModelScore:
 
     def __init__(self):
         self.accuracy = 0
@@ -40,17 +31,17 @@ class ModelScore(Loggable):
         """Calculate classifier performance metrics."""
         true_labels = np.array(true_labels)
         prd = np.array([round(p, 0) for p in predictions], dtype=int)
-        self.accuracy = float(accuracy_score(true_labels, prd))
-        self.precision = float(precision_score(true_labels, prd))
-        self.recall = float(recall_score(true_labels, prd))
-        self.f_score = float(f1_score(true_labels, prd))
+        self.accuracy = float(skm.accuracy_score(true_labels, prd))
+        self.precision = float(skm.precision_score(true_labels, prd))
+        self.recall = float(skm.recall_score(true_labels, prd))
+        self.f_score = float(skm.f1_score(true_labels, prd))
 
     def log(self):
         for a in attr_of(self, (int, float)):
             log(a.capitalize(), f'{getattr(self, a) * 100:.2f} %')
 
 
-class AttackScore(Loggable):
+class AttackScore:
 
     def __init__(self):
         self.evasions = None
@@ -60,14 +51,15 @@ class AttackScore(Loggable):
         self.n_valid = 0
         self.n_valid_evades = 0
 
-    def calculate(self, attack, constraints, amax):
+    def calculate(self, attack, constraints, attr_max):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
         original = attack.cls.predict(ori_x, ori_y)
         correct = np.where(ori_y == original)[0]
         evades = np.where(adv_y != original)[0]
         self.evasions = np.intersect1d(evades, correct)
-        self.n_valid, inv_idx = score_valid(ori_x, adv_x, constraints, amax)
+        self.n_valid, inv_idx = \
+            score_valid(ori_x, adv_x, constraints, attr_max)
         self.valid_evades = np.setdiff1d(self.evasions, inv_idx)
         self.n_evasions = len(self.evasions)
         self.n_valid_evades = len(self.valid_evades)
@@ -79,7 +71,7 @@ class AttackScore(Loggable):
         logr('Valid+Evades', self.n_valid_evades, self.n_records)
 
 
-class Result(Loggable):
+class Result:
     class AvgList(list):
 
         @property
@@ -109,12 +101,12 @@ class Result(Loggable):
                      for a in attr_of(self, Result.AvgList)])
 
     def log(self):
-        print('=' * 52, '\nAVERAGE')
+        print('=' * 50, '\nAVERAGE')
         log('Accuracy', f'{self.accuracy.avg :.2f} %')
         log('Precision', f'{self.precision.avg :.2f} %')
         log('Recall', f'{self.recall.avg :.2f} %')
         log('F-score', f'{self.f_score.avg :.2f} %')
-        logrd('Evasions', self.n_evasions.avg, self.n_records.avg)
-        logrd('Valid', self.n_valid.avg, self.n_records.avg)
-        logrd('Valid Evasions',
-              self.n_valid_evades.avg, self.n_records.avg)
+        logd('Evasions', self.n_evasions.avg, self.n_records.avg)
+        logd('Valid', self.n_valid.avg, self.n_records.avg)
+        logd('Valid Evasions',
+             self.n_valid_evades.avg, self.n_records.avg)

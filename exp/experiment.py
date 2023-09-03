@@ -6,11 +6,12 @@ import numpy as np
 from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ClsPicker, \
-    Loggable, score_valid, plot_graph
-from exp.utility import log, time_sec, write_result, fname, read_dataset
+    score_valid, plot_graph, machine_details
+from exp.utility import log, time_sec, write_yaml, file_name, \
+    read_dataset
 
 
-class Experiment(Loggable):
+class Experiment:
     """Run adversarial experiment"""
 
     def __init__(self, conf: namedtuple):
@@ -40,7 +41,8 @@ class Experiment(Loggable):
         self.cls = ClsPicker.load(c.cls)(self.conf(c.cls))
         self.attack = AttackRunner(
             c.attack, c.validate, self.conf(c.attack))
-        self.validation = Validation(c.constraints, self.attr_max)
+        self.validation = Validation(
+            c.constraints, self.attr_max, c.reset_strategy)
         self.log()
 
         self.start = time.time_ns()
@@ -58,7 +60,7 @@ class Experiment(Loggable):
 
         self.result.log()
         plot_graph(self.validation, c, self.attrs)
-        write_result(fname(c), self.to_dict())
+        write_yaml(file_name(c), self.to_dict())
 
     def prepare_input_data(self):
         np.seterr(divide='ignore', invalid='ignore')
@@ -67,7 +69,7 @@ class Experiment(Loggable):
         self.y = rows[:, -1].astype(int).flatten()
         self.attr_max = np.ones(self.X.shape[1])
         for i in range(self.X.shape[1]):
-            self.attr_max[i] = mx = max(self.X[:, i])
+            self.attr_max[i] = mx = max(0.00001, max(self.X[:, i]))
             self.X[:, i] = np.nan_to_num(self.X[:, i] / mx)
         self.inv_idx = score_valid(
             self.X, self.X, self.config.constraints, self.attr_max)[1]
@@ -95,33 +97,32 @@ class Experiment(Loggable):
         log('Validation', self.config.validate)
         log('K-folds', self.config.folds)
 
+    # noinspection PyTypeChecker
     def to_dict(self) -> dict:
         return {'experiment': {
             'dataset': self.config.dataset,
             'description': self.config.desc,
             'config': self.config.config_path,
             'k_folds': self.config.folds,
-            'duration_sec': time_sec(self.start, self.end),
-        }, 'classifier': {
-            'name': self.cls.name,
             'n_records': len(self.X),
             'n_classes': len(np.unique(self.y)),
             'n_attributes': len(self.attrs),
             'attrs': dict(enumerate(self.attrs)),
-            'config': self.cls.conf,
-            'class_distribution': dict([
-                (int(k), int(v)) for k, v in
-                zip(*np.unique(self.y, return_counts=True))]),
-            'attr_range': dict([
-                (k, float(v)) for k, v in enumerate(self.attr_max)]),
+            'attr_ranges': dict(enumerate(self.attr_max.tolist())),
+            'class_distribution': dict(
+                [map(int, x) for x in
+                 zip(*np.unique(self.y, return_counts=True))]),
+            'system': machine_details(),
+            'capture_utc': time.time_ns(),
+            'duration_sec': time_sec(self.start, self.end),
+            'start': self.start, 'end': self.end,
         }, 'validation': {
-            'original_invalid_rows': self.inv_idx.tolist(),
-            'constraints': list(self.validation.constraints.keys()),
+            'n_constraints': len(self.validation.constraints),
             'immutable': self.validation.immutable,
-            'configuration': self.conf('str_constraints'),
-            'mutable': self.conf('str_func'),
-            'dependencies': dict([
-                (k, list(v)) for k, v in
-                self.validation.desc.items() if len(v) > 0])},
+            'predicates': self.conf('p_config'),
+            'dependencies': dict(self.validation.desc.items()),
+            'reset_strategy': self.config.reset_strategy
+        }, 'invalid_rows': self.inv_idx.tolist(),
+            'classifier': {**self.cls.to_dict()},
             'attack': {**self.attack.to_dict()},
             'folds': {**self.result.to_dict()}}

@@ -1,20 +1,32 @@
-from typing import Dict, Tuple, Set
+from typing import Dict, Tuple
 
 import numpy as np
-from networkx import DiGraph, descendants, ancestors
+from networkx import Graph, add_path, descendants, ancestors
 
 from exp import CONSTR_DICT, categorize
+
+ALL, DEP = 1, 2  # reset strategy
 
 
 class Validation:
     """Constraint validation implementation."""
 
-    def __init__(self, constraints: CONSTR_DICT, attr_max: np.ndarray):
+    def __init__(
+            self, constraints: CONSTR_DICT, attr_max: np.ndarray,
+            mode=DEP
+    ):
+        """Initialize validation model
+
+        Arguments:
+            constraints - Constraints dictionary
+            attr_max - ordered list of attribute max values
+            mode - reset strategy
+        """
         self.constraints = constraints or {}
         self.scalars = attr_max
-        self.dep_graph, self.desc = self.desc_graph(self.constraints)
-        self.immutable, self.single_feat, self.multi_feat = \
-            categorize(self.constraints)
+        self.immutable, self.mutable = x = categorize(self.constraints)
+        self.graph, self.desc = self.desc_graph(*x)
+        self.reset = mode if mode in [ALL, DEP] else DEP
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
         """Enforce feature constraints.
@@ -26,31 +38,23 @@ class Validation:
         Returns:
             Valid adversarial records wrt. constraints.
         """
-        # initialize validation map
         vmap = np.ones(ref.shape, dtype=np.ubyte)
-        for i in self.immutable:
-            vmap[:, i] = 0
-        for index, pred in self.single_feat.items():
-            inputs = adv[:, index] * self.scalars[index]
-            mask_bits = np.vectorize(pred)(inputs)  # evaluate
-            vmap[:, index] = mask_bits  # apply to mask
+        vmap[:, self.immutable] = 0
         adv = adv * vmap + ref * (1 - vmap)
 
-        # evaluate multi-variate constraints
         vmap = np.ones(ref.shape, dtype=np.ubyte)
-        for target, (sources, pred) in self.multi_feat.items():
+        for target, (sources, pred) in self.mutable.items():
             in_, sf = adv[:, sources], self.scalars[list(sources)]
-            mask_bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
-            vmap[:, target] *= mask_bits
-            deps = list(self.desc[target])
-            if deps and False in mask_bits:  # propagate
-                invalid = np.array((np.where(mask_bits == 0)[0]))
-                vmap[np.ix_(invalid, deps)] = 0
+            val_in = np.multiply(in_, sf)
+            bits = np.apply_along_axis(pred, 1, val_in)  # evaluate
+            invalid = np.array((np.where(bits == 0)[0]))
+            deps = range(ref.shape[1]) if self.reset == ALL else \
+                self.desc[target]
+            vmap[np.ix_(invalid, deps)] = 0  # apply
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod
-    def desc_graph(constraints: CONSTR_DICT) \
-            -> Tuple[DiGraph, Dict[int, Set]]:
+    def desc_graph(immutable, mutable) -> Tuple[Graph, Dict[int, list]]:
         """Construct a dependency graph to model constraints.
 
         This allows to determine which target nodes are reachable
@@ -59,13 +63,11 @@ class Validation:
         Returns:
             The graph and a map of reachable nodes from each source.
         """
-        g, targets = DiGraph(), list(constraints.keys())
-        edges = [j for s in [[
-            (src, tgt) for src in list(set(y)) if src != tgt]
-            for tgt, (y, _) in constraints.items()] for j in s]
-        nodes = list(set([s for s, _ in edges] + targets))
-        g.add_nodes_from(nodes)
-        g.add_edges_from(edges)
-        reachable = [(n, ancestors(g, n).union(descendants(g, n)))
-                     for n in targets]
-        return g, dict(reachable)
+        g, dep_nodes = Graph(), [s for (s, _) in mutable.values()]
+        nodes = immutable + [c for dn in dep_nodes for c in dn]
+        g.add_nodes_from(list(set(nodes)))
+        for ngr in dep_nodes:
+            add_path(g, ngr)
+        r = [(k, list(({n} | ancestors(g, n) | descendants(g, n))))
+             for k, n in [(k, s[0]) for k, (s, _) in mutable.items()]]
+        return g, dict(r)
