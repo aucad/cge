@@ -42,7 +42,7 @@ def get_unsw_constraints() -> List[BaseRelationConstraint]:
                  or d == Constant(0) or g != Constant(1))
                 and (a == Constant(1)
                      or (b == Constant(0) and c == Constant(0)
-                     and h == Constant(0) and i == Constant(0))))
+                         and h == Constant(0) and i == Constant(0))))
 
     def apply_const_on_dur(a: Feature, b: Feature):
         return a == Constant(0) or b == Constant(0)
@@ -70,7 +70,8 @@ def get_iot_constraints() -> List[BaseRelationConstraint]:
     def apply_const_on_s0state(a: Feature, b: Feature, c: Feature):
         return (a != Constant(1)) or (b == c == Constant(0))
 
-    def apply_const_on_orig_ip_bytes(a: Feature, b: Feature, c: Feature, d: Feature):
+    def apply_const_on_orig_ip_bytes(a: Feature, b: Feature, c: Feature,
+                                     d: Feature):
         return ((a != Constant(1))
                 or b == Constant(0) or c >= Constant(20)
                 or g5 or g6 or d != 1)
@@ -86,11 +87,13 @@ def get_iot_constraints() -> List[BaseRelationConstraint]:
     # resp_pkts <= resp_ip_bytes
     g2 = Feature(16) <= Feature(17)
 
-    # when the connection state is S0, there is no response packet and bytes
+    # when the connection state is S0, there is no response packet
+    # and bytes
     g3 = apply_const_on_s0state(Feature(6), Feature(16), Feature(17))
 
     # ori_packets > 0 and  ori_bytes > 20
-    g4 = apply_const_on_orig_ip_bytes(Feature(1), Feature(14), Feature(15), Feature(8))
+    g4 = apply_const_on_orig_ip_bytes(Feature(1), Feature(14),
+                                      Feature(15), Feature(8))
 
     # orig_pkts >= resp_pkts
     g5 = Feature(14) >= Feature(16)
@@ -108,6 +111,7 @@ def get_iot_constraints() -> List[BaseRelationConstraint]:
     g9 = apply_const_on_resp_pkt(Feature(0), Feature(10), Feature(7))
 
     return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
+
 
 def init_constraints(feat_file):
     if 'unsw' in feat_file:

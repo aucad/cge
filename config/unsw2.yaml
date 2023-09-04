@@ -1,0 +1,26 @@
+name: UNSW-NB15
+dataset: data/unsw_nb15.csv
+desc: sampled from 175K training set, immutable categorical attrs.
+
+dnn:
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  feat_file: "data/feature_unsw.csv"
+
+constraints:
+  immutable:
+    - proto_tcp
+    - proto_udp
+    - proto_other
+    - service_none
+    - service_http
+    - service_dns
+    - service_other
+    - state_FIN
+    - state_INT
+    - state_other
+  predicates:
+    - proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0) or state_FIN==1
+    - proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes == 0
+    - proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
