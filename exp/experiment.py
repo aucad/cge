@@ -22,6 +22,7 @@ class Experiment:
         self.attack = None
         self.validation = None
         self.result = Result()
+        self.attr_min = np.array([])
         self.attr_max = np.array([])
         self.attrs = []
         self.start = 0
@@ -67,10 +68,13 @@ class Experiment:
         self.attrs, rows = read_dataset(self.config.dataset)
         self.X = rows[:, :-1]
         self.y = rows[:, -1].astype(int).flatten()
+        self.attr_min = np.ones(self.X.shape[1])
         self.attr_max = np.ones(self.X.shape[1])
         for i in range(self.X.shape[1]):
-            self.attr_max[i] = mx = max(0.00001, max(self.X[:, i]))
-            self.X[:, i] = np.nan_to_num(self.X[:, i] / mx)
+            self.attr_min[i] = mn = min(0, min(self.X[:, i]))
+            self.attr_max[i] = mx = max(self.X[:, i])
+            self.X[:, i] = np.nan_to_num(
+                (self.X[:, i] - mn) / (mx - mn))
         self.inv_idx = score_valid(
             self.X, self.X, self.config.constraints, self.attr_max)[1]
         if len(self.inv_idx) > 0:
@@ -108,7 +112,8 @@ class Experiment:
             'n_classes': len(np.unique(self.y)),
             'n_attributes': len(self.attrs),
             'attrs': dict(enumerate(self.attrs)),
-            'attr_ranges': dict(enumerate(self.attr_max.tolist())),
+            'attr_max': dict(enumerate(self.attr_max.tolist())),
+            'attr_min': dict(enumerate(self.attr_min.tolist())),
             'class_distribution': dict(
                 [map(int, x) for x in
                  zip(*np.unique(self.y, return_counts=True))]),
