@@ -1,10 +1,10 @@
 # Data sets
 
-| Name             | Description                              | Rows   | DOI        |
-|:-----------------|:-----------------------------------------|:-------|:-----------|
-| [IoT-23][iot]    | malicious and benign IoT network traffic | 10,000 | [🔗][iotd] |
-| [UNSW-NB15][uns] | network intrusion dataset with 9 attacks | 10,000 | [🔗][unsd] |
-| [URL][url]       | legitimate and phishing URLs             | 11,430 | [🔗][urld] |
+| Name             | Description                              |  Rows  | Inclusion |    DOI     |
+|:-----------------|:-----------------------------------------|:------:|:---------:|:----------:|
+| [IoT-23][iot]    | malicious and benign IoT network traffic | 10,000 |  Sampled  | [🔗][iotd] |
+| [UNSW-NB15][uns] | network intrusion dataset with 9 attacks | 10,000 |  Sampled  | [🔗][unsd] |
+| [URL][url]       | legitimate and phishing URLs             | 11,430 |   Full    | [🔗][urld] |
 
 
 

@@ -1,9 +1,9 @@
 name: URL
 dataset: data/url.csv
-desc: URL dataset from Hannousse and Yahiouche (2021)
+desc: URL dataset of legitimate and phishing URLs
 
 cpgd:
-  feat_file: "data/_feature_url.csv"
+  feat_file: "data/feature_url.csv"
 
 #constraints:
 #  immutable:

@@ -72,8 +72,9 @@ class Experiment:
         self.attr_max = np.ones(self.X.shape[1])
         for i in range(self.X.shape[1]):
             self.attr_min[i] = mn = min(0, min(self.X[:, i]))
-            self.attr_max[i] = mx = max(self.X[:, i] + mn)
-            self.X[:, i] = np.nan_to_num((self.X[:, i] + mn) / mx)
+            self.attr_max[i] = mx = max(self.X[:, i])
+            self.X[:, i] = np.nan_to_num(
+                (self.X[:, i] - mn) / (mx - mn))
         self.inv_idx = score_valid(
             self.X, self.X, self.config.constraints, self.attr_max)[1]
         if len(self.inv_idx) > 0:
