@@ -113,11 +113,70 @@ def get_iot_constraints() -> List[BaseRelationConstraint]:
     return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
 
 
+def get_lcld_constraints() -> List[BaseRelationConstraint]:
+    def date_feature_to_month(a: Feature):
+        return np.floor(a / Constant(100)) * Constant(12) + (a % Constant(100))
+
+    # installment = loan_amount * int_rate(1 + int_rate) ^ term / ((1 + int_rate) ^ term - 1)
+    calculated_installment = (
+            np.ceil(Constant(100) * (Feature(0) * (Feature(2) / Constant(1200)) *
+                    (Constant(1) + Feature(2) / Constant(1200)) ** Feature(1))
+                    / ((Constant(1) + Feature(2) / Constant(1200)) ** Feature(1) - Constant(1))) / Constant(100))
+
+    g1 = np.absolute(Feature(3) - calculated_installment)
+
+    # open_acc <= total_acc
+    g2 = Feature(10) - Feature(14)
+
+    # pub_rec_bankruptcies <= pub_rec
+    g3 = Feature(16) - Feature(11)
+
+    # term = 36 or term = 60
+    g4 = np.absolute((Constant(36) - Feature(1)) * (Constant(60) - Feature(1)))
+
+    # ratio_loan_amnt_annual_inc
+    g5 = np.absolute(Feature(20) - Feature(0) / Feature(6))
+
+    # ratio_open_acc_total_acc
+    g6 = np.absolute(Feature(21) - Feature(10) / Feature(14))
+
+    # diff_issue_d_earliest_cr_line
+    g7 = np.absolute(
+        Feature(22)
+        - (date_feature_to_month(Feature(7)) - date_feature_to_month(Feature(9)))
+    )
+
+    # ratio_pub_rec_diff_issue_d_earliest_cr_line
+    g8 = np.absolute(Feature(23) - Feature(11) / Feature(22))
+
+    # ratio_pub_rec_bankruptcies_pub_rec
+    g9 = np.absolute(Feature(24) - Feature(16) / Feature(22))
+
+    # Neea:Can you help with this part of constraints, you can refer
+    # to "reference/problem_definition.py" for more info
+    # def apply_const_on_ratio_pub():
+    #     ratio_mask = x_adv[:, 11] == 0
+    #     ratio = np.empty(x_adv.shape[0])
+    #     ratio = np.ma.masked_array(ratio, mask=ratio_mask, fill_value=-1).filled()
+    #     ratio[~ratio_mask] = x_adv[~ratio_mask, 16] / x_adv[~ratio_mask, 11]
+    #     ratio[ratio == np.inf] = -1
+    #     ratio[np.isnan(ratio)] = -1
+    #     return ratio
+
+    # ratio_pub_rec_bankruptcies_pub_rec
+    # cal_ratio = apply_const_on_ratio_pub()
+    # g10 = np.absolute(Feature(25) - cal_ratio)
+
+    # add g10 to return list after fix it
+    return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
+
 def init_constraints(feat_file):
     if 'unsw' in feat_file:
         c_set = get_unsw_constraints()
     elif 'iot' in feat_file:
         c_set = get_iot_constraints()
+    elif 'lcld' in feat_file:
+        c_set = get_lcld_constraints()
     else:
         c_set = None
     if not c_set or len(c_set) < 2:

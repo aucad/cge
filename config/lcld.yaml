@@ -1,0 +1,79 @@
+name: LCLD
+dataset: data/lcld_venus.csv
+desc: credit requests dataset that can be accepted or rejected
+
+
+cpgd:
+  feat_file:  "data/lcld_update_type.csv"
+
+constraints:
+  immutable:
+    - int_rate
+    - grade
+    - issue_d
+    - earliest_cr_line
+    - pub_rec
+    - pub_rec_bankruptcies
+    - fico_score
+    - initial_list_status_w
+    - diff_issue_d_earliest_cr_line
+    - ratio_pub_rec_diff_issue_d_earliest_cr_line
+    - ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line
+    - ratio_pub_rec_bankruptcies_pub_rec
+    - home_ownership_MORTGAGE
+    - home_ownership_OTHER
+    - home_ownership_OWN
+    - home_ownership_RENT
+    - verification_status_Not Verified
+    - verification_status_Source Verified
+    - verification_status_Verified
+    - charged_off
+
+  predicates:
+    # installment = loan_amount * int_rate (1 + int_rate) ^ term / ((1+int_rate) ^ term - 1)
+    - calculated_installment = (
+      np.ceil( 100 * (loan_amnt * (int_rate / 1200) * (1 + int_rate / 1200) ** term)
+      / ((1 + int_rate / 1200) ** term - 1)) / 100 )
+      
+    - g1 = np.absolute(installment - calculated_installment)
+
+    # open_acc <= total_acc
+    - g2 = open_acc - total_acc
+
+    # pub_rec_bankruptcies <= pub_rec
+    - g3 = pub_rec_bankruptcies - pub_rec
+
+    # term = 36 or term = 60
+    - g4 = np.absolute((36 - term) * (60 - term))
+
+    # ratio_loan_amnt_annual_inc
+    - g5 = np.absolute(ratio_loan_amnt_annual_inc - loan_amnt / annual_inc)
+
+    # ratio_open_acc_total_acc
+    - g6 = np.absolute(ratio_open_acc_total_acc - open_acc / total_acc)
+
+    # diff_issue_d_earliest_cr_line
+    - g7 = np.absolute(
+            diff_issue_d_earliest_cr_line
+            - (self._date_feature_to_month(issue_d) - self._date_feature_to_month(earliest_cr_line))
+        )
+
+    # ratio_pub_rec_diff_issue_d_earliest_cr_line
+    - g8 = np.absolute(ratio_pub_rec_diff_issue_d_earliest_cr_line - pub_rec / diff_issue_d_earliest_cr_line)
+
+    # ratio_pub_rec_bankruptcies_pub_rec
+    - g9 = np.absolute(ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line - pub_rec_bankruptcies / 
+                       diff_issue_d_earliest_cr_line)
+
+    # ratio_pub_rec_bankruptcies_pub_rec
+    # x_ml[:, 11] is pub_rec
+    - ratio_mask = x_ml[:, 11] == 0
+    - ratio = np.empty(x_ml.shape[0])
+    - ratio = np.ma.masked_array(ratio, mask=ratio_mask, fill_value=-1).filled()
+    - ratio[~ratio_mask] = x_ml[~ratio_mask, 16] / x_ml[~ratio_mask, 11]
+    - ratio[ratio == np.inf] = -1
+    - ratio[np.isnan(ratio)] = -1
+
+    - g10 = np.absolute(x_ml[:, 25] - ratio)
+
+    - g1 or g2 or g3 or g4 or g5 or g6 or g7 or g8 or g9 or g10
