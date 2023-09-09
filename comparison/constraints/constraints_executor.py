@@ -54,13 +54,14 @@ class ConstraintsVisitor:
 
 
 class NumpyConstraintsVisitor(ConstraintsVisitor):
-
+    # add % to list of operators
     str_operator_to_result = {
         "+": lambda left, right: left + right,
         "-": lambda left, right: left - right,
         "*": lambda left, right: left * right,
         "/": lambda left, right: left / right,
         "**": lambda left, right: left**right,
+        "%": lambda left, right: left % right
     }
 
     def __init__(

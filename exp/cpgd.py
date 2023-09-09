@@ -114,6 +114,7 @@ def get_iot_constraints() -> List[BaseRelationConstraint]:
 
 
 def get_lcld_constraints() -> List[BaseRelationConstraint]:
+    # problem with %, mod is not defined
     def date_feature_to_month(a: Feature):
         return np.floor(a / Constant(100)) * Constant(12) + (a % Constant(100))
 
