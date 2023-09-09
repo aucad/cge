@@ -1,4 +1,4 @@
-name: UNSW-NB15
+name: UNSW2-NB15
 dataset: data/unsw_nb15.csv
 desc: sampled from 175K training set, immutable categorical attrs.
 
@@ -20,7 +20,3 @@ constraints:
     - state_FIN
     - state_INT
     - state_other
-  predicates:
-    - proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0) or state_FIN==1
-    - proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes == 0
-    - proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)

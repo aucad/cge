@@ -172,11 +172,11 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
     return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
 
 def init_constraints(feat_file):
-    if 'unsw' in feat_file:
+    if 'UNSW-NB15' in feat_file:
         c_set = get_unsw_constraints()
-    elif 'iot' in feat_file:
+    elif 'IoT-23' in feat_file:
         c_set = get_iot_constraints()
-    elif 'lcld' in feat_file:
+    elif 'LCLD' in feat_file:
         c_set = get_lcld_constraints()
     else:
         c_set = None
