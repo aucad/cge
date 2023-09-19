@@ -5,7 +5,27 @@ desc: URL dataset of legitimate and phishing URLs
 cpgd:
   feat_file: "data/feature_url.csv"
 
-#constraints:
-#  immutable:
-#  predicates:
+constraints:
+#  immutable: all features are mutable
+  predicates:
+    - length_hostname <= length_url
+    - intermediate_sum = nb_dots + nb_hyphens +	nb_at +	nb_qm +	nb_and + nb_or + nb_eq + nb_underscore + nb_tilde 
+                         nb_percent + nb_slash + nb_star +	nb_colon + nb_comma + nb_semicolumn
+      intermediate_sum = intermediate_sum + ( nb_space * 3)
+      intermediate_sum <= length_url
+    - nb_com >= 0 or nb_dots > 0
+    - http_in_path >= 0 or nb_slash > 0
+    - intermediate_sum = (( nb_www * 3) + ( nb_com * 4) + (http_in_path * 2))
+      intermediate_sum <= length_url
+    - nb_space >= 0 or ratio_digits_url > 0
+    - ip >= 0 or ratio_digits_url > 0
+    - port >= 0 or ratio_digits_url > 0
+    - abnormal_subdomain >= 0 or ratio_digits_host > 0
+    - nb_external_redirection <= nb_redirection
+    - (nb_www * 3) <= (length_url + 1)
+    - (nb_com * 4) <= (length_url + 1)
+    - (ip * 4) <= (length_url + 1)
+    - (http_in_path * 2) <= (length_url + 1)
+
+
 
