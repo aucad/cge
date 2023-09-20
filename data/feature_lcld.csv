@@ -29,8 +29,8 @@ home_ownership_MORTGAGE,ohe0,FALSE,0,1
 home_ownership_OTHER,ohe0,FALSE,0,1
 home_ownership_OWN,ohe0,FALSE,0,1
 home_ownership_RENT,ohe0,FALSE,0,1
-verification_status_Not Verified,ohe1,FALSE,0,1
-verification_status_Source Verified,ohe1,FALSE,0,1
+verification_status_Not_Verified,ohe1,FALSE,0,1
+verification_status_Source_Verified,ohe1,FALSE,0,1
 verification_status_Verified,ohe1,FALSE,0,1
 purpose_car,ohe2,TRUE,0,1
 purpose_credit_card,ohe2,TRUE,0,1
