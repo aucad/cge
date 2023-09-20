@@ -4,7 +4,7 @@ desc: credit requests dataset that can be accepted or rejected
 
 
 cpgd:
-  feat_file:  "data/lcld_update_type.csv"
+  feat_file:  "data/feature_lcld.csv"
 
 constraints:
   immutable:
@@ -30,55 +30,23 @@ constraints:
     - charged_off
 
   predicates:
+    # see: https://github.com/serval-uni-lu/moeva2-ijcai22-replication/blob/aacf2d954d58cf5b690e485a9fb81e73d6715679/src/examples/lcld/lcld_constraints.py#L75C8-L75C8
     # c1: installment calculation
-    def c1(installment, calculated_installment):
-        calculated_installment = (
-          np.ceil( 100 * (loan_amnt * (int_rate / 1200) * (1 + int_rate / 1200) ** term)
-            / ((1 + int_rate / 1200) ** term - 1)) / 100 )
-        return installment == calculated_installment
-
+    - installment == -(-(100 * (loan_amnt * (int_rate/1200) * (1 + int_rate/1200) ** term) / ((1 + int_rate/1200) ** term - 1)) // 100)
     # c2: check open_acc
-    def c2(open_acc, total_acc):
-      return open_acc <= total_acc
-
+    - open_acc <= total_acc
     # c3: check pub_rec_bankruptcies
-    def c3(pub_rec_bankruptcies, pub_rec):
-        return pub_rec_bankruptcies <= pub_rec
-
+    -  pub_rec_bankruptcies <= pub_rec
     # c4: check term
-    def c4(term):
-        return term == 36 or term == 60
-
+    -  term == 36 or term == 60
     # c5: check ratio_loan_amnt_annual_inc
-    def c5(ratio_loan_amnt_annual_inc, loan_amnt, annual_inc):
-        return ratio_loan_amnt_annual_inc == loan_amnt / annual_inc
-
+    - ratio_loan_amnt_annual_inc == loan_amnt / annual_inc
     # c6: check ratio_open_acc_total_acc
-    def c6(ratio_open_acc_total_acc, open_acc, total_acc):
-        return ratio_open_acc_total_acc == open_acc / total_acc
-
+    - ratio_open_acc_total_acc == open_acc / total_acc
     # c7: check diff_issue_d_earliest_cr_line
-    def c7(diff_issue_d_earliest_cr_line, issue_d, earliest_cr_line):
-        return diff_issue_d_earliest_cr_line == (self._date_feature_to_month(issue_d)
-                 - self._date_feature_to_month(earliest_cr_line))
-
+    - diff_issue_d_earliest_cr_line == (((issue_d // 100) * 12 + (issue_d % 100)) - ((earliest_cr_line // 100) * 12 + (earliest_cr_line % 100)))
     # c8: check ratio_pub_rec_diff_issue_d_earliest_cr_line
-    def c8(ratio_pub_rec_diff_issue_d_earliest_cr_line, pub_rec, diff_issue_d_earliest_cr_line):
-        return ratio_pub_rec_diff_issue_d_earliest_cr_line == pub_rec / diff_issue_d_earliest_cr_line
-
+    -  ratio_pub_rec_diff_issue_d_earliest_cr_line == pub_rec / diff_issue_d_earliest_cr_line
     # c9: check ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line
-    def c9(ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line, pub_rec_bankruptcies, \
-            diff_issue_d_earliest_cr_line):
-        return ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line == pub_rec_bankruptcies
-                 / diff_issue_d_earliest_cr_line
-
-    # c10: check ratio
-    #    def c10(x_ml, ratio_mask):
-      #        ratio = np.empty(x_ml.shape[0])
-      #        ratio = np.ma.masked_array(ratio, mask=ratio_mask, fill_value=-1).filled()
-      #        ratio[~ratio_mask] = x_ml[~ratio_mask, 16] / x_ml[~ratio_mask, 11]
-      #        ratio[ratio == np.inf] = -1
-      #        ratio[np.isnan(ratio)] = -1
-      #        return x_ml[:, 25] == ratio
-
-    - c1 or c2 or c3 or c4 or c5 or c6 or c7 or c8 or c9
+    - ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line == pub_rec_bankruptcies / diff_issue_d_earliest_cr_line
+    # TODO: check since there should be 10 total
