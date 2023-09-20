@@ -71,7 +71,7 @@ class Experiment:
         self.attr_min = np.ones(self.X.shape[1])
         self.attr_max = np.ones(self.X.shape[1])
         for i in range(self.X.shape[1]):
-            self.attr_min[i] = mn = min(0, min(self.X[:, i]))
+            self.attr_min[i] = mn = min(self.X[:, i])
             self.attr_max[i] = mx = max(self.X[:, i])
             self.X[:, i] = np.nan_to_num(
                 (self.X[:, i] - mn) / (mx - mn))
