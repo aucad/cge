@@ -1,5 +1,5 @@
 name: LCLD
-dataset: data/lcld_venus.csv
+dataset: data/lcld.csv
 desc: credit requests dataset that can be accepted or rejected
 
 
@@ -24,10 +24,9 @@ constraints:
     - home_ownership_OTHER
     - home_ownership_OWN
     - home_ownership_RENT
-    - verification_status_Not Verified
-    - verification_status_Source Verified
+    - verification_status_Not_Verified
+    - verification_status_Source_Verified
     - verification_status_Verified
-    - charged_off
 
   predicates:
     # see: https://github.com/serval-uni-lu/moeva2-ijcai22-replication/blob/aacf2d954d58cf5b690e485a9fb81e73d6715679/src/examples/lcld/lcld_constraints.py#L75C8-L75C8
