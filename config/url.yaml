@@ -6,26 +6,30 @@ cpgd:
   feat_file: "data/feature_url.csv"
 
 constraints:
-#  immutable: all features are mutable
   predicates:
+    # ref: https://github.com/serval-uni-lu/constrained-attacks/blob/d797e85f46c0a15f7d78bcf552fa95fb18782b46/tests/attacks/moeva/url_constraints.py#L13C8-L13C8
+    # g1
     - length_hostname <= length_url
-    - intermediate_sum = nb_dots + nb_hyphens +	nb_at +	nb_qm +	nb_and + nb_or + nb_eq + nb_underscore + nb_tilde 
-                         nb_percent + nb_slash + nb_star +	nb_colon + nb_comma + nb_semicolumn
-      intermediate_sum = intermediate_sum + ( nb_space * 3)
-      intermediate_sum <= length_url
-    - nb_com >= 0 or nb_dots > 0
-    - http_in_path >= 0 or nb_slash > 0
-    - intermediate_sum = (( nb_www * 3) + ( nb_com * 4) + (http_in_path * 2))
-      intermediate_sum <= length_url
-    - nb_space >= 0 or ratio_digits_url > 0
-    - ip >= 0 or ratio_digits_url > 0
-    - port >= 0 or ratio_digits_url > 0
-    - abnormal_subdomain >= 0 or ratio_digits_host > 0
+    # g2
+    - (nb_dots + nb_hyphens + nb_at + nb_qm + nb_and + nb_or + nb_eq + nb_underscore + nb_tilde + nb_percent + nb_slash + nb_star + nb_colon + nb_comma + nb_semicolumn + (nb_space * 3)) <= length_url
+    # g3
+    - 0 <= nb_com or 0 < nb_dots
+    # g4
+    - 0 <= http_in_path or 0 < nb_slash
+    # g5
+    - ((3 * nb_www) + (4 * nb_com) + (2 * http_in_path)) <= length_url
+    # g6
+    - 0 <= nb_space or 0 < ratio_digits_url
+    # g8
+    - 0 <= ip or 0 < ratio_digits_url
+    # g10
+    - 0 <= port or 0 < ratio_digits_url
+    # g11
+    - 0 <= abnormal_subdomain or 0 < ratio_digits_host
+    # g12
     - nb_external_redirection <= nb_redirection
+    # g13-g16
     - (nb_www * 3) <= (length_url + 1)
     - (nb_com * 4) <= (length_url + 1)
     - (ip * 4) <= (length_url + 1)
     - (http_in_path * 2) <= (length_url + 1)
-
-
-
