@@ -1,6 +1,6 @@
-name: UNSW2-NB15
+name: perf_test_1-12
 dataset: data/unsw_nb15.csv
-desc: sampled from 175K training set, immutable categorical attrs.
+desc: Constraint performance test with 12 constraints
 
 dnn:
   layers: [ 64, 64, 32 ]

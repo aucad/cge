@@ -22,6 +22,7 @@ def plot_graph(v, c, a):
         legend1 = plt.legend(
             labels=[f'{k}: {a[k]}' for k in gn], loc='upper left',
             handles={Patch(fill=False, alpha=0) for _ in gn},
+            ncol=(len(gn) // 20) + 1 if len(gn) > 25 else 1,
             bbox_to_anchor=(.92, 1.02), frameon=False)
         pairs = [(Patch(fill=True, color=clr[i]), lbl[i])
                  for i, _ in enumerate(clr)]
