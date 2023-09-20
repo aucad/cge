@@ -1,11 +1,11 @@
 # Data sets
 
-| Name             | Description                              |  Rows  | Inclusion |    DOI     |
+| Name             | Description                              |  Rows  | Inclusion |    Ref     |
 |:-----------------|:-----------------------------------------|:------:|:---------:|:----------:|
-| [IoT-23][iot]    | malicious and benign IoT network traffic | 10,000 |  Sampled  | [🔗][iotd] |
-| [UNSW-NB15][uns] | network intrusion dataset with 9 attacks | 10,000 |  Sampled  | [🔗][unsd] |
-| [URL][url]       | legitimate and phishing URLs             | 11,430 |   Full    | [🔗][urld] |
-
+| [IoT-23][iot]    | Malicious and benign IoT network traffic | 10,000 |  Sampled  | [🔗][iotd] |
+| [UNSW-NB15][uns] | Network intrusion dataset with 9 attacks | 10,000 |  Sampled  | [🔗][unsd] |
+| [URL][url]       | Legitimate and phishing URLs             | 11,430 |   Full    | [🔗][urld] |
+| [LCLD](#TODO)    | Loan application data set                |   ?    |     ?     |            | 
 
 
 [iot]: https://www.stratosphereips.org/datasets-iot23/
