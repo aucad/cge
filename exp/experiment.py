@@ -44,22 +44,22 @@ class Experiment:
             c.attack, c.validate, self.conf(c.attack))
         self.validation = Validation(
             c.constraints, self.attr_max, c.reset_strategy)
-        # self.log()
-        #
-        # self.start = time.time_ns()
-        # for fold_num, indices in enumerate(self.folds):
-        #     data = self.X.copy(), self.y.copy()
-        #     self.cls.reset(*data, *indices).train()
-        #     self.result.append(self.cls.score)
-        #     self.attack.reset(self.cls).run(self.validation)
-        #     self.result.append(self.attack.score)
-        #     print('-' * 50)
-        #     log('Fold #', fold_num + 1)
-        #     self.cls.score.log()
-        #     self.attack.score.log()
-        # self.end = time.time_ns()
+        self.log()
 
-       # self.result.log()
+        self.start = time.time_ns()
+        for fold_num, indices in enumerate(self.folds):
+            data = self.X.copy(), self.y.copy()
+            self.cls.reset(*data, *indices).train()
+            self.result.append(self.cls.score)
+            self.attack.reset(self.cls).run(self.validation)
+            self.result.append(self.attack.score)
+            print('-' * 50)
+            log('Fold #', fold_num + 1)
+            self.cls.score.log()
+            self.attack.score.log()
+        self.end = time.time_ns()
+
+        self.result.log()
         plot_graph(self.validation, c, self.attrs)
         write_yaml(file_name(c), self.to_dict())
 
@@ -71,7 +71,7 @@ class Experiment:
         self.attr_min = np.ones(self.X.shape[1])
         self.attr_max = np.ones(self.X.shape[1])
         for i in range(self.X.shape[1]):
-            self.attr_min[i] = mn = min(self.X[:, i])
+            self.attr_min[i] = mn = min(0, min(self.X[:, i]))
             self.attr_max[i] = mx = max(self.X[:, i])
             self.X[:, i] = np.nan_to_num(
                 (self.X[:, i] - mn) / (mx - mn))
