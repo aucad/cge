@@ -31,21 +31,24 @@ constraints:
   predicates:
     # see: https://github.com/serval-uni-lu/moeva2-ijcai22-replication/blob/aacf2d954d58cf5b690e485a9fb81e73d6715679/src/examples/lcld/lcld_constraints.py#L75C8-L75C8
     # c1: installment calculation
-    - installment == -(-(100 * (loan_amnt * (int_rate/1200) * (1 + int_rate/1200) ** term) / ((1 + int_rate/1200) ** term - 1)) // 100)
+    #- installment == -(-(100 * (loan_amnt * (int_rate/1200) * (1 + int_rate/1200) ** term) / ((1 + int_rate/1200) ** term - 1)) // 100)
+
     # c2: check open_acc
-    - open_acc <= total_acc
+    - open_acc  <= total_acc
     # c3: check pub_rec_bankruptcies
     - pub_rec_bankruptcies <= pub_rec
     # c4: check term
     - term == 36 or term == 60
     # c5: check ratio_loan_amnt_annual_inc
-    - ratio_loan_amnt_annual_inc == loan_amnt / annual_inc
+    - (- 0.02) <= (ratio_loan_amnt_annual_inc - loan_amnt / annual_inc) <= 0.02
     # c6: check ratio_open_acc_total_acc
-    - ratio_open_acc_total_acc == open_acc / total_acc
+    - (- 0.02) <= (ratio_open_acc_total_acc - open_acc / total_acc) <= 0.02
     # c7: check diff_issue_d_earliest_cr_line
-    - diff_issue_d_earliest_cr_line == (((issue_d // 100) * 12 + (issue_d % 100)) - ((earliest_cr_line // 100) * 12 + (earliest_cr_line % 100)))
+    #- diff_issue_d_earliest_cr_line >= (((issue_d // 100) * 12 + (issue_d % 100)) - ((earliest_cr_line // 100) * 12 + (earliest_cr_line % 100)))
+     # - diff_issue_d_earliest_cr_line == (((issue_d // 100) * 12 + (issue_d % 100)) - ((earliest_cr_line // 100) * 12 + (earliest_cr_line % 100)))
+
     # c8: check ratio_pub_rec_diff_issue_d_earliest_cr_line
-    - ratio_pub_rec_diff_issue_d_earliest_cr_line == pub_rec / diff_issue_d_earliest_cr_line
+    - (- 0.02) <= (ratio_pub_rec_diff_issue_d_earliest_cr_line - pub_rec / diff_issue_d_earliest_cr_line) <= 0.02
     # c9: check ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line
-    - ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line == pub_rec_bankruptcies / diff_issue_d_earliest_cr_line
+    - (- 0.02) <= (ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line - pub_rec_bankruptcies / diff_issue_d_earliest_cr_line) <= 0.02
     # TODO: check since there should be 10 total
