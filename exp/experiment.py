@@ -97,7 +97,9 @@ class Experiment:
         log('Attributes', len(self.attrs))
         log('Constraints', len(self.validation.constraints.keys()))
         log('Immutable', len(self.validation.immutable))
-        log('Attack max iter', self.attack.conf['max_iter'])
+        log('Attack max iter',
+            (self.attack.conf['max_iter']
+             if 'max_iter' in self.attack.conf else 'N/A'))
         log('Validation', self.config.validate)
         log('K-folds', self.config.folds)
 
