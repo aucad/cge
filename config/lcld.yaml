@@ -36,9 +36,9 @@ constraints:
     # c2: check open_acc
     - open_acc <= total_acc
     # c3: check pub_rec_bankruptcies
-    -  pub_rec_bankruptcies <= pub_rec
+    - pub_rec_bankruptcies <= pub_rec
     # c4: check term
-    -  term == 36 or term == 60
+    - term == 36 or term == 60
     # c5: check ratio_loan_amnt_annual_inc
     - ratio_loan_amnt_annual_inc == loan_amnt / annual_inc
     # c6: check ratio_open_acc_total_acc
@@ -46,7 +46,7 @@ constraints:
     # c7: check diff_issue_d_earliest_cr_line
     - diff_issue_d_earliest_cr_line == (((issue_d // 100) * 12 + (issue_d % 100)) - ((earliest_cr_line // 100) * 12 + (earliest_cr_line % 100)))
     # c8: check ratio_pub_rec_diff_issue_d_earliest_cr_line
-    -  ratio_pub_rec_diff_issue_d_earliest_cr_line == pub_rec / diff_issue_d_earliest_cr_line
+    - ratio_pub_rec_diff_issue_d_earliest_cr_line == pub_rec / diff_issue_d_earliest_cr_line
     # c9: check ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line
     - ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line == pub_rec_bankruptcies / diff_issue_d_earliest_cr_line
     # TODO: check since there should be 10 total

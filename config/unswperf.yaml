@@ -16,7 +16,7 @@ constraints:
     - proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0) or state_FIN==1
     - proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes == 0
     - proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
-    #  I added more constraints:
+    #  add more constraints:
     - state_INT != 1 or (sbytes > 0 and dbytes == 0)
     - (service_dns != 1 and proto_udp != 1) or smean <= 512
     # If window size is represented as 8 bits field, then swin and dwin should be in this range: [0,255]
