@@ -29,9 +29,6 @@ from comparison.cpgd.tf_classifier import TensorflowClassifier
 
 
 def get_unsw_constraints() -> List[BaseRelationConstraint]:
-    # TODO: implement
-    # there must be at least two constraints to compute loss
-    # see example in reference/constraints_ex.py
     def apply_const_on_tcp_fields(
             a: Feature, b: Feature, c: Feature, d: Feature, e: Feature,
             f: Feature, g: Feature, h: Feature, i: Feature):
@@ -65,8 +62,6 @@ def get_unsw_constraints() -> List[BaseRelationConstraint]:
 
 
 def get_iot_constraints() -> List[BaseRelationConstraint]:
-    # TODO: implement
-    # there must be at least two constraints to compute loss
     def apply_const_on_s0state(a: Feature, b: Feature, c: Feature):
         return (a != Constant(1)) or (b == c == Constant(0))
 
@@ -178,11 +173,12 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
 
 
 def init_constraints(feat_file):
-    if 'UNSW-NB15' in feat_file:
+    # matches by file name - do not change.
+    if 'unsw' in feat_file:
         c_set = get_unsw_constraints()
-    elif 'IoT-23' in feat_file:
+    elif 'iot' in feat_file:
         c_set = get_iot_constraints()
-    elif 'LCLD' in feat_file:
+    elif 'lcld' in feat_file:
         c_set = get_lcld_constraints()
     else:
         c_set = None

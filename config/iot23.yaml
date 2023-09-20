@@ -12,7 +12,7 @@ pgd:
   num_random_init: 100
 
 cpgd:
-  feat_file: "data/feature_ctu.csv"
+  feat_file: "data/feature_iot.csv"
 
 
 constraints:
