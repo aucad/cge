@@ -118,11 +118,14 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
     def date_feature_to_month(a: Feature):
         return np.floor(a / Constant(100)) * Constant(12) + (a % Constant(100))
 
-    # installment = loan_amount * int_rate(1 + int_rate) ^ term / ((1 + int_rate) ^ term - 1)
-    calculated_installment = (
-            np.ceil(Constant(100) * (Feature(0) * (Feature(2) / Constant(1200)) *
-                    (Constant(1) + Feature(2) / Constant(1200)) ** Feature(1))
-                    / ((Constant(1) + Feature(2) / Constant(1200)) ** Feature(1) - Constant(1))) / Constant(100))
+    # installment = loan_amount * int_rate(1 + int_rate) ^ term / ((1 +
+    # int_rate) ^ term - 1)
+    calculated_installment = \
+        (np.ceil(Constant(100) * (Feature(0) * (Feature(2) / Constant(1200)) *
+                                  (Constant(1) + Feature(2) / Constant(
+                                      1200)) ** Feature(1))
+                 / ((Constant(1) + Feature(2) / Constant(1200))
+                    ** Feature(1) - Constant(1))) / Constant(100))
 
     g1 = np.absolute(Feature(3) - calculated_installment)
 
@@ -144,7 +147,8 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
     # diff_issue_d_earliest_cr_line
     g7 = np.absolute(
         Feature(22)
-        - (date_feature_to_month(Feature(7)) - date_feature_to_month(Feature(9)))
+        - (date_feature_to_month(Feature(7)) - date_feature_to_month(
+            Feature(9)))
     )
 
     # ratio_pub_rec_diff_issue_d_earliest_cr_line
@@ -158,7 +162,8 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
     # def apply_const_on_ratio_pub():
     #     ratio_mask = x_adv[:, 11] == 0
     #     ratio = np.empty(x_adv.shape[0])
-    #     ratio = np.ma.masked_array(ratio, mask=ratio_mask, fill_value=-1).filled()
+    #     ratio = np.ma.masked_array
+    #     (ratio, mask=ratio_mask, fill_value=-1).filled()
     #     ratio[~ratio_mask] = x_adv[~ratio_mask, 16] / x_adv[~ratio_mask, 11]
     #     ratio[ratio == np.inf] = -1
     #     ratio[np.isnan(ratio)] = -1
@@ -170,6 +175,7 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
 
     # add g10 to return list after fix it
     return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
+
 
 def init_constraints(feat_file):
     if 'UNSW-NB15' in feat_file:
