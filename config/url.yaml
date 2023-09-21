@@ -5,9 +5,9 @@ desc: URL dataset of legitimate and phishing URLs
 cpgd:
   feat_file: "data/feature_url.csv"
 
+# ref: https://github.com/serval-uni-lu/constrained-attacks/blob/d797e85f46c0a15f7d78bcf552fa95fb18782b46/tests/attacks/moeva/url_constraints.py#L13C8-L13C8
 constraints:
   predicates:
-    # ref: https://github.com/serval-uni-lu/constrained-attacks/blob/d797e85f46c0a15f7d78bcf552fa95fb18782b46/tests/attacks/moeva/url_constraints.py#L13C8-L13C8
     # g1
     - length_hostname <= length_url
     # g2

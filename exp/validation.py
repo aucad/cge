@@ -12,18 +12,19 @@ class Validation:
     """Constraint validation implementation."""
 
     def __init__(
-            self, constraints: CONSTR_DICT, attr_max: np.ndarray,
+            self, constraints: CONSTR_DICT,
+            attr_range: list[Tuple[int, int]],
             mode=DEP
     ):
         """Initialize validation model
 
         Arguments:
             constraints - Constraints dictionary
-            attr_max - ordered list of attribute max values
+            attr_range - ordered list of attribute ranges
             mode - reset strategy
         """
         self.constraints = constraints or {}
-        self.scalars = attr_max
+        self.scalars = attr_range
         self.immutable, self.mutable = x = categorize(self.constraints)
         self.graph, self.desc = self.desc_graph(*x)
         self.reset = mode if mode in [ALL, DEP] else DEP
@@ -44,8 +45,10 @@ class Validation:
 
         vmap = np.ones(ref.shape, dtype=np.ubyte)
         for target, (sources, pred) in self.mutable.items():
-            in_, sf = adv[:, sources], self.scalars[list(sources)]
-            val_in = np.multiply(in_, sf)
+            val_in = adv[:, sources]
+            for i, ft_i in enumerate(sources):
+                (mn, mx) = self.scalars[ft_i]
+                val_in[:, i] = (val_in[:, i] * (mx - mn)) + mn
             bits = np.apply_along_axis(pred, 1, val_in)  # evaluate
             invalid = np.array((np.where(bits == 0)[0]))
             deps = range(ref.shape[1]) if self.reset == ALL else \

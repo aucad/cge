@@ -5,8 +5,10 @@ from exp.validation import Validation, ALL, DEP
 def test_no_constraints():
     ori = np.array([[1, 2, 3], [5, 6, 7]])
     adv = np.array([[6, 7, 1], [3, 1, 2]])
-    result = Validation({}, np.array([1] * ori.shape[0])) \
-        .enforce(ori, adv)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+    result = Validation({}, ranges).enforce(ori, adv)
     assert (result == adv).all()
 
 
@@ -19,8 +21,10 @@ def test_immutable_all():
         2: ((2,), False),
         3: ((3,), False)
     }
-    ar = np.array([1] * ori.shape[0])
-    result = Validation(constraints, ar).enforce(ori, adv)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+    result = Validation(constraints, ranges).enforce(ori, adv)
     assert (result == ori).all()
 
 
@@ -29,8 +33,10 @@ def test_immutable_1():
     adv = np.array([[.2, .4, .6], [.0, .5, .2], [.6, .6, .3]])
     exp = np.array([[.2, .5, .6], [.0, .5, .2], [.6, .2, .3]])
     constraints = {1: ((1,), False)}
-    ar = np.array([1] * ori.shape[0])
-    result = Validation(constraints, ar).enforce(ori, adv)
+    mn = np.array([0] * ori.shape[0])
+    mx = np.array([1] * ori.shape[0])
+    ranges = list(zip(mn, mx))
+    result = Validation(constraints, ranges).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -39,9 +45,10 @@ def test_immutable_2():
     adv = np.array([[.5, .7, .8, .1, .9, .1], [.8, .3, .2, .5, .3, .2]])
     exp = np.array([[.5, .7, .4, .1, .9, .7], [.8, .3, .4, .5, .3, .1]])
     constraints = {2: ((2,), False), 5: ((5,), False)}
-    ar = np.array([1] * ori.shape[0])
-    result = Validation(constraints, ar) \
-        .enforce(ori, adv)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+    result = Validation(constraints, ranges).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -50,8 +57,10 @@ def test_bin_feature():
     adv = np.array([[.8], [1.], [.4], [0.], [.2], [1.]])
     exp = np.array([[1.], [1.], [1.], [0.], [0.], [1.]])
     constraints = {0: ((0,), lambda x: x[0] == 0 or x[0] == 1)}
-    result = Validation(constraints, np.array([1])) \
-        .enforce(ori, adv)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+    result = Validation(constraints, ranges).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -67,8 +76,10 @@ def test_mutable_simple():
         1: ((1,), lambda x: x[0] < .3 or x[0] > .6),
         2: ((2,), lambda x: (x[0] * 10) % 2 == 0)
     }
-    ar = np.ones(ori.shape[1])
-    result = Validation(constraints, ar).enforce(ori, adv)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+    result = Validation(constraints, ranges).enforce(ori, adv)
     assert (result == exp).all()
 
 
@@ -78,8 +89,10 @@ def test_nominal():
     adv2 = np.array([[0, 1, 1, 0, 0]])
     sources = tuple(range(ori.shape[1]))
     test_f = lambda arr: sum(arr) == 1
-    mx = np.ones(ori.shape[1])
-    v_model = Validation({'A': (sources, test_f)}, mx)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+    v_model = Validation({'A': (sources, test_f)}, ranges)
     assert test_f(ori[0])
     assert test_f(adv1[0])
     assert not test_f(adv2[0])
@@ -98,8 +111,11 @@ def test_mutable_dep_reset():
         'C': ((4, 5), lambda arr: arr[0] == 0 or arr[1] == 0),
         'D': ((4, 6), lambda arr: arr[0] == 0 and arr[1] == 1)
     }
-    ar = np.ones(ori.shape[1])
-    v_model = Validation(constraints, ar, DEP)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+
+    v_model = Validation(constraints, ranges, DEP)
     assert (v_model.enforce(ori, ori) == ori).all()
     assert (v_model.enforce(ori, adv) == exp).all()
 
@@ -115,7 +131,10 @@ def test_mutable_reset_all():
         'C': ((4, 5), lambda arr: arr[0] == 0 or arr[1] == 0),
         'D': ((4, 6), lambda arr: arr[0] == 0 and arr[1] == 1)
     }
-    ar = np.ones(ori.shape[1])
-    v_model = Validation(constraints, ar, ALL)
+    mn = np.array([0] * ori.shape[1])
+    mx = np.array([1] * ori.shape[1])
+    ranges = list(zip(mn, mx))
+
+    v_model = Validation(constraints, ranges, ALL)
     assert (v_model.enforce(ori, ori) == ori).all()
     assert (v_model.enforce(ori, adv) == exp).all()
