@@ -2,10 +2,10 @@ name: LCLD
 dataset: data/lcld.csv
 desc: credit requests dataset that can be accepted or rejected
 
-
 cpgd:
   feat_file:  "data/feature_lcld.csv"
 
+# https://github.com/serval-uni-lu/moeva2-ijcai22-replication/blob/aacf2d954d58cf5b690e485a9fb81e73d6715679/src/examples/lcld/lcld_constraints.py#L75C8-L75C8
 constraints:
   immutable:
     - int_rate
@@ -27,26 +27,24 @@ constraints:
     - verification_status_Not_Verified
     - verification_status_Source_Verified
     - verification_status_Verified
-
   predicates:
-    # see: https://github.com/serval-uni-lu/moeva2-ijcai22-replication/blob/aacf2d954d58cf5b690e485a9fb81e73d6715679/src/examples/lcld/lcld_constraints.py#L75C8-L75C8
+    # (x**2)**(0.5) is approximately the abs function, https://stackoverflow.com/a/53061257/4054683
     # c1: installment calculation
-    - -20 <= installment - -(-(100 * (loan_amnt * (int_rate/1200) * (1 + int_rate/1200) ** term) / ((1 + int_rate/1200) ** term - 1)) // 100) <= 20
-    # c2: check open_acc
+    # - -20 <= installment - -(-(100 * (loan_amnt * (int_rate/1200) * (1 + int_rate/1200) ** term) / ((1 + int_rate/1200) ** term - 1)) // 100) <= 20
+    # c2: check open_acc (offset my attr min)
     - open_acc + 1 <= total_acc + 2
     # c3: check pub_rec_bankruptcies
-    - pub_rec_bankruptcies <= pub_rec
-    # c4: check term
-    - term == 36 or term == 60
+#    - pub_rec_bankruptcies <= pub_rec
+    # c4: check term (account for imprecision)
+    - ((term - 36)**2)**(0.5) <= 0.0001 or ((term - 60)**2)**(0.5) <= 0.0001
     # c5: check ratio_loan_amnt_annual_inc
-    - -0.02 <= (ratio_loan_amnt_annual_inc - loan_amnt / annual_inc) <= 0.02
+#    - -0.02 <= (ratio_loan_amnt_annual_inc - loan_amnt / annual_inc) <= 0.02
     # c6: check ratio_open_acc_total_acc
-    - -0.02 <= (ratio_open_acc_total_acc - open_acc / total_acc) <= 0.02
-    # c7: check diff_issue_d_earliest_cr_line
-    - -.1 <= diff_issue_d_earliest_cr_line - (((issue_d // 100) * 12 + (issue_d % 100)) - ((earliest_cr_line // 100) * 12 + (earliest_cr_line % 100))) <= .1
-    # c8: check ratio_pub_rec_diff_issue_d_earliest_cr_line
-    - -0.02 <= ratio_pub_rec_diff_issue_d_earliest_cr_line - pub_rec / diff_issue_d_earliest_cr_line <= 0.02
-    # c9: check ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line
-    - -0.02 <= (ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line - pub_rec_bankruptcies / diff_issue_d_earliest_cr_line) <= 0.02
-    # TODO: check since there should be 10 total
-    - -1 <= (ratio_pub_rec_bankruptcies_pub_rec - pub_rec_bankruptcies / (pub_rec + 0.00001)) * ((pub_rec + 0.00001) != 0) - (ratio_pub_rec_bankruptcies_pub_rec - pub_rec_bankruptcies / (pub_rec + 0.00001)) * ((pub_rec + 0.00001) == 0) <= 1
+#    - -0.02 <= (ratio_open_acc_total_acc - open_acc / total_acc) <= 0.02
+#    # c7: check diff_issue_d_earliest_cr_line
+#    - -.1 <= diff_issue_d_earliest_cr_line - (((issue_d // 100) * 12 + (issue_d % 100)) - ((earliest_cr_line // 100) * 12 + (earliest_cr_line % 100))) <= .1
+#    # c8: check ratio_pub_rec_diff_issue_d_earliest_cr_line
+#    - -0.02 <= ratio_pub_rec_diff_issue_d_earliest_cr_line - pub_rec / diff_issue_d_earliest_cr_line <= 0.02
+#    # c9: check ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line
+#    - -0.02 <= (ratio_pub_rec_bankruptcies_diff_issue_d_earliest_cr_line - pub_rec_bankruptcies / diff_issue_d_earliest_cr_line) <= 0.02
+#    - -1 <= (ratio_pub_rec_bankruptcies_pub_rec - pub_rec_bankruptcies / (pub_rec + 0.00001)) * ((pub_rec + 0.00001) != 0) - (ratio_pub_rec_bankruptcies_pub_rec - pub_rec_bankruptcies / (pub_rec + 0.00001)) * ((pub_rec + 0.00001) == 0) <= 1
