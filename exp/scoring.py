@@ -13,8 +13,11 @@ def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CD, scalars):
         correct, modified = ori[:, ft_i], adv[:, ft_i]
         invalid = np.where(np.subtract(correct, modified) != 0)[0]
     for (sources, pred) in [cd[ft_i] for ft_i in mutable]:
-        in_, sf = adv[:, sources], scalars[list(sources)]
-        bits = np.apply_along_axis(pred, 1, np.multiply(in_, sf))
+        in_ = adv[:, sources]
+        for i, ft_i in enumerate(sources):
+            (mn, mx) = scalars[ft_i]
+            in_[:, i] = (in_[:, i] * (mx - mn)) + mn
+        bits = np.apply_along_axis(pred, 1, in_)
         invalid = np.union1d(invalid, np.where(bits == 0)[0])
     return ori.shape[0] - invalid.shape[0], invalid
 
@@ -51,7 +54,7 @@ class AttackScore:
         self.n_valid = 0
         self.n_valid_evades = 0
 
-    def calculate(self, attack, constraints, attr_max):
+    def calculate(self, attack, constraints, attr_range):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
         original = attack.cls.predict(ori_x, ori_y)
@@ -59,7 +62,7 @@ class AttackScore:
         evades = np.where(adv_y != original)[0]
         self.evasions = np.intersect1d(evades, correct)
         self.n_valid, inv_idx = \
-            score_valid(ori_x, adv_x, constraints, attr_max)
+            score_valid(ori_x, adv_x, constraints, attr_range)
         self.valid_evades = np.setdiff1d(self.evasions, inv_idx)
         self.n_evasions = len(self.evasions)
         self.n_valid_evades = len(self.valid_evades)

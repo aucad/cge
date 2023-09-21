@@ -71,7 +71,7 @@ def log(label: str, value):
 
 def logr(label: str, n: float, d: float):
     a, b, r = round(n, 0), round(d, 0), sdiv(n, d)
-    return log(label, f'{a} of {b} - {r:.1f} %')
+    return log(label, f'{a} of {b} - {r:.2f} %')
 
 
 def logd(label: str, n: float, d: float):
