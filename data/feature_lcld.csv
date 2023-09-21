@@ -18,7 +18,7 @@ mort_acc,real,TRUE,0,51
 pub_rec_bankruptcies,real,FALSE,0,12
 fico_score,real,FALSE,662,847.5
 initial_list_status_w,int,FALSE,0,1
-application_type_Joint App,int,TRUE,0,1
+application_type_Joint_App,int,TRUE,0,1
 ratio_loan_amnt_annual_inc,real,TRUE,0.000171429,310.6060606
 ratio_open_acc_total_acc,real,TRUE,0.024390244,1
 diff_issue_d_earliest_cr_line,real,FALSE,36,999
