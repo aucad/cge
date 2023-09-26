@@ -11,23 +11,17 @@ cpgd:
 
 constraints:
   predicates:
-    - proto_tcp + proto_udp + proto_other == 1
-    - service_none + service_http + service_dns + service_other == 1
-    - state_FIN + state_INT + state_other == 1
-    - proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0) or state_FIN==1
-    - proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes == 0
-    - proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
     #  add 12 more Feature-value constraints
     # If window size is represented as 8 bits field, then swin and dwin should be in this range: [0,255]
-    - swin >= 0 and swin <= 255
-    - dwin >= 0 and dwin <= 255
-    - sloss >= 0 and sloss <= 3993
-    - dloss >= 0 and dloss <= 2627
-    - sbytes >= 0 and sbytes <= 7085342
-    - dbytes >= 46 and dbytes <= 10508068
-    - dur >= 0 and dur <= 60
-    - ct_srv_src >= 1 and ct_srv_src <= 63
-    - ct_dst_ltm >= 1 and ct_dst_ltm <= 50
-    - ct_src_dport_ltm >= 1 and ct_src_dport_ltm <= 50
-    - ct_dst_sport_ltm >= 1 and ct_dst_sport_ltm <= 46
-    - ct_dst_src_ltm >= 1 and ct_dst_src_ltm <= 63
+    - swin >= 0 or swin <= 255
+    - dwin >= 0 or dwin <= 255
+    - sloss >= 0 or sloss <= 3993
+    - dloss >= 0 or dloss <= 2627
+    - sbytes >= 0 or sbytes <= 7085342
+    - dbytes >= 46 or dbytes <= 10508068
+    - dur >= 0 or dur <= 60
+    - ct_srv_src >= 1 or ct_srv_src <= 63
+    - ct_dst_ltm >= 1 or ct_dst_ltm <= 50
+    - ct_src_dport_ltm >= 1 or ct_src_dport_ltm <= 50
+    - ct_dst_sport_ltm >= 1 or ct_dst_sport_ltm <= 46
+    - ct_dst_src_ltm >= 1 or ct_dst_src_ltm <= 63

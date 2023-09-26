@@ -11,18 +11,11 @@ cpgd:
 
 constraints:
   predicates:
-    - proto_tcp + proto_udp + proto_other == 1
-    - service_none + service_http + service_dns + service_other == 1
-    - state_FIN + state_INT + state_other == 1
-    - proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0) or state_FIN==1
-    - proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes == 0
-    - proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
     #  add 6 more Feature-correlated constraints
     - state_INT != 1 or (sbytes > 0 and dbytes == 0)                      # checked = T
     - service_dns != 1  or smean <= 512                                   # checked = T
     - dbytes != 0 or dloss == 0                                           # checked = T
-    # ct_src_dport_ltm >= ct_dst_sport_ltm except if service is none
-    -  service_none == 1 or (ct_src_dport_ltm >= ct_dst_sport_ltm)        # checked = T
+    - service_none != 1 or proto_other != 1 or ct_src_dport_ltm >= 1      # checked = T
     - state_FIN != 1 or ct_dst_sport_ltm >= 1                             # checked = T
     - (dmean >= 10) or (sjit >= djit)                                     # checked = T
 
