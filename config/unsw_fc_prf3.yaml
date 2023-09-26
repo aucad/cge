@@ -1,0 +1,45 @@
+# check the file name
+name: perf_test_1-17
+dataset: data/unsw_nb15.csv
+desc: Constraint performance test with 12 constraints
+
+dnn:
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  feat_file: "data/feature_unsw.csv"
+
+constraints:
+  predicates:
+    - proto_tcp + proto_udp + proto_other == 1
+    - service_none + service_http + service_dns + service_other == 1
+    - state_FIN + state_INT + state_other == 1
+    - proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0) or state_FIN==1
+    - proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes == 0
+    - proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
+    #  add 12 more Feature-correlated constraints
+    # if state is INT, then sbytes > 0 and dbytes == 0
+    - state_INT != 1 or (sbytes > 0 and dbytes == 0)
+    # if service is dns and proto is udp, smean <= 512
+    - (service_dns != 1 and proto_udp != 1) or smean <= 512
+    # if dbytes = 0, then sloss = dloss = 0
+    - dbytes != 0 or (sloss == 0 and dloss == 0)
+    - ct_src_dport_ltm >= ct_dst_sport_ltm
+    # if state is FIN, then ct_dst_sport_ltm = 1
+    - state_FIN != 1 or ct_dst_sport_ltm == 1
+    # if proto is tcp and service is http, then sjit >= djit
+    - (proto_tcp != 1 and service_http != 1) or (sjit >= djit)
+    # if swin and dwin = 0, then dmean = 0
+    - (swin == dwin != 0 ) or dmean == 0
+    # if swin and dwin != 0, then dmean > 0
+    - (swin == dwin == 0 ) or dmean > 0
+    # if state_INT = 1, smean >= dmean
+    - state_INT != 1 or (smean >= dmean)
+    # if state_FIN = 1, smean <= dmean
+    - state_FIN != 1 or smean <= dmean
+    # if state_other = 1, smean <= dmean
+    - state_other != 1 or smean <= dmean
+    # if trans_depth = 1, then state_FIN = 1, not vice verca.
+    - trans_depth != 1 or state_FIN == 1
+
+
