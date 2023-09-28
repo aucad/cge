@@ -197,6 +197,7 @@ class TensorFlowConstraintsVisitor(ConstraintsVisitor):
             "-": lambda left, right: left - right,
             "*": lambda left, right: left * right,
             "/": lambda left, right: left / right,
+            "%": lambda left, right: left % right,
             "**": lambda left, right: tf.math.pow(left, right),
         }
 

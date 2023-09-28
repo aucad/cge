@@ -35,6 +35,9 @@ class Value(ConstraintsNode):
     def __pow__(self, power: Value, modulo=None) -> MathOperation:
         return MathOperation("**", self, power)
 
+    def __mod__(self, power: Value, modulo=None) -> MathOperation:
+        return MathOperation("%", self, power)
+
     def __lt__(self, other: Value) -> BaseRelationConstraint:
         return LessConstraint(self, other)
 

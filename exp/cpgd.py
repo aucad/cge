@@ -23,7 +23,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from comparison.constraints.constraints import get_constraints_from_file
 from comparison.constraints.relation_constraint import \
-    Feature, BaseRelationConstraint, Constant
+    Feature, BaseRelationConstraint, Constant, MathOperation
 from comparison.cpgd.cpgd import CPGD
 from comparison.cpgd.tf_classifier import TensorflowClassifier
 
@@ -109,74 +109,53 @@ def get_iot_constraints() -> List[BaseRelationConstraint]:
 
 
 def get_lcld_constraints() -> List[BaseRelationConstraint]:
-    # problem with %, mod is not defined
-    def date_feature_to_month(a: Feature):
-        return np.floor(a / Constant(100)) * Constant(12) + (
-                    a % Constant(100))
+    tol = Constant(1e-3)
 
-    # installment = loan_amount * int_rate(1 + int_rate) ^ term / ((1 +
-    # int_rate) ^ term - 1)
-    calculated_installment = ((
-                     Feature(0) * (Feature(2) / Constant(1200)) *
-                    (Constant(1) + Feature(2) / Constant(
-                        1200)) ** Feature(1))
-                 / ((Constant(1) + Feature(2) / Constant(1200))
-                    ** Feature(1) - Constant(1)))
-
-    # calculated_installment = (
-    #                                  x[:, 0] * (x[:, 2] / 1200) * (1 + x[:, 2] / 1200) ** x[:, 1]
-    #                          ) / ((1 + x[:, 2] / 1200) ** x[:, 1] - 1)
-    # g41 = np.absolute(x[:, 3] - calculated_installment) - 0.099999
-
-    g1 = np.absolute(Feature(3) - calculated_installment)
+    ir_1200 = Feature(2) / Constant(1200)
+    ir_1200_p1 = Constant(1) + ir_1200
+    g1 = ((Feature(3) - (
+            (Feature(0) * ir_1200 * (ir_1200_p1 ** Feature(1))) / (
+                (ir_1200_p1 ** Feature(1)) - Constant(1)))) ** Constant(
+        2) ** Constant(0.5) - Constant(0.099999)) <= Constant(20)
 
     # open_acc <= total_acc
-    g2 = Feature(10) - Feature(14)
+    g2 = Feature(10) <= Feature(14)
 
     # pub_rec_bankruptcies <= pub_rec
-    g3 = Feature(16) - Feature(11)
+    g3 = Feature(16) <= Feature(11)
 
     # term = 36 or term = 60
-    g4 = np.absolute(
-        (Constant(36) - Feature(1)) * (Constant(60) - Feature(1)))
+    term_val = Feature(1) ** Constant(2) ** Constant(0.5)
+    g4 = (term_val <= Constant(36) + tol or term_val <= Constant(60) + tol)
 
-    # ratio_loan_amnt_annual_inc
-    g5 = np.absolute(Feature(20) - Feature(0) / Feature(6))
+    # # ratio_loan_amnt_annual_inc
+    g5 = (((Feature(20) - Feature(0) / Feature(6)) ** Constant(2))
+          ** Constant(0.5)) <= tol
 
-    # ratio_open_acc_total_acc
-    g6 = np.absolute(Feature(21) - Feature(10) / Feature(14))
+    # # ratio_open_acc_total_acc
+    # g6 = np.absolute(Feature(21) - Feature(10) / Feature(14))
+    g6 = (((Feature(21) - Feature(10) / Feature(14)) ** Constant(2))
+          ** Constant(0.5)) <= tol
 
     # diff_issue_d_earliest_cr_line
-    g7 = np.absolute(
-        Feature(22)
-        - (date_feature_to_month(Feature(7)) - date_feature_to_month(
-            Feature(9)))
-    )
+    def date_ft_to_month(x):
+        return Feature(x) / Constant(100) * Constant(12) \
+               + (Feature(x) % Constant(100))
+
+    g7 = Feature(22) - (date_ft_to_month(7) - date_ft_to_month(9)) <= tol
 
     # ratio_pub_rec_diff_issue_d_earliest_cr_line
-    g8 = np.absolute(Feature(23) - Feature(11) / Feature(22))
+    g8 = (((Feature(23) - Feature(11) / Feature(22)) ** Constant(2))
+          ** Constant(0.5)) <= tol
 
     # ratio_pub_rec_bankruptcies_pub_rec
-    g9 = np.absolute(Feature(24) - Feature(16) / Feature(22))
+    g9 = (((Feature(24) - Feature(16) / Feature(22)) ** Constant(2))
+          ** Constant(0.5)) <= tol
 
-    # Neea:Can you help with this part of constraints, you can refer
-    # to "reference/problem_definition.py" for more info
-    # def apply_const_on_ratio_pub():
-    #     ratio_mask = x_adv[:, 11] == 0
-    #     ratio = np.empty(x_adv.shape[0])
-    #     ratio = np.ma.masked_array
-    #     (ratio, mask=ratio_mask, fill_value=-1).filled()
-    #     ratio[~ratio_mask] = x_adv[~ratio_mask, 16] / x_adv[~ratio_mask, 11]
-    #     ratio[ratio == np.inf] = -1
-    #     ratio[np.isnan(ratio)] = -1
-    #     return ratio
+    g10 = ((Feature(25) - Feature(16) / (Feature(11) + Constant(1e-5)))
+           ** Constant(2) ** Constant(0.5)) <= tol
 
-    # ratio_pub_rec_bankruptcies_pub_rec
-    # cal_ratio = apply_const_on_ratio_pub()
-    # g10 = np.absolute(Feature(25) - cal_ratio)
-
-    # add g10 to return list after fix it
-    return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
+    return [g1, g2, g3, g4, g5, g6, g7, g8, g9, g10]
 
 
 # flake8: noqa: F841
@@ -233,7 +212,7 @@ def get_url_contraints() -> List[BaseRelationConstraint]:
     g15 = (Constant(4) * Feature(2)) <= (Feature(0) + Constant(1))
     g16 = (Constant(2) * Feature(23)) <= (Feature(0) + Constant(1))
 
-    return [g1, g2, g3, g13, g14, g15, g16]
+    return [g1, g2, g3, g4, g5, g6, g8, g10, g11, g12, g13, g14, g15, g16]
 
 
 def init_constraints(feat_file):
