@@ -1,0 +1,131 @@
+attack:
+  can_validate: true
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 0,
+    norm: 2, targeted: false, verbose: true}
+  name: HopSkipJumpConst
+classifier:
+  config:
+    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
+      tree_method: exact}
+    train: {num_boost_round: 20}
+  name: XGBoost
+experiment:
+  attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
+    6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
+    11: sbytes, 12: dbytes, 13: rate, 14: sloss, 15: dloss, 16: sjit, 17: djit, 18: swin,
+    19: stcpb, 20: dtcpb, 21: dwin, 22: smean, 23: dmean, 24: trans_depth, 25: ct_srv_src,
+    26: ct_dst_ltm, 27: ct_src_dport_ltm, 28: ct_dst_sport_ltm, 29: ct_dst_src_ltm,
+    30: ct_src_ltm, 31: ct_srv_dst, 32: label}
+  attrs_ranges:
+    ct_dst_ltm: [1, 50]
+    ct_dst_sport_ltm: [1, 46]
+    ct_dst_src_ltm: [1, 63]
+    ct_src_dport_ltm: [1, 50]
+    ct_src_ltm: [1, 50]
+    ct_srv_dst: [1, 62]
+    ct_srv_src: [1, 63]
+    dbytes: [0, 7085342]
+    djit: [0, 199573]
+    dloss: [0, 2627]
+    dmean: [0, 1458]
+    dtcpb: [0, 4294383134]
+    dur: [0, 60]
+    dwin: [0, 255]
+    proto_other: [0, 1]
+    proto_tcp: [0, 1]
+    proto_udp: [0, 1]
+    rate: [0, 1000001]
+    sbytes: [46, 10508068]
+    service_dns: [0, 1]
+    service_http: [0, 1]
+    service_none: [0, 1]
+    service_other: [0, 1]
+    sjit: [0, 1460481]
+    sloss: [0, 3993]
+    smean: [28, 1499]
+    state_FIN: [0, 1]
+    state_INT: [0, 1]
+    state_other: [0, 1]
+    stcpb: [0, 4294729542]
+    swin: [0, 255]
+    trans_depth: [0, 2]
+  capture_utc: 1695932617238051383
+  class_distribution: {0: 5000, 1: 5000}
+  config: config/unsw.yaml
+  dataset: data/unsw_nb15.csv
+  description: sampled from 175K training set
+  duration_sec: 72.5
+  end: 1695932615623133250
+  k_folds: 5
+  n_attributes: 33
+  n_classes: 2
+  n_records: 10000
+  start: 1695932543171830677
+  system:
+    cpu_current_frequency: 2199.998
+    cpu_max_frequency: 0.0
+    cpu_min_frequency: 0.0
+    cpu_physical_cores: 4
+    cpu_total_cores: 8
+    cpu_total_usage: 94.4
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    machine: x86_64
+    processor: x86_64
+    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    release: 5.15.0-1042-gcp
+    system: Linux
+    version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
+    virtual_mem_available: 30.27GB
+    virtual_mem_percentage: 3.4
+    virtual_mem_total_size: 31.34GB
+    virtual_mem_used: 625.84MB
+folds:
+  accuracy: [0.942, 0.942, 0.944, 0.935, 0.931]
+  f_score: [0.941767, 0.941591, 0.943662, 0.933402, 0.931138]
+  n_evasions: [1141, 1249, 939, 1458, 1416]
+  n_records: [2000, 2000, 2000, 2000, 2000]
+  n_valid: [2000, 2000, 2000, 2000, 2000]
+  n_valid_evades: [1141, 1249, 939, 1458, 1416]
+  precision: [0.949393, 0.945399, 0.944612, 0.947971, 0.941473]
+  recall: [0.934263, 0.937813, 0.942714, 0.919273, 0.921027]
+invalid_rows: []
+validation:
+  dependencies:
+    a: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+    b: [4, 5, 6, 7]
+    c: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+    d: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+    e: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+    f: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+  immutable: []
+  n_constraints: 6
+  predicates:
+    a:
+      attrs: {1: proto_tcp, 2: proto_udp, 3: proto_other}
+      exec: 'lambda a: a[0] + a[1] + a[2] == 1'
+      text: proto_tcp + proto_udp + proto_other == 1
+    b:
+      attrs: {4: service_none, 5: service_http, 6: service_dns, 7: service_other}
+      exec: 'lambda a: a[0] + a[1] + a[2] + a[3] == 1'
+      text: service_none + service_http + service_dns + service_other == 1
+    c:
+      attrs: {8: state_FIN, 9: state_INT, 10: state_other}
+      exec: 'lambda a: a[0] + a[1] + a[2] == 1'
+      text: state_FIN + state_INT + state_other == 1
+    d:
+      attrs: {1: proto_tcp, 8: state_FIN, 12: dbytes, 18: swin, 21: dwin}
+      exec: 'lambda a: a[0] != 1 or (a[3] == 255 or a[4] == 255) or (a[2] == a[4]
+        == 0) or a[1]==1'
+      text: proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0)
+        or state_FIN==1
+    e:
+      attrs: {0: dur, 1: proto_tcp, 8: state_FIN, 9: state_INT, 12: dbytes}
+      exec: 'lambda a: a[1] != 1 or a[2] == 1 or a[0] == 0 or a[3] != 1 or a[4] ==
+        0'
+      text: proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes
+        == 0
+    f:
+      attrs: {1: proto_tcp, 18: swin, 19: stcpb, 20: dtcpb, 21: dwin}
+      exec: 'lambda a: a[0] == 1 or (a[1] == a[4] == a[2] == a[3] == 0)'
+      text: proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
+  reset_strategy: 2

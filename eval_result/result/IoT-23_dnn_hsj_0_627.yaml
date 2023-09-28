@@ -1,0 +1,126 @@
+attack:
+  can_validate: true
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 0,
+    norm: 2, targeted: false, verbose: true}
+  name: HopSkipJumpConst
+classifier:
+  config:
+    layers: [64, 32]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
+experiment:
+  attrs: {0: proto=udp, 1: proto=tcp, 2: proto=icmp, 3: duration, 4: orig_bytes, 5: resp_bytes,
+    6: conn_state=S0, 7: conn_state=SF, 8: conn_state=other, 9: missed_bytes, 10: history=D,
+    11: history=Dd, 12: history=S, 13: history=other, 14: orig_pkts, 15: orig_ip_bytes,
+    16: resp_pkts, 17: resp_ip_bytes, 18: label}
+  attrs_ranges:
+    conn_state=S0: [0, 1]
+    conn_state=SF: [0, 1]
+    conn_state=other: [0, 1]
+    duration: [0, 503]
+    history=D: [0, 1]
+    history=Dd: [0, 1]
+    history=S: [0, 1]
+    history=other: [0, 1]
+    missed_bytes: [0, 5792]
+    orig_bytes: [0, 952]
+    orig_ip_bytes: [0, 204400]
+    orig_pkts: [0, 5110]
+    proto=icmp: [0, 1]
+    proto=tcp: [0, 1]
+    proto=udp: [0, 1]
+    resp_bytes: [0, 164266]
+    resp_ip_bytes: [0, 168910]
+    resp_pkts: [0, 184]
+  capture_utc: 1695930458654647980
+  class_distribution: {0: 5000, 1: 5000}
+  config: config/iot23.yaml
+  dataset: data/ctu_1-8-34.csv
+  description: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
+  duration_sec: 1576.6
+  end: 1695930457035876833
+  k_folds: 5
+  n_attributes: 19
+  n_classes: 2
+  n_records: 10000
+  start: 1695928880463755871
+  system:
+    cpu_current_frequency: 2199.998
+    cpu_max_frequency: 0.0
+    cpu_min_frequency: 0.0
+    cpu_physical_cores: 4
+    cpu_total_cores: 8
+    cpu_total_usage: 12.6
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+    machine: x86_64
+    processor: x86_64
+    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    release: 5.15.0-1042-gcp
+    system: Linux
+    version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
+    virtual_mem_available: 30.21GB
+    virtual_mem_percentage: 3.6
+    virtual_mem_total_size: 31.34GB
+    virtual_mem_used: 686.56MB
+folds:
+  accuracy: [0.9755, 0.967, 0.982, 0.9795, 0.983]
+  f_score: [0.975414, 0.967647, 0.982336, 0.980504, 0.983431]
+  n_evasions: [0, 0, 0, 0, 0]
+  n_records: [2000, 2000, 2000, 2000, 2000]
+  n_valid: [2000, 2000, 2000, 2000, 2000]
+  n_valid_evades: [0, 0, 0, 0, 0]
+  precision: [0.952008, 0.937322, 0.965284, 0.961754, 0.967402]
+  recall: [1.0, 1.0, 1.0, 1.0, 1.0]
+invalid_rows: []
+validation:
+  dependencies:
+    a: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+    b: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+    c: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+    d: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+    e: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+    f: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+    g: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+    h: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+  immutable: [0, 1, 2, 6, 7, 8, 10, 11, 12, 13]
+  n_constraints: 18
+  predicates:
+    a:
+      attrs: {14: orig_pkts, 15: orig_ip_bytes}
+      exec: 'lambda a: a[0] <= a[1]'
+      text: orig_pkts <= orig_ip_bytes
+    b:
+      attrs: {16: resp_pkts, 17: resp_ip_bytes}
+      exec: 'lambda a: a[0] <= a[1]'
+      text: resp_pkts <= resp_ip_bytes
+    c:
+      attrs: {6: conn_state=S0, 16: resp_pkts, 17: resp_ip_bytes}
+      exec: 'lambda a: a[0] != 1 or a[1] == a[2] == 0'
+      text: conn_state=S0 != 1 or resp_pkts == resp_ip_bytes == 0
+    d:
+      attrs: {1: proto=tcp, 14: orig_pkts, 15: orig_ip_bytes}
+      exec: 'lambda a: a[0] != 1 or a[1] == 0 or a[2] > 20'
+      text: proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20
+    e:
+      attrs: {1: proto=tcp, 16: resp_pkts, 17: resp_ip_bytes}
+      exec: 'lambda a: a[0] != 1 or a[1] == 0 or a[2] >= 20'
+      text: proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20
+    f:
+      attrs: {1: proto=tcp, 8: conn_state=other, 14: orig_pkts, 15: orig_ip_bytes,
+        16: resp_pkts, 17: resp_ip_bytes}
+      exec: 'lambda a: a[0] != 1 or a[2] >= a[4] or a[3] < a[5] or a[1] != 1'
+      text: proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes
+        or conn_state=other != 1
+    g:
+      attrs: {0: proto=udp, 7: conn_state=SF, 10: history=D, 11: history=Dd, 14: orig_pkts,
+        16: resp_pkts}
+      exec: 'lambda a: a[0] != 1 or a[4] >= a[5] or (a[3] == 1 and a[1] == 1)'
+      text: proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF
+        == 1)
+    h:
+      attrs: {0: proto=udp, 7: conn_state=SF, 14: orig_pkts, 15: orig_ip_bytes, 16: resp_pkts,
+        17: resp_ip_bytes}
+      exec: 'lambda a: a[0] != 1 or a[2] < a[4] or a[3] >= a[5] or a[1] == 1'
+      text: proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes
+        or conn_state=SF == 1
+  reset_strategy: 2
