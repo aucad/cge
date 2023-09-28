@@ -35,6 +35,8 @@ The software dependencies are specified in `requirements.txt` and `requirements-
 
 ## Usage
 
+Runtime requirements: Python 3.9 or higher.
+
 Install dependencies
 
 ```
