@@ -111,14 +111,16 @@ def get_iot_constraints() -> List[BaseRelationConstraint]:
 def get_lcld_constraints() -> List[BaseRelationConstraint]:
     # problem with %, mod is not defined
     def date_feature_to_month(a: Feature):
-        return np.floor(a / Constant(100)) * Constant(12) + (a % Constant(100))
+        return np.floor(a / Constant(100)) * Constant(12) + (
+                    a % Constant(100))
 
     # installment = loan_amount * int_rate(1 + int_rate) ^ term / ((1 +
     # int_rate) ^ term - 1)
     calculated_installment = \
-        (np.ceil(Constant(100) * (Feature(0) * (Feature(2) / Constant(1200)) *
-                                  (Constant(1) + Feature(2) / Constant(
-                                      1200)) ** Feature(1))
+        (np.ceil(Constant(100) * (
+                    Feature(0) * (Feature(2) / Constant(1200)) *
+                    (Constant(1) + Feature(2) / Constant(
+                        1200)) ** Feature(1))
                  / ((Constant(1) + Feature(2) / Constant(1200))
                     ** Feature(1) - Constant(1))) / Constant(100))
 
@@ -131,7 +133,8 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
     g3 = Feature(16) - Feature(11)
 
     # term = 36 or term = 60
-    g4 = np.absolute((Constant(36) - Feature(1)) * (Constant(60) - Feature(1)))
+    g4 = np.absolute(
+        (Constant(36) - Feature(1)) * (Constant(60) - Feature(1)))
 
     # ratio_loan_amnt_annual_inc
     g5 = np.absolute(Feature(20) - Feature(0) / Feature(6))
@@ -172,6 +175,7 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
     return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
 
 
+# flake8: noqa: F841
 def get_url_contraints() -> List[BaseRelationConstraint]:
     """from <https://tinyurl.com/zdypm9a8>"""
 
@@ -211,10 +215,12 @@ def get_url_contraints() -> List[BaseRelationConstraint]:
     # g9 = apply_if_a_supp_zero_than_b_supp_zero(2, 26)
 
     # g10: if x[:, 28] > 0 then x[:,25] > 0
-    g10 = apply_if_a_supp_zero_than_b_supp_zero(Feature(28), Feature(25))
+    g10 = apply_if_a_supp_zero_than_b_supp_zero(Feature(28),
+                                                Feature(25))
 
     # g11: if x[:, 31] > 0 then x[:,26] > 0
-    g11 = apply_if_a_supp_zero_than_b_supp_zero(Feature(31), Feature(26))
+    g11 = apply_if_a_supp_zero_than_b_supp_zero(Feature(31),
+                                                Feature(26))
 
     # x[:,38] <= x[:,37]
     g12 = Feature(38) <= Feature(37)
@@ -223,7 +229,7 @@ def get_url_contraints() -> List[BaseRelationConstraint]:
     g15 = (Constant(4) * Feature(2)) <= (Feature(0) + Constant(1))
     g16 = (Constant(2) * Feature(23)) <= (Feature(0) + Constant(1))
 
-    return [g1, g2, g3, , g13, g14, g15, g16]
+    return [g1, g2, g3, g13, g14, g15, g16]
 
 
 def init_constraints(feat_file):

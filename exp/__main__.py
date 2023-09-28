@@ -47,6 +47,13 @@ def parse_args(parser: ArgumentParser):
         choices=[1, 2],
         help='reset strategy: 1=all, 2=dependencies'
     )
+    parser.add_argument(
+        '-p', '--pattern',
+        type=str,
+        action='store',
+        help='expression or pattern to append to results file name',
+        default=None,
+    )
     return parser.parse_args()
 
 
@@ -88,6 +95,7 @@ def build_config(args):
     config['cls'] = args.cls or config['cls']
     if args.reset and int(args.reset) > 0:
         config['reset_strategy'] = args.reset
+    config['fn_pattern'] = args.pattern if args.pattern else None
     config = to_namedtuple(pred_parse(config))
     check_params(config)
     return config

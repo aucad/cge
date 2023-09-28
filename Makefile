@@ -1,16 +1,24 @@
 SHELL := /bin/bash
 
-ITERS = 2 5
+ITERS = 2 5 0
+TIMES = 1 2 3 4 5
+CLASSIFIERS = dnn xgb
 ATTACKS = hsj pgd zoo cpgd
-CONFIGS = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name 'test.yaml')
+ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name '*_prf*.yaml')
+PERF_CONF = $(shell find config/$(cat) -type f -iname '*_prf*.yaml')
 
-all: exp
+all: attacks time
 
 dev: test lint
 
-exp:
-	$(foreach f, $(CONFIGS), $(foreach a, $(ATTACKS), $(foreach i, $(ITERS), \
-	python3 -m exp $(f) $($(v)) -i $(i) -a $(a) -v ; )))
+attacks:
+	$(foreach f, $(ATTK_CONF), $(foreach a, $(ATTACKS), \
+	$(foreach c, $(CLASSIFIERS), $(foreach i, $(ITERS), \
+	python3 -m exp $(f) -i $(i) -a $(a) -c $(c) -v ; ))))
+
+time:
+	$(foreach f, $(PERF_CONF), $(foreach t, $(TIMES), \
+	python3 -m exp $(f) --pattern $(t) ; ))
 
 test:
 	pytest --cov-report term-missing --cov=./exp test
@@ -29,4 +37,4 @@ clean:
 	@find . -name '__pycache__' -exec rm -fr {} +
 
 
-.PHONY: exp test
+.PHONY: test

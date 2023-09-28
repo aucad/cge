@@ -41,10 +41,11 @@ def upper_attrs(cname):
 
 
 def file_name(c):
-    r = str(round(time.time() * 1000))[-3:]
+    r = c.fn_pattern or str(round(time.time() * 1000))[-3:]
     v = "" if c.validate else "REG_"
     a, s, n = c.attack, c.cls, c.name
-    i = getattr(c, a)['max_iter'] if 'max_iter' in getattr(c, a) else 'auto'
+    i = getattr(c, a)['max_iter'] \
+        if 'max_iter' in getattr(c, a) else 'auto'
     return os.path.join(c.out, f'{v}{n}_{s}_{a}_{i}_{r}.yaml')
 
 

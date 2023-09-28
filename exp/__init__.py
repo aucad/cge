@@ -5,6 +5,7 @@ Adversarial machine learning with constraints.
 """
 
 __title__ = 'Constrained AML attacks'
+__author__ = "@nkrusch and @Nour-Alhussien"
 __license__ = 'MIT'
 __version__ = '1.0.0'
 
