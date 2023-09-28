@@ -3,6 +3,12 @@ name: perf_test_1-13
 dataset: data/unsw_nb15.csv
 desc: Constraint performance test with 12 constraints
 
+validate: true
+cls: xgb
+attack: hsj
+hsj:
+  max_iter: 5
+
 dnn:
   layers: [ 64, 64, 32 ]
 
