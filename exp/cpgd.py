@@ -116,13 +116,17 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
 
     # installment = loan_amount * int_rate(1 + int_rate) ^ term / ((1 +
     # int_rate) ^ term - 1)
-    calculated_installment = \
-        (np.ceil(Constant(100) * (
-                    Feature(0) * (Feature(2) / Constant(1200)) *
+    calculated_installment = ((
+                     Feature(0) * (Feature(2) / Constant(1200)) *
                     (Constant(1) + Feature(2) / Constant(
                         1200)) ** Feature(1))
                  / ((Constant(1) + Feature(2) / Constant(1200))
-                    ** Feature(1) - Constant(1))) / Constant(100))
+                    ** Feature(1) - Constant(1)))
+
+    # calculated_installment = (
+    #                                  x[:, 0] * (x[:, 2] / 1200) * (1 + x[:, 2] / 1200) ** x[:, 1]
+    #                          ) / ((1 + x[:, 2] / 1200) ** x[:, 1] - 1)
+    # g41 = np.absolute(x[:, 3] - calculated_installment) - 0.099999
 
     g1 = np.absolute(Feature(3) - calculated_installment)
 
