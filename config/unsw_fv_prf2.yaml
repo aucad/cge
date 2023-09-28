@@ -18,4 +18,4 @@ constraints:
     - sloss >= 0 or sloss <= 3993
     - dloss >= 0 or dloss <= 2627
     - sbytes >= 0 or sbytes <= 7085342
-    - dbytes >= 46 or dbytes <= 10508068
+    - dbytes >= 0 or dbytes <= 10508068

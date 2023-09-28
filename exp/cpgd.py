@@ -223,7 +223,7 @@ def get_url_contraints() -> List[BaseRelationConstraint]:
     g15 = (Constant(4) * Feature(2)) <= (Feature(0) + Constant(1))
     g16 = (Constant(2) * Feature(23)) <= (Feature(0) + Constant(1))
 
-    return [g1, g2, g3, g4, g5, g6, g8, g10, g11, g12, g13, g14, g15, g16]
+    return [g1, g2, g3, , g13, g14, g15, g16]
 
 
 def init_constraints(feat_file):

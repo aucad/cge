@@ -12,8 +12,8 @@ cpgd:
 constraints:
   predicates:
     #  add 6 more Feature-correlated constraints
-    - state_INT != 1 or (sbytes > 0 and dbytes == 0)                      # checked = T
-    - service_dns != 1  or smean <= 512                                   # checked = T
+    - state_INT != 1 or dbytes == 0                                      # checked = T
+    - service_dns != 1 or smean <= 512                                   # checked = T
     - dbytes != 0 or dloss == 0                                           # checked = T
     - service_none != 1 or proto_other != 1 or ct_src_dport_ltm >= 1      # checked = T
     - state_FIN != 1 or ct_dst_sport_ltm >= 1                             # checked = T
