@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-ITERS = 2 5 0
+ITERS = 0
 TIMES = 1 2 3 4 5
 CLASSIFIERS = dnn xgb
 ATTACKS = hsj pgd zoo cpgd
