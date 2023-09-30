@@ -6,7 +6,7 @@ ATTACKS = hsj pgd zoo cpgd
 ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name '*_prf*.yaml')
 PERF_CONF = $(shell find config/$(cat) -type f -iname '*_prf*.yaml')
 
-all: attacks time
+all: attacks
 
 dev: test lint
 
