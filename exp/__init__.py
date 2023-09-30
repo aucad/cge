@@ -27,8 +27,8 @@ from exp.xgb import XGBoost
 from exp.dnn import DeepNeuralNetwork
 from exp.classifier import ClsPicker
 from exp.cpgd import CPGD, cpgd_apply_and_predict
-from exp.zoo import ZooConst
-from exp.pgd import PGDConst
-from exp.hopskip import HopSkipJumpConst
+from exp.zoo import VZoo
+from exp.pgd import VPGD
+from exp.hopskip import VHSJ
 from exp.attack import AttackRunner, AttackPicker
 from exp.experiment import Experiment

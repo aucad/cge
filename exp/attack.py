@@ -5,7 +5,7 @@ import numpy as np
 from art.attacks.evasion import ZooAttack, \
     ProjectedGradientDescent as Pgd, HopSkipJump
 
-from exp import ZooConst, PGDConst, HopSkipJumpConst, AttackScore, \
+from exp import VZoo, VPGD, VHSJ, AttackScore, \
     Validation, Validatable, cpgd_apply_and_predict, CPGD
 from exp.utility import upper_attrs
 
@@ -24,11 +24,11 @@ class AttackPicker:
     @staticmethod
     def load_attack(attack_name, apply_constr: bool):
         if attack_name == AttackPicker.ZOO:
-            return ZooConst if apply_constr else ZooAttack
+            return VZoo if apply_constr else ZooAttack
         if attack_name == AttackPicker.PDG:
-            return PGDConst if apply_constr else Pgd
+            return VPGD if apply_constr else Pgd
         if attack_name == AttackPicker.HSJ:
-            return HopSkipJumpConst if apply_constr else HopSkipJump
+            return VHSJ if apply_constr else HopSkipJump
         if attack_name == AttackPicker.CPGD:
             return CPGD
 

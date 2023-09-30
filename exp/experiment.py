@@ -59,8 +59,16 @@ class Experiment:
         self.end = time.time_ns()
 
         self.result.log()
-        plot_graph(self.validation, c, self.attrs)
+        self.graph()
         write_yaml(file_name(c), self.to_dict())
+
+    def graph(self):
+        if len(self.attrs) == 0:
+            self.prepare_input_data()
+        validation = Validation(
+            self.config.constraints, self.attrs,
+            self.config.reset_strategy)
+        plot_graph(validation, self.config, self.attrs)
 
     def prepare_input_data(self):
         np.seterr(divide='ignore', invalid='ignore')
@@ -106,6 +114,7 @@ class Experiment:
     # noinspection PyTypeChecker
     def to_dict(self) -> dict:
         return {'experiment': {
+            'name': self.config.name,
             'dataset': self.config.dataset,
             'description': self.config.desc,
             'config': self.config.config_path,

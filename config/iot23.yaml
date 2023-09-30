@@ -30,9 +30,9 @@ constraints:
   predicates:
     - orig_pkts <= orig_ip_bytes
     - resp_pkts <= resp_ip_bytes
-    - conn_state=S0 != 1 or resp_pkts == resp_ip_bytes == 0
-    - proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20
-    - proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20
-    - proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or conn_state=other != 1
-    - proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF == 1)
-    - proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or conn_state=SF == 1
+    - int(conn_state=S0) != 1 or int(resp_pkts) == int(resp_ip_bytes) == 0
+    - int(proto=tcp) != 1 or int(orig_pkts) == 0 or orig_ip_bytes >= 20
+    - int(proto=tcp) != 1 or int(resp_pkts) == 0 or resp_ip_bytes >= 20
+    - int(proto=tcp) != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes or int(conn_state=other) != 1
+    - int(proto=udp) != 1 or orig_pkts >= resp_pkts or (int(history=Dd) == 1 and int(conn_state=SF) == 1)
+    - int(proto=udp) != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes or int(conn_state=SF) == 1

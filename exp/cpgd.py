@@ -29,93 +29,75 @@ from comparison.cpgd.tf_classifier import TensorflowClassifier
 
 
 def get_unsw_constraints() -> List[BaseRelationConstraint]:
-    def apply_const_on_tcp_fields(
-            a: Feature, b: Feature, c: Feature, d: Feature, e: Feature,
-            f: Feature, g: Feature, h: Feature, i: Feature):
-        return (((a != Constant(1))
-                 or (b == Constant(255) or c == Constant(255))
-                 or (d == Constant(0) and c == Constant(0))
-                 or e == Constant(1) or f == Constant(0)
-                 or d == Constant(0) or g != Constant(1))
-                and (a == Constant(1)
-                     or (b == Constant(0) and c == Constant(0)
-                         and h == Constant(0) and i == Constant(0))))
+    g1 = Feature(1) + Feature(2) + Feature(3) == Constant(1)
 
-    def apply_const_on_dur(a: Feature, b: Feature):
-        return a == Constant(0) or b == Constant(0)
+    g2 = (Feature(4) + Feature(5) + Feature(6) + Feature(7) ==
+          Constant(1))
 
-    def apply_const_on_dur_dbyte(a: Feature, b: Feature, c: Feature):
-        return a > Constant(0) or b == Constant(1) or c == Constant(0)
+    g3 = Feature(8) + Feature(9) + Feature(10) == Constant(1)
 
-    # if proto != tcp, then all tcp fields should be 0
-    g1 = apply_const_on_tcp_fields(Feature(1), Feature(18), Feature(21),
-                                   Feature(12), Feature(8), Feature(0),
-                                   Feature(9), Feature(19), Feature(20))
+    g4 = ((Feature(1)) != Constant(1) or
+          (Feature(18) == Constant(255) or
+           Feature(21) == Constant(255)) or
+          (Feature(12) == Feature(21) == Constant(0)) or
+          Feature(8) == Constant(1))
 
-    # if dur=0, then dbytes=0
-    g2 = apply_const_on_dur(Feature(0), Feature(12))
+    g5 = ((Feature(1)) != Constant(1) or
+          Feature(8) == Constant(1) or
+          Feature(0) == Constant(0) or
+          Feature(9) != Constant(1) or
+          Feature(12) == Constant(0))
 
-    # if dur > 0 and stat=INT, then dbytes = 0
-    g3 = apply_const_on_dur_dbyte(Feature(0), Feature(9), Feature(12))
+    g6 = (Feature(1) == Constant(1) or
+          (Feature(18) == Feature(19) == Feature(20) ==
+           Feature(21) == 0))
 
-    return [g1, g2, g3]
+    return [g1, g2, g3, g4, g5, g6]
 
 
 def get_iot_constraints() -> List[BaseRelationConstraint]:
-    def apply_const_on_s0state(a: Feature, b: Feature, c: Feature):
-        return (a != Constant(1)) or (b == c == Constant(0))
-
-    def apply_const_on_orig_ip_bytes(a: Feature, b: Feature, c: Feature,
-                                     d: Feature):
-        return ((a != Constant(1))
-                or b == Constant(0) or c >= Constant(20)
-                or g5 or g6 or d != 1)
-
-    def apply_const_on_resp_pkt(a: Feature, b: Feature, c: Feature):
-        return ((a != Constant(1))
-                or g5 or (b == Constant(1) and c == Constant(1))
-                or g7 or g8 or c == Constant(1))
-
-    # orig_pkts <= orig_ip_bytes
     g1 = Feature(14) <= Feature(15)
 
-    # resp_pkts <= resp_ip_bytes
     g2 = Feature(16) <= Feature(17)
 
-    # when the connection state is S0, there is no response packet
-    # and bytes
-    g3 = apply_const_on_s0state(Feature(6), Feature(16), Feature(17))
+    g3 = ((Feature(6) != Constant(1)) or
+          (Feature(16) == Feature(17) == Constant(0)))
 
-    # ori_packets > 0 and  ori_bytes > 20
-    g4 = apply_const_on_orig_ip_bytes(Feature(1), Feature(14),
-                                      Feature(15), Feature(8))
+    g4 = (Feature(1) != Constant(1) or
+          Feature(14) == Constant(0) or
+          Feature(15) >= Constant(20))
 
-    # orig_pkts >= resp_pkts
-    g5 = Feature(14) >= Feature(16)
+    g5 = (Feature(1) != Constant(1) or
+          Feature(16) == Constant(0) or
+          Feature(17) >= Constant(20))
 
-    # orig_ip_bytes < resp_ip_bytes
-    g6 = Feature(15) < Feature(17)
+    g6 = (Feature(1) != Constant(1) or
+          Feature(14) >= Feature(16) or
+          Feature(15) < Feature(17) or
+          Feature(8) != Constant(1))
 
-    # orig_pkts < resp_pkts
-    g7 = Feature(14) < Feature(16)
+    g7 = (Feature(0) != Constant(1) or
+          Feature(14) >= Feature(16) or
+          (Feature(11) == Constant(1) and
+           Feature(7) == Constant(1)))
 
-    # orig_ip_bytes >= resp_ip_bytes
-    g8 = Feature(15) >= Feature(17)
+    g8 = (Feature(0) != Constant(1) or
+          Feature(14) < Feature(16) or
+          Feature(15) >= Feature(17) or
+          Feature(7) == Constant(1))
 
-    # constraints when proto is not udp
-    g9 = apply_const_on_resp_pkt(Feature(0), Feature(10), Feature(7))
-
-    return [g1, g2, g3, g4, g5, g6, g7, g8, g9]
+    return [g1, g2, g3, g4, g5, g6, g7, g8]
 
 
 def get_lcld_constraints() -> List[BaseRelationConstraint]:
+    """from <https://tinyurl.com/cfvpjhwu>"""
     tol = Constant(1e-3)
 
     ir_1200 = Feature(2) / Constant(1200)
     ir_1200_p1 = Constant(1) + ir_1200
     g1 = ((Feature(3) - (
             (Feature(0) * ir_1200 * (ir_1200_p1 ** Feature(1))) / (
-                (ir_1200_p1 ** Feature(1)) - Constant(1)))) ** Constant(
+            (ir_1200_p1 ** Feature(1)) - Constant(1)))) ** Constant(
         2) ** Constant(0.5) - Constant(0.099999)) <= Constant(20)
 
     # open_acc <= total_acc
@@ -126,7 +108,8 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
 
     # term = 36 or term = 60
     term_val = Feature(1) ** Constant(2) ** Constant(0.5)
-    g4 = (term_val <= Constant(36) + tol or term_val <= Constant(60) + tol)
+    g4 = (term_val <= Constant(36) + tol or term_val <= Constant(
+        60) + tol)
 
     # # ratio_loan_amnt_annual_inc
     g5 = (((Feature(20) - Feature(0) / Feature(6)) ** Constant(2))
@@ -142,7 +125,8 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
         return Feature(x) / Constant(100) * Constant(12) \
                + (Feature(x) % Constant(100))
 
-    g7 = Feature(22) - (date_ft_to_month(7) - date_ft_to_month(9)) <= tol
+    g7 = Feature(22) - (
+            date_ft_to_month(7) - date_ft_to_month(9)) <= tol
 
     # ratio_pub_rec_diff_issue_d_earliest_cr_line
     g8 = (((Feature(23) - Feature(11) / Feature(22)) ** Constant(2))
@@ -158,8 +142,7 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
     return [g1, g2, g3, g4, g5, g6, g7, g8, g9, g10]
 
 
-# flake8: noqa: F841
-def get_url_contraints() -> List[BaseRelationConstraint]:
+def get_url_constraints() -> List[BaseRelationConstraint]:
     """from <https://tinyurl.com/zdypm9a8>"""
 
     def apply_if_a_supp_zero_than_b_supp_zero(a: Feature, b: Feature):
@@ -188,14 +171,8 @@ def get_url_contraints() -> List[BaseRelationConstraint]:
     # g6: if x[:, 19] > 0 then x[:,25] > 0
     g6 = apply_if_a_supp_zero_than_b_supp_zero(Feature(19), Feature(25))
 
-    # g7: if x[:, 19] > 0 then x[:,26] > 0
-    # g7 = apply_if_a_supp_zero_than_b_supp_zero(19, 26)
-
     # g8: if x[:, 2] > 0 then x[:,25] > 0
     g8 = apply_if_a_supp_zero_than_b_supp_zero(Feature(2), Feature(25))
-
-    # g9: if x[:, 2] > 0 then x[:,26] > 0
-    # g9 = apply_if_a_supp_zero_than_b_supp_zero(2, 26)
 
     # g10: if x[:, 28] > 0 then x[:,25] > 0
     g10 = apply_if_a_supp_zero_than_b_supp_zero(Feature(28),
@@ -212,11 +189,13 @@ def get_url_contraints() -> List[BaseRelationConstraint]:
     g15 = (Constant(4) * Feature(2)) <= (Feature(0) + Constant(1))
     g16 = (Constant(2) * Feature(23)) <= (Feature(0) + Constant(1))
 
-    return [g1, g2, g3, g4, g5, g6, g8, g10, g11, g12, g13, g14, g15, g16]
+    return [g1, g2, g3, g4, g5, g6, g8, g10, g11, g12,
+            g13, g14, g15, g16]
 
 
 def init_constraints(feat_file):
     # matches by file name - do not change.
+    c_set = None
     if 'unsw' in feat_file:
         c_set = get_unsw_constraints()
     elif 'iot' in feat_file:
@@ -224,13 +203,12 @@ def init_constraints(feat_file):
     elif 'lcld' in feat_file:
         c_set = get_lcld_constraints()
     elif 'url' in feat_file:
-        c_set = get_url_contraints()
-    else:
-        c_set = None
+        c_set = get_url_constraints()
     if not c_set or len(c_set) < 2:
         g1 = Feature(0) <= Feature(0)
         g2 = Feature(1) <= Feature(1)
         c_set = [g1, g2]
+        print('Using default minimal constraints for CPGD')
     return feat_file, c_set
 
 

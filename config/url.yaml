@@ -8,27 +8,16 @@ cpgd:
 # ref: https://github.com/serval-uni-lu/constrained-attacks/blob/d797e85f46c0a15f7d78bcf552fa95fb18782b46/tests/attacks/moeva/url_constraints.py#L13C8-L13C8
 constraints:
   predicates:
-    # g1
     - length_hostname <= length_url
-    # g2
     - (nb_dots + nb_hyphens + nb_at + nb_qm + nb_and + nb_or + nb_eq + nb_underscore + nb_tilde + nb_percent + nb_slash + nb_star + nb_colon + nb_comma + nb_semicolumn + (nb_space * 3)) <= length_url
-    # g3
     - 0 <= nb_com or 0 < nb_dots
-    # g4
     - 0 <= http_in_path or 0 < nb_slash
-    # g5
     - ((3 * nb_www) + (4 * nb_com) + (2 * http_in_path)) <= length_url
-    # g6
     - 0 <= nb_space or 0 < ratio_digits_url
-    # g8
     - 0 <= ip or 0 < ratio_digits_url
-    # g10
     - 0 <= port or 0 < ratio_digits_url
-    # g11
     - 0 <= abnormal_subdomain or 0 < ratio_digits_host
-    # g12
     - nb_external_redirection <= nb_redirection
-    # g13-g16
     - (nb_www * 3) <= (length_url + 1)
     - (nb_com * 4) <= (length_url + 1)
     - (ip * 4) <= (length_url + 1)

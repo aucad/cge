@@ -43,7 +43,7 @@ class PGDNumpyConstr(ProjectedGradientDescentNumpy, Validatable):
         return self.v_model.enforce(x, x_adv)  # NEW
 
 
-class PGDConst(ProjectedGradientDescent, Validatable):
+class VPGD(ProjectedGradientDescent, Validatable):
 
     def __init__(
             self,
