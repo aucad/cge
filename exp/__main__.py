@@ -1,11 +1,10 @@
 import sys
-
 from argparse import ArgumentParser
 
 from exp import Experiment, AttackPicker, ClsPicker
+from exp.plot import plot_results
 from exp.preproc import pred_parse
 from exp.utility import to_namedtuple, read_yaml
-from exp.plot import plot_results
 
 
 def parse_args(parser: ArgumentParser):

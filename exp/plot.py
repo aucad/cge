@@ -70,9 +70,8 @@ class ResultData:
 
     def write_table(self, sorter):
         writer = SpaceAlignedTableWriter()
-        writer.headers = \
-            'classifier,dataset,attack,accuracy,evades,v+e,dur(s)' \
-                .split(',')
+        writer.headers = ('classifier,dataset,attack,accuracy,'
+                          'evades,v+e,dur(s)'.split(','))
         mat = [ResultData.fmt(r) for r in self.raw_rata]
         mat = sorted(mat, key=sorter)
         writer.value_matrix = mat

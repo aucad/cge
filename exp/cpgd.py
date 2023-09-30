@@ -23,7 +23,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from comparison.constraints.constraints import get_constraints_from_file
 from comparison.constraints.relation_constraint import \
-    Feature, BaseRelationConstraint, Constant, MathOperation
+    Feature, BaseRelationConstraint, Constant
 from comparison.cpgd.cpgd import CPGD
 from comparison.cpgd.tf_classifier import TensorflowClassifier
 
@@ -95,10 +95,11 @@ def get_lcld_constraints() -> List[BaseRelationConstraint]:
 
     ir_1200 = Feature(2) / Constant(1200)
     ir_1200_p1 = Constant(1) + ir_1200
-    g1 = ((Feature(3) - (
-            (Feature(0) * ir_1200 * (ir_1200_p1 ** Feature(1))) / (
-            (ir_1200_p1 ** Feature(1)) - Constant(1)))) ** Constant(
-        2) ** Constant(0.5) - Constant(0.099999)) <= Constant(20)
+    g1 = (((Feature(3) - (
+            (Feature(0) * ir_1200 * (ir_1200_p1 ** Feature(1))) /
+            ((ir_1200_p1 ** Feature(1)) - Constant(1)))) **
+           Constant(2) ** Constant(0.5) - Constant(0.099999))
+          <= Constant(20))
 
     # open_acc <= total_acc
     g2 = Feature(10) <= Feature(14)
