@@ -11,3 +11,4 @@ keras
 tensorflow-macos; platform_machine == 'arm64' and sys_platform == 'darwin'
 tensorflow; platform_machine != 'arm64' or sys_platform != 'darwin'
 psutil
+pytablewriter

@@ -3,11 +3,17 @@ import re
 import time
 from collections import namedtuple
 from itertools import product
+from pathlib import Path
 from typing import List
 
 import numpy as np
 import pandas as pd
 import yaml
+
+
+def read_yaml(file_path):
+    with open(Path(file_path), 'r', encoding='utf-8') as open_yml:
+        return yaml.safe_load(open_yml)
 
 
 def to_namedtuple(d: dict):

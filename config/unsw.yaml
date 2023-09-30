@@ -10,11 +10,11 @@ cpgd:
 
 constraints:
   predicates:
-    - proto_tcp + proto_udp + proto_other == 1
-    - service_none + service_http + service_dns + service_other == 1
-    - state_FIN + state_INT + state_other == 1
-    - proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0) or state_FIN==1
-    - proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes == 0
-    - proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
+    - int(proto_tcp) + int(proto_udp) + int(proto_other) == 1
+    - int(service_none) + int(service_http) + int(service_dns) + int(service_other) == 1
+    - int(state_FIN) + int(state_INT) + int(state_other) == 1
+    - int(proto_tcp) != 1 or (int(swin) == 255 or int(dwin) == 255) or (int(dbytes) == int(dwin) == 0) or int(state_FIN)==1
+    - int(proto_tcp) != 1 or int(state_FIN) == 1 or int(dur) == 0 or int(state_INT) != 1 or int(dbytes) == 0
+    - int(proto_tcp) == 1 or (int(swin) == int(dwin) == int(stcpb) == int(dtcpb) == 0)
 
 

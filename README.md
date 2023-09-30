@@ -79,12 +79,12 @@ make dev     -- Test and lint, all at once
 
 All data sets are preprocessed and located in `data/` directory.
 
-| Name                 | Description                              | Link                                                                                               |  Rows  | Inclusion |
-|----------------------|:-----------------------------------------|:---------------------------------------------------------------------------------------------------|:------:|:---------:|
-| [**IoT-23**][iot]    | Malicious and benign IoT network traffic | DOI: <code>[10.5281/zenodo.4743746](https://doi.org/10.5281/zenodo.4743746)</code>                 | 10,000 |  Sampled  |
-| [**UNSW-NB15**][uns] | Network intrusion dataset with 9 attacks | DOI: <code>[10.1109/MilCIS.2015.7348942](https://doi.org/10.1109/MilCIS.2015.7348942)</code>       | 10,000 |  Sampled  |
-| [**URL**][url]       | Legitimate and phishing URLs             | DOI: <code>[10.1016/j.engappai.2021.104347](https://doi.org/10.1016/j.engappai.2021.104347)</code> | 11,430 | Complete  |
-| [**LCLD**][lcld]     | Kaggle's All Lending Club loan data      | URL: [Kaggle](https://www.kaggle.com/datasets/wordsforthewise/lending-club)                        | 20,000 |  Sampled  | 
+| Name                 | Description                              |  Rows  | Inclusion | Link                                                                              |
+|:---------------------|:-----------------------------------------|:------:|:---------:|:----------------------------------------------------------------------------------|
+| [**IoT-23**][iot]    | Malicious and benign IoT network traffic | 10,000 |  Sampled  | [10.5281/zenodo.4743746](https://doi.org/10.5281/zenodo.4743746)                  |
+| [**UNSW-NB15**][uns] | Network intrusion dataset with 9 attacks | 10,000 |  Sampled  | [10.1109/MilCIS.2015.7348942](https://doi.org/10.1109/MilCIS.2015.7348942)        |
+| [**URL**][url]       | Legitimate and phishing URLs             | 11,430 | Complete  | [10.1016/j.engappai.2021.104347](https://doi.org/10.1016/j.engappai.2021.104347)  |
+| [**LCLD**][lcld]     | Kaggle's All Lending Club loan data      | 20,000 |  Sampled  | [Kaggle](https://www.kaggle.com/datasets/wordsforthewise/lending-club)            | 
 
 
 **Sampling.** The sampled data sets were generated to obtain equal class distribution using Weka's supervised instance

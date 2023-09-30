@@ -1,24 +1,23 @@
 SHELL := /bin/bash
 
-ITERS = 0
 TIMES = 1 2 3 4 5
 CLASSIFIERS = dnn xgb
 ATTACKS = hsj pgd zoo cpgd
 ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name '*_prf*.yaml')
 PERF_CONF = $(shell find config/$(cat) -type f -iname '*_prf*.yaml')
 
-all: attacks time
+all: attacks
 
 dev: test lint
 
 attacks:
 	$(foreach f, $(ATTK_CONF), $(foreach a, $(ATTACKS), \
-	$(foreach c, $(CLASSIFIERS), $(foreach i, $(ITERS), \
-	python3 -m exp $(f) -i $(i) -a $(a) -c $(c) -v ; ))))
+	$(foreach c, $(CLASSIFIERS), \
+	python3 -m exp $(f) -a $(a) -c $(c) -v ; )))
 
 time:
 	$(foreach f, $(PERF_CONF), $(foreach t, $(TIMES), \
-	python3 -m exp $(f) --pattern $(t) ; ))
+	python3 -m exp $(f) --fn $(t) ; ))
 
 test:
 	pytest --cov-report term-missing --cov=./exp test

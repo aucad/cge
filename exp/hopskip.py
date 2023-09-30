@@ -7,7 +7,7 @@ from art.attacks.evasion import HopSkipJump
 from exp import Validatable
 
 
-class HopSkipJumpConst(HopSkipJump, Validatable):
+class VHSJ(HopSkipJump, Validatable):
 
     def _attack(
             self,

@@ -1,20 +1,28 @@
 import sys
-
-import yaml
-from pathlib import Path
 from argparse import ArgumentParser
 
 from exp import Experiment, AttackPicker, ClsPicker
+from exp.plot import plot_results
 from exp.preproc import pred_parse
-from exp.utility import to_namedtuple
+from exp.utility import to_namedtuple, read_yaml
 
 
 def parse_args(parser: ArgumentParser):
     """Setup available program arguments."""
     parser.add_argument(
-        dest='config',
+        dest='path',
         action='store',
-        help='Experiment configuration file path',
+        help='Configuration file or results directory',
+    )
+    parser.add_argument(
+        '-g', '--graph',
+        action='store_true',
+        help='Plot a constraint graph (without running experiment)'
+    )
+    parser.add_argument(
+        '-p', '--plot',
+        action='store_true',
+        help='Plot results'
     )
     parser.add_argument(
         '-v', '--validate',
@@ -22,36 +30,36 @@ def parse_args(parser: ArgumentParser):
         help='enforce constraints during attack'
     )
     parser.add_argument(
-        '-a', '--attack',
+        '-a',
         action='store',
         choices=AttackPicker.list_attacks(),
         help='evasion attack'
     )
     parser.add_argument(
-        '-c', '--cls',
+        '-c',
         action='store',
         choices=ClsPicker.list_cls(),
         help='classifier'
     )
     parser.add_argument(
-        '-i', '--iter',
+        '-i',
         type=int,
-        choices=range(0, 501),
-        metavar="0-500",
-        help='max attack iterations, 0=default',
+        choices=range(1, 501),
+        metavar="1-500",
+        help='max attack iterations, [default: 0]',
         default=-1
     )
     parser.add_argument(
-        '-r', '--reset',
+        '--reset',
         type=int,
         choices=[1, 2],
-        help='reset strategy: 1=all, 2=dependencies'
+        help='reset strategy: 1=all, 2=dependencies [default: 2]'
     )
     parser.add_argument(
-        '-p', '--pattern',
+        '--fn',
         type=str,
         action='store',
-        help='expression or pattern to append to results file name',
+        help='expression to append to results file name',
         default=None,
     )
     return parser.parse_args()
@@ -70,32 +78,27 @@ def check_params(conf):
     return True
 
 
-def read_yaml(file_path):
-    with open(Path(file_path), 'r', encoding='utf-8') as open_yml:
-        return yaml.safe_load(open_yml)
-
-
 def build_config(args):
     c = read_yaml('./config/default.yaml')
-    params = read_yaml(args.config)
+    params = read_yaml(args.path)
 
     # merge the default config, experiment config, from files
     for k, v in params.items():
         c[k] = {**((c[k] or {}) if k in c else {}), **v} \
             if type(v) is dict else v
-    config = {**c, 'config_path': args.config}
+    config = {**c, 'config_path': args.path}
 
     # if defined, override file configs with command arguments
     if args.validate:
         config['validate'] = True
     attack_name = config['attack'] = \
-        args.attack if args.attack else config['attack']
-    if args.iter > -1:
-        config[attack_name]['max_iter'] = args.iter
-    config['cls'] = args.cls or config['cls']
+        args.a if args.a else config['attack']
+    if args.i > 0:
+        config[attack_name]['max_iter'] = args.i
+    config['cls'] = args.c or config['cls']
     if args.reset and int(args.reset) > 0:
         config['reset_strategy'] = args.reset
-    config['fn_pattern'] = args.pattern if args.pattern else None
+    config['fn_pattern'] = args.fn if args.fn else None
     config = to_namedtuple(pred_parse(config))
     check_params(config)
     return config
@@ -103,5 +106,14 @@ def build_config(args):
 
 if __name__ == '__main__':
     args_ = parse_args(ArgumentParser())
+
+    if args_.plot:
+        plot_results(args_.path)
+        sys.exit(0)
+
     config_ = build_config(args_)
+    if args_.graph:
+        Experiment(config_).graph()
+        sys.exit(0)
+
     Experiment(config_).run()
