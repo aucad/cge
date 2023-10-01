@@ -2,22 +2,31 @@
 
 Experimental setup for introducing constraints to universal adversarial attacks.
 
-## Repository organization
+This implementation allows to run adversarial machine learning attacks, with (or without) constraints,
+on multiple data sets, attacks, and classifiers.
+The following options are implemented.
 
-| Directory          | Description                                |
-|:-------------------|:-------------------------------------------|
-| `.github`          | Automated workflows                        |
-| `comparison`       | CPGD implementation + license              |
-| `config`           | Experiment configuration files             |
-| `data`             | Experiment data sets                       |
-| `exp`              | Experiment implementation                  |
-| `ref_result`       | Referential result for inspection          |
-| `test`             | Implementation tests                       |
+- **attacks**: Projected Gradient Descent (PGD), zeroth-order optimization (Zoo), HopSkipJumpAttack, and C-PGD (comparison)
+- **classifiers**: Keras Deep neural network, XGBoost (tree-based ensemble)
+- **data**: 4 different data sets (see [descriptions](#data-sets))
 
-The Makefile contains pre-configured commands to ease running experiments,
-particularly `make all` will run all experiments at once.
+PGD and C-PGD attacks require a neural network classifier.
+The C-PGD attack uses different constraint-implementation strategy ([source](https://github.com/serval-uni-lu/moeva2-ijcai22-replication)), and is included to allow comparing its results to the other attacks.
 
-The software dependencies are specified in `requirements.txt` and `requirements-dev.txt`.
+**Repository organization**
+
+| Directory          | Description                       |
+|:-------------------|:----------------------------------|
+| `.github`          | Automated workflows               |
+| `comparison`       | CPGD implementation + license     |
+| `config`           | Experiment configuration files    |
+| `data`             | Experiment data sets              |
+| `exp`              | Experiment runtime implementation |
+| `ref_result`       | Referential result for inspection |
+| `test`             | Implementation tests              |
+
+- The Makefile contains pre-configured commands to ease running experiments.
+- The software dependencies are detailed in `requirements.txt`.
 
 ## Experiment workflow
 
