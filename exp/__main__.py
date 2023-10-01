@@ -33,12 +33,14 @@ def parse_args(parser: ArgumentParser):
         '-a',
         action='store',
         choices=AttackPicker.list_attacks(),
+        dest="attack",
         help='evasion attack'
     )
     parser.add_argument(
         '-c',
         action='store',
         choices=ClsPicker.list_cls(),
+        dest="cls",
         help='classifier'
     )
     parser.add_argument(
@@ -47,6 +49,7 @@ def parse_args(parser: ArgumentParser):
         choices=range(1, 501),
         metavar="1-500",
         help='max attack iterations, [default: 0]',
+        dest="iter",
         default=-1
     )
     parser.add_argument(
@@ -61,6 +64,12 @@ def parse_args(parser: ArgumentParser):
         action='store',
         help='expression to append to results file name',
         default=None,
+    )
+    parser.add_argument(
+        '-o', '--out',
+        action="store",
+        dest="out",
+        help="output directory path",
     )
     return parser.parse_args()
 
@@ -92,10 +101,11 @@ def build_config(args):
     if args.validate:
         config['validate'] = True
     attack_name = config['attack'] = \
-        args.a if args.a else config['attack']
-    if args.i > 0:
-        config[attack_name]['max_iter'] = args.i
-    config['cls'] = args.c or config['cls']
+        args.attack if args.attack else config['attack']
+    if args.iter > 0:
+        config[attack_name]['max_iter'] = args.iter
+    config['cls'] = args.cls or config['cls']
+    config['out'] = args.out or config['out']
     if args.reset and int(args.reset) > 0:
         config['reset_strategy'] = args.reset
     config['fn_pattern'] = args.fn if args.fn else None

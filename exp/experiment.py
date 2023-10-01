@@ -59,12 +59,10 @@ class Experiment:
         self.end = time.time_ns()
 
         self.result.log()
-        self.graph()
         write_yaml(file_name(c), self.to_dict())
 
     def graph(self):
-        if len(self.attrs) == 0:
-            self.prepare_input_data()
+        self.prepare_input_data()
         validation = Validation(
             self.config.constraints, self.attrs,
             self.config.reset_strategy)

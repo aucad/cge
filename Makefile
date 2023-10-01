@@ -5,15 +5,19 @@ CLASSIFIERS = dnn xgb
 ATTACKS = hsj pgd zoo cpgd
 ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name '*_prf*.yaml')
 PERF_CONF = $(shell find config/$(cat) -type f -iname '*_prf*.yaml')
+ALL__CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml' )
 
-all: attacks
+all: graphs attacks
 
 dev: test lint
 
 attacks:
 	$(foreach f, $(ATTK_CONF), $(foreach a, $(ATTACKS), \
 	$(foreach c, $(CLASSIFIERS), \
-	python3 -m exp $(f) -a $(a) -c $(c) -v ; )))
+	python3 -m exp $(f) -a $(a) -c $(c) -v --out result/attacks ; )))
+
+graphs:
+	$(foreach f, $(ALL__CONF), python3 -m exp $(f) --graph; )
 
 time:
 	$(foreach f, $(PERF_CONF), $(foreach t, $(TIMES), \

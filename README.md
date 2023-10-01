@@ -1,29 +1,31 @@
 # Constrained adversarial attacks
 
-Experimental setup for introducing constraints to universal adversarial attacks.
+This repository contains an experimental setup for introducing constraints to universal adversarial machine learning attacks.
+We introduce a _validation algorithm_ that guarantees generated adversarial examples satisfy domain constraints.
 
-This implementation allows to run adversarial machine learning attacks, with (or without) constraints,
-on multiple data sets, attacks, and classifiers.
+This implementation allows to run adversarial machine learning attacks, with or without constraints,
+on multiple data sets, attacks, and classifiers, using our constraint validation algorithm.
 The following options are implemented.
 
 - **attacks**: Projected Gradient Descent (PGD), zeroth-order optimization (Zoo), HopSkipJumpAttack, and C-PGD (comparison)
-- **classifiers**: Keras Deep neural network, XGBoost (tree-based ensemble)
+- **classifiers**: Keras Deep neural network and tree-based ensemble XGBoost
 - **data**: 4 different data sets (see [descriptions](#data-sets))
 
-PGD and C-PGD attacks require a neural network classifier.
-The C-PGD attack uses different constraint-implementation strategy ([source](https://github.com/serval-uni-lu/moeva2-ijcai22-replication)), and is included to allow comparing its results to the other attacks.
+PGD, Zoo, and HopSkipJumpAttacks are modified to use our constraint validation algorithm.
+The C-PGD attack uses a different constraint-validation approach (cf. [source](https://github.com/serval-uni-lu/moeva2-ijcai22-replication)), and is included to allow comparing its results to the other attacks.
+PGD and C-PGD require a neural network classifier.
 
 **Repository organization**
 
-| Directory          | Description                       |
-|:-------------------|:----------------------------------|
-| `.github`          | Automated workflows               |
-| `comparison`       | CPGD implementation + license     |
-| `config`           | Experiment configuration files    |
-| `data`             | Experiment data sets              |
-| `exp`              | Experiment runtime implementation |
-| `ref_result`       | Referential result for inspection |
-| `test`             | Implementation tests              |
+| Directory          | Description                                       |
+|:-------------------|:--------------------------------------------------|
+| `.github`          | Automated workflows                               |
+| `comparison`       | C-PGD attack implementation + its license         |
+| `config`           | Experiment configuration files                    |
+| `data`             | Experiment data sets                              |
+| `exp`              | Experiment runtime and validation implementations |
+| `ref_result`       | Referential result for inspection                 |
+| `test`             | Implementation unit tests                         |
 
 - The Makefile contains pre-configured commands to ease running experiments.
 - The software dependencies are detailed in `requirements.txt`.
@@ -35,10 +37,10 @@ The C-PGD attack uses different constraint-implementation strategy ([source](htt
 ○────┤   parse   ├──────┤   setup    ├──────┤    run     ├──────┤    end     ├────◎
      │   args    │      │ experiment │      │ experiment │      │ experiment │
      └───────────┘      └────────────┘      └────────────┘      └────────────┘
-      from config        preprocess &        k times:           * write result
-      & cmd args         init model          1. train model     * plot graph
-                         attack, and         2. attack
-                         validation          3. score
+      inputs:           preprocess &        k times:             write result
+      - data set        init classifier,    1. train model      
+      - config incl.    attack, and         2. attack
+        constraints     validation          3. score
 </pre>
 
 ## Usage
@@ -57,13 +59,13 @@ Run experiments for all combinations of data sets, classifiers and attacks.
 make attacks
 ```
 
-Run all experiments for all configuration options
+Generate constraint-dependency graphs for all configurations.
 
 ```
-make all
+make graphs
 ```
 
-Usage help
+Usage help:
 
 ```
 python3 -m exp --help
