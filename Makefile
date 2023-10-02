@@ -7,6 +7,11 @@ ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.
 PERF_CONF = $(shell find config/$(cat) -type f -iname '*_prf*.yaml')
 ALL__CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml' )
 
+ifndef $DIR
+DIR:=result
+endif
+
+
 all: graphs attacks
 
 dev: test lint
@@ -15,6 +20,14 @@ attacks:
 	$(foreach f, $(ATTK_CONF), $(foreach a, $(ATTACKS), \
 	$(foreach c, $(CLASSIFIERS), \
 	python3 -m exp $(f) -a $(a) -c $(c) -v --out result/attacks ; )))
+
+original:
+	$(foreach f, $(ATTK_CONF), $(foreach a, $(ATTACKS), \
+	$(foreach c, $(CLASSIFIERS), \
+	python3 -m exp $(f) -a $(a) -c $(c) --out result/original ; )))
+
+plots:
+	python3 -m exp $(DIR)/attacks --plot
 
 graphs:
 	$(foreach f, $(ALL__CONF), python3 -m exp $(f) --graph; )

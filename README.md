@@ -74,10 +74,16 @@ Run experiments for all combinations of data sets, classifiers and attacks.
 make attacks
 ```
 
-Usage help:
+Generate a table of experiment results
 
 ```
-python3 -m exp --help
+make plots
+```
+
+### Custom usage
+
+```
+python3 -m exp [PATH] {ARGS}
 ```
 
 <details>
