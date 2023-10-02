@@ -49,6 +49,7 @@ class ResultData:
             # noinspection PyBroadException
             try:
                 self.raw_rata.append(read_yaml(file))
+            # flake8: noqa: E722
             except:
                 pass
 

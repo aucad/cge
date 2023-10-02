@@ -46,8 +46,8 @@ def parse_args(parser: ArgumentParser):
     parser.add_argument(
         '-i',
         type=int,
-        choices=range(1, 501),
-        metavar="1-500",
+        choices=range(0, 501),
+        metavar="0-500",
         help='max attack iterations, [default: 0]',
         dest="iter",
         default=-1
