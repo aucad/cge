@@ -1,10 +1,9 @@
 attack:
-  can_validate: false
-  config:
-    args: {enable_constraints: false, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
-    feat_file: data/feature_iot.csv
-    max_iter: 0
-  name: CPGD
+  can_validate: true
+  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
+    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
+  name: VZoo
 classifier:
   config:
     layers: [64, 32]
@@ -34,44 +33,45 @@ experiment:
     resp_bytes: [0, 164266]
     resp_ip_bytes: [0, 168910]
     resp_pkts: [0, 184]
-  capture_utc: 1695931761890861760
+  capture_utc: 1696189760042228596
   class_distribution: {0: 5000, 1: 5000}
   config: config/iot23.yaml
   dataset: data/ctu_1-8-34.csv
   description: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
-  duration_sec: 890.7
-  end: 1695931760292646929
+  duration_sec: 19416.9
+  end: 1696189758317778697
   k_folds: 5
   n_attributes: 19
   n_classes: 2
   n_records: 10000
-  start: 1695930869615171560
+  name: IoT-23
+  start: 1696170341403802914
   system:
     cpu_current_frequency: 2199.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 12.2
-    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cpu_total_usage: 12.5
+    cpu_usage_per_core: [0.0, 0.0, 3.0, 3.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
-    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.21GB
-    virtual_mem_percentage: 3.6
+    virtual_mem_available: 30.23GB
+    virtual_mem_percentage: 3.5
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 686.84MB
+    virtual_mem_used: 668.36MB
 folds:
-  accuracy: [0.9785, 0.975, 0.979, 0.976, 0.978]
-  f_score: [0.978723, 0.975705, 0.979631, 0.976331, 0.97862]
-  n_evasions: [993, 981, 1011, 994, 1010]
+  accuracy: [0.9725, 0.981, 0.9785, 0.977, 0.978]
+  f_score: [0.973079, 0.980924, 0.979376, 0.97799, 0.978175]
+  n_evasions: [107, 96, 11, 170, 22]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [709, 16, 512, 737, 511]
-  n_valid_evades: [213, 1, 28, 230, 26]
-  precision: [0.958333, 0.952562, 0.960076, 0.953757, 0.958135]
+  n_valid: [2000, 2000, 2000, 2000, 2000]
+  n_valid_evades: [107, 96, 11, 170, 22]
+  precision: [0.947569, 0.962562, 0.959586, 0.956929, 0.957282]
   recall: [1.0, 1.0, 1.0, 1.0, 1.0]
 invalid_rows: []
 validation:
@@ -97,32 +97,35 @@ validation:
       text: resp_pkts <= resp_ip_bytes
     c:
       attrs: {6: conn_state=S0, 16: resp_pkts, 17: resp_ip_bytes}
-      exec: 'lambda a: a[0] != 1 or a[1] == a[2] == 0'
-      text: conn_state=S0 != 1 or resp_pkts == resp_ip_bytes == 0
+      exec: 'lambda a: int(a[0]) != 1 or int(a[1]) == int(a[2]) == 0'
+      text: int(conn_state=S0) != 1 or int(resp_pkts) == int(resp_ip_bytes) == 0
     d:
       attrs: {1: proto=tcp, 14: orig_pkts, 15: orig_ip_bytes}
-      exec: 'lambda a: a[0] != 1 or a[1] == 0 or a[2] > 20'
-      text: proto=tcp != 1 or orig_pkts == 0 or orig_ip_bytes > 20
+      exec: 'lambda a: int(a[0]) != 1 or int(a[1]) == 0 or a[2] >= 20'
+      text: int(proto=tcp) != 1 or int(orig_pkts) == 0 or orig_ip_bytes >= 20
     e:
       attrs: {1: proto=tcp, 16: resp_pkts, 17: resp_ip_bytes}
-      exec: 'lambda a: a[0] != 1 or a[1] == 0 or a[2] >= 20'
-      text: proto=tcp != 1 or resp_pkts == 0 or resp_ip_bytes >= 20
+      exec: 'lambda a: int(a[0]) != 1 or int(a[1]) == 0 or a[2] >= 20'
+      text: int(proto=tcp) != 1 or int(resp_pkts) == 0 or resp_ip_bytes >= 20
     f:
       attrs: {1: proto=tcp, 8: conn_state=other, 14: orig_pkts, 15: orig_ip_bytes,
         16: resp_pkts, 17: resp_ip_bytes}
-      exec: 'lambda a: a[0] != 1 or a[2] >= a[4] or a[3] < a[5] or a[1] != 1'
-      text: proto=tcp != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes
-        or conn_state=other != 1
+      exec: 'lambda a: int(a[0]) != 1 or a[2] >= a[4] or a[3] < a[5] or int(a[1])
+        != 1'
+      text: int(proto=tcp) != 1 or orig_pkts >= resp_pkts or orig_ip_bytes < resp_ip_bytes
+        or int(conn_state=other) != 1
     g:
       attrs: {0: proto=udp, 7: conn_state=SF, 10: history=D, 11: history=Dd, 14: orig_pkts,
         16: resp_pkts}
-      exec: 'lambda a: a[0] != 1 or a[4] >= a[5] or (a[3] == 1 and a[1] == 1)'
-      text: proto=udp != 1 or orig_pkts >= resp_pkts or (history=Dd == 1 and conn_state=SF
-        == 1)
+      exec: 'lambda a: int(a[0]) != 1 or a[4] >= a[5] or (int(a[3]) == 1 and int(a[1])
+        == 1)'
+      text: int(proto=udp) != 1 or orig_pkts >= resp_pkts or (int(history=Dd) == 1
+        and int(conn_state=SF) == 1)
     h:
       attrs: {0: proto=udp, 7: conn_state=SF, 14: orig_pkts, 15: orig_ip_bytes, 16: resp_pkts,
         17: resp_ip_bytes}
-      exec: 'lambda a: a[0] != 1 or a[2] < a[4] or a[3] >= a[5] or a[1] == 1'
-      text: proto=udp != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes
-        or conn_state=SF == 1
+      exec: 'lambda a: int(a[0]) != 1 or a[2] < a[4] or a[3] >= a[5] or int(a[1])
+        == 1'
+      text: int(proto=udp) != 1 or orig_pkts < resp_pkts or orig_ip_bytes >= resp_ip_bytes
+        or int(conn_state=SF) == 1
   reset_strategy: 2

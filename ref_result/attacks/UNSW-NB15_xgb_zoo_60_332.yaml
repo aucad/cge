@@ -1,15 +1,15 @@
 attack:
-  can_validate: false
-  config:
-    args: {enable_constraints: false, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
-    feat_file: data/feature_unsw.csv
-    max_iter: 0
-  name: CPGD
+  can_validate: true
+  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
+    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
+  name: VZoo
 classifier:
   config:
-    layers: [64, 64, 32]
-    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
-  name: Neural Network
+    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
+      tree_method: exact}
+    train: {num_boost_round: 20}
+  name: XGBoost
 experiment:
   attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
     6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
@@ -50,45 +50,46 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1695933912405335984
+  capture_utc: 1696226002336935009
   class_distribution: {0: 5000, 1: 5000}
   config: config/unsw.yaml
   dataset: data/unsw_nb15.csv
   description: sampled from 175K training set
-  duration_sec: 688.7
-  end: 1695933910729520369
+  duration_sec: 1271.0
+  end: 1696226000810571063
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
-  start: 1695933222077071557
+  name: UNSW-NB15
+  start: 1696224729810935051
   system:
     cpu_current_frequency: 2199.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 14.0
-    cpu_usage_per_core: [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+    cpu_total_usage: 99.7
+    cpu_usage_per_core: [2.9, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0]
     machine: x86_64
     processor: x86_64
-    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.20GB
-    virtual_mem_percentage: 3.6
+    virtual_mem_available: 30.29GB
+    virtual_mem_percentage: 3.3
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 702.48MB
+    virtual_mem_used: 610.62MB
 folds:
-  accuracy: [0.9145, 0.911, 0.929, 0.9145, 0.914]
-  f_score: [0.913767, 0.908905, 0.927992, 0.911901, 0.915187]
-  n_evasions: [1034, 1588, 1525, 1759, 1403]
+  accuracy: [0.938, 0.9305, 0.937, 0.943, 0.935]
+  f_score: [0.937813, 0.928681, 0.937126, 0.941598, 0.936399]
+  n_evasions: [1340, 1434, 1581, 1383, 1594]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [1066, 1008, 1016, 1062, 1045]
-  n_valid_evades: [173, 711, 769, 853, 532]
-  precision: [0.915152, 0.957929, 0.924242, 0.938494, 0.902724]
-  recall: [0.912387, 0.864654, 0.931772, 0.886774, 0.928]
+  n_valid: [2000, 2000, 2000, 2000, 2000]
+  n_valid_evades: [1340, 1434, 1581, 1383, 1594]
+  precision: [0.952138, 0.934917, 0.941825, 0.951346, 0.929126]
+  recall: [0.923913, 0.922528, 0.932473, 0.932049, 0.943787]
 invalid_rows: []
 validation:
   dependencies:
@@ -103,30 +104,33 @@ validation:
   predicates:
     a:
       attrs: {1: proto_tcp, 2: proto_udp, 3: proto_other}
-      exec: 'lambda a: a[0] + a[1] + a[2] == 1'
-      text: proto_tcp + proto_udp + proto_other == 1
+      exec: 'lambda a: int(a[0]) + int(a[1]) + int(a[2]) == 1'
+      text: int(proto_tcp) + int(proto_udp) + int(proto_other) == 1
     b:
       attrs: {4: service_none, 5: service_http, 6: service_dns, 7: service_other}
-      exec: 'lambda a: a[0] + a[1] + a[2] + a[3] == 1'
-      text: service_none + service_http + service_dns + service_other == 1
+      exec: 'lambda a: int(a[0]) + int(a[1]) + int(a[2]) + int(a[3]) == 1'
+      text: int(service_none) + int(service_http) + int(service_dns) + int(service_other)
+        == 1
     c:
       attrs: {8: state_FIN, 9: state_INT, 10: state_other}
-      exec: 'lambda a: a[0] + a[1] + a[2] == 1'
-      text: state_FIN + state_INT + state_other == 1
+      exec: 'lambda a: int(a[0]) + int(a[1]) + int(a[2]) == 1'
+      text: int(state_FIN) + int(state_INT) + int(state_other) == 1
     d:
       attrs: {1: proto_tcp, 8: state_FIN, 12: dbytes, 18: swin, 21: dwin}
-      exec: 'lambda a: a[0] != 1 or (a[3] == 255 or a[4] == 255) or (a[2] == a[4]
-        == 0) or a[1]==1'
-      text: proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0)
-        or state_FIN==1
+      exec: 'lambda a: int(a[0]) != 1 or (int(a[3]) == 255 or int(a[4]) == 255) or
+        (int(a[2]) == int(a[4]) == 0) or int(a[1])==1'
+      text: int(proto_tcp) != 1 or (int(swin) == 255 or int(dwin) == 255) or (int(dbytes)
+        == int(dwin) == 0) or int(state_FIN)==1
     e:
       attrs: {0: dur, 1: proto_tcp, 8: state_FIN, 9: state_INT, 12: dbytes}
-      exec: 'lambda a: a[1] != 1 or a[2] == 1 or a[0] == 0 or a[3] != 1 or a[4] ==
-        0'
-      text: proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes
-        == 0
+      exec: 'lambda a: int(a[1]) != 1 or int(a[2]) == 1 or int(a[0]) == 0 or int(a[3])
+        != 1 or int(a[4]) == 0'
+      text: int(proto_tcp) != 1 or int(state_FIN) == 1 or int(dur) == 0 or int(state_INT)
+        != 1 or int(dbytes) == 0
     f:
       attrs: {1: proto_tcp, 18: swin, 19: stcpb, 20: dtcpb, 21: dwin}
-      exec: 'lambda a: a[0] == 1 or (a[1] == a[4] == a[2] == a[3] == 0)'
-      text: proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
+      exec: 'lambda a: int(a[0]) == 1 or (int(a[1]) == int(a[4]) == int(a[2]) == int(a[3])
+        == 0)'
+      text: int(proto_tcp) == 1 or (int(swin) == int(dwin) == int(stcpb) == int(dtcpb)
+        == 0)
   reset_strategy: 2
