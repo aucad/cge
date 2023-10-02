@@ -1,13 +1,14 @@
 attack:
   can_validate: true
-  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 0, norm: inf,
-    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
-  name: PGDConst
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
+    norm: 2, targeted: false, verbose: true}
+  name: VHSJ
 classifier:
   config:
-    layers: [64]
-    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
-  name: Neural Network
+    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
+      tree_method: exact}
+    train: {num_boost_round: 20}
+  name: XGBoost
 experiment:
   attrs: {0: length_url, 1: length_hostname, 2: ip, 3: nb_dots, 4: nb_hyphens, 5: nb_at,
     6: nb_qm, 7: nb_and, 8: nb_or, 9: nb_eq, 10: nb_underscore, 11: nb_tilde, 12: nb_percent,
@@ -87,45 +88,46 @@ experiment:
     tld_in_subdomain: [0, 1]
     web_traffic: [0, 10767986]
     whois_registered_domain: [0, 1]
-  capture_utc: 1695935793179180873
+  capture_utc: 1696231063387490625
   class_distribution: {0: 5715, 1: 5715}
   config: config/url.yaml
   dataset: data/url.csv
   description: URL dataset of legitimate and phishing URLs
-  duration_sec: 194.4
-  end: 1695935791392475949
+  duration_sec: 799.8
+  end: 1696231061728103391
   k_folds: 5
   n_attributes: 64
   n_classes: 2
   n_records: 11430
-  start: 1695935596996607032
+  name: URL
+  start: 1696230261924771805
   system:
     cpu_current_frequency: 2199.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 17.3
+    cpu_total_usage: 99.4
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
-    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.19GB
-    virtual_mem_percentage: 3.6
+    virtual_mem_available: 30.27GB
+    virtual_mem_percentage: 3.4
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 705.95MB
+    virtual_mem_used: 625.93MB
 folds:
-  accuracy: [0.960192, 0.962817, 0.947507, 0.958443, 0.949694]
-  f_score: [0.961424, 0.963535, 0.946714, 0.957721, 0.948081]
-  n_evasions: [0, 0, 0, 0, 0]
+  accuracy: [0.962817, 0.958005, 0.959755, 0.961942, 0.961942]
+  f_score: [0.962138, 0.958261, 0.959328, 0.961657, 0.962741]
+  n_evasions: [2015, 1999, 2073, 2068, 1998]
   n_records: [2286, 2286, 2286, 2286, 2286]
   n_valid: [2286, 2286, 2286, 2286, 2286]
-  n_valid_evades: [0, 0, 0, 0, 0]
-  precision: [0.964286, 0.966437, 0.950089, 0.954747, 0.952813]
-  recall: [0.95858, 0.96065, 0.943363, 0.960714, 0.943396]
+  n_valid_evades: [2015, 1999, 2073, 2068, 1998]
+  precision: [0.96, 0.959095, 0.95679, 0.968917, 0.967298]
+  recall: [0.964286, 0.957428, 0.961879, 0.954506, 0.958227]
 invalid_rows: []
 validation:
   dependencies:

@@ -1,9 +1,9 @@
 attack:
   can_validate: true
   config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
-    initial_const: 0.001, learning_rate: 0.1, max_iter: 0, nb_parallel: 5, targeted: false,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
     use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
-  name: ZooConst
+  name: VZoo
 classifier:
   config:
     layers: [64, 64, 32]
@@ -49,45 +49,46 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1695933150321417621
+  capture_utc: 1696224724164741851
   class_distribution: {0: 5000, 1: 5000}
   config: config/unsw.yaml
   dataset: data/unsw_nb15.csv
   description: sampled from 175K training set
-  duration_sec: 353.1
-  end: 1695933148673358246
+  duration_sec: 25719.4
+  end: 1696224722641126423
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
-  start: 1695932795613435330
+  name: UNSW-NB15
+  start: 1696199003228243674
   system:
     cpu_current_frequency: 2199.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 15.5
-    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cpu_total_usage: 12.5
+    cpu_usage_per_core: [2.9, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 3.0]
     machine: x86_64
     processor: x86_64
-    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.22GB
-    virtual_mem_percentage: 3.6
+    virtual_mem_available: 30.24GB
+    virtual_mem_percentage: 3.5
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 685.18MB
+    virtual_mem_used: 659.86MB
 folds:
-  accuracy: [0.9165, 0.917, 0.9165, 0.9195, 0.9125]
-  f_score: [0.918656, 0.919339, 0.914752, 0.917647, 0.914342]
-  n_evasions: [0, 0, 0, 0, 0]
+  accuracy: [0.925, 0.9105, 0.9105, 0.9145, 0.922]
+  f_score: [0.92228, 0.908627, 0.910812, 0.910984, 0.920892]
+  n_evasions: [1707, 1645, 1718, 1727, 1633]
   n_records: [2000, 2000, 2000, 2000, 2000]
   n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [0, 0, 0, 0, 0]
-  precision: [0.915534, 0.929273, 0.907801, 0.921891, 0.881132]
-  recall: [0.921799, 0.909615, 0.921811, 0.913442, 0.950153]
+  n_valid_evades: [1707, 1645, 1718, 1727, 1633]
+  precision: [0.944798, 0.937829, 0.928862, 0.929862, 0.933196]
+  recall: [0.90081, 0.881188, 0.893451, 0.892857, 0.908909]
 invalid_rows: []
 validation:
   dependencies:
@@ -102,30 +103,33 @@ validation:
   predicates:
     a:
       attrs: {1: proto_tcp, 2: proto_udp, 3: proto_other}
-      exec: 'lambda a: a[0] + a[1] + a[2] == 1'
-      text: proto_tcp + proto_udp + proto_other == 1
+      exec: 'lambda a: int(a[0]) + int(a[1]) + int(a[2]) == 1'
+      text: int(proto_tcp) + int(proto_udp) + int(proto_other) == 1
     b:
       attrs: {4: service_none, 5: service_http, 6: service_dns, 7: service_other}
-      exec: 'lambda a: a[0] + a[1] + a[2] + a[3] == 1'
-      text: service_none + service_http + service_dns + service_other == 1
+      exec: 'lambda a: int(a[0]) + int(a[1]) + int(a[2]) + int(a[3]) == 1'
+      text: int(service_none) + int(service_http) + int(service_dns) + int(service_other)
+        == 1
     c:
       attrs: {8: state_FIN, 9: state_INT, 10: state_other}
-      exec: 'lambda a: a[0] + a[1] + a[2] == 1'
-      text: state_FIN + state_INT + state_other == 1
+      exec: 'lambda a: int(a[0]) + int(a[1]) + int(a[2]) == 1'
+      text: int(state_FIN) + int(state_INT) + int(state_other) == 1
     d:
       attrs: {1: proto_tcp, 8: state_FIN, 12: dbytes, 18: swin, 21: dwin}
-      exec: 'lambda a: a[0] != 1 or (a[3] == 255 or a[4] == 255) or (a[2] == a[4]
-        == 0) or a[1]==1'
-      text: proto_tcp != 1 or (swin == 255 or dwin == 255) or (dbytes == dwin == 0)
-        or state_FIN==1
+      exec: 'lambda a: int(a[0]) != 1 or (int(a[3]) == 255 or int(a[4]) == 255) or
+        (int(a[2]) == int(a[4]) == 0) or int(a[1])==1'
+      text: int(proto_tcp) != 1 or (int(swin) == 255 or int(dwin) == 255) or (int(dbytes)
+        == int(dwin) == 0) or int(state_FIN)==1
     e:
       attrs: {0: dur, 1: proto_tcp, 8: state_FIN, 9: state_INT, 12: dbytes}
-      exec: 'lambda a: a[1] != 1 or a[2] == 1 or a[0] == 0 or a[3] != 1 or a[4] ==
-        0'
-      text: proto_tcp != 1 or state_FIN == 1 or dur == 0 or state_INT != 1 or dbytes
-        == 0
+      exec: 'lambda a: int(a[1]) != 1 or int(a[2]) == 1 or int(a[0]) == 0 or int(a[3])
+        != 1 or int(a[4]) == 0'
+      text: int(proto_tcp) != 1 or int(state_FIN) == 1 or int(dur) == 0 or int(state_INT)
+        != 1 or int(dbytes) == 0
     f:
       attrs: {1: proto_tcp, 18: swin, 19: stcpb, 20: dtcpb, 21: dwin}
-      exec: 'lambda a: a[0] == 1 or (a[1] == a[4] == a[2] == a[3] == 0)'
-      text: proto_tcp == 1 or (swin == dwin == stcpb == dtcpb == 0)
+      exec: 'lambda a: int(a[0]) == 1 or (int(a[1]) == int(a[4]) == int(a[2]) == int(a[3])
+        == 0)'
+      text: int(proto_tcp) == 1 or (int(swin) == int(dwin) == int(stcpb) == int(dtcpb)
+        == 0)
   reset_strategy: 2

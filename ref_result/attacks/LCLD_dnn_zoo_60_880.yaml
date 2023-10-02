@@ -1,10 +1,9 @@
 attack:
-  can_validate: false
-  config:
-    args: {enable_constraints: false, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
-    feat_file: data/feature_lcld.csv
-    max_iter: 0
-  name: CPGD
+  can_validate: true
+  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
+    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
+  name: VZoo
 classifier:
   config:
     layers: [64]
@@ -71,45 +70,46 @@ experiment:
     verification_status_Not_Verified: [0, 1]
     verification_status_Source_Verified: [0, 1]
     verification_status_Verified: [0, 1]
-  capture_utc: 1695928870260250467
+  capture_utc: 1696159391885346878
   class_distribution: {0: 10000, 1: 10000}
   config: config/lcld.yaml
   dataset: data/lcld.csv
   description: credit requests dataset that can be accepted or rejected
-  duration_sec: 3322.5
-  end: 1695928868472235565
+  duration_sec: 29906.6
+  end: 1696159390190956749
   k_folds: 5
   n_attributes: 48
   n_classes: 2
   n_records: 20000
-  start: 1695925545987078535
+  name: LCLD
+  start: 1696129483608016478
   system:
     cpu_current_frequency: 2199.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 13.1
-    cpu_usage_per_core: [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cpu_total_usage: 12.6
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
-    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.16GB
-    virtual_mem_percentage: 3.8
+    virtual_mem_available: 30.23GB
+    virtual_mem_percentage: 3.5
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 743.31MB
+    virtual_mem_used: 669.82MB
 folds:
-  accuracy: [0.6205, 0.64875, 0.64575, 0.65375, 0.641]
-  f_score: [0.609166, 0.651969, 0.6419, 0.668104, 0.635903]
-  n_evasions: [1299, 1279, 1313, 1221, 1310]
+  accuracy: [0.639, 0.6335, 0.62975, 0.6535, 0.64275]
+  f_score: [0.676813, 0.67595, 0.633507, 0.651584, 0.653911]
+  n_evasions: [1097, 953, 956, 1169, 1168]
   n_records: [4000, 4000, 4000, 4000, 4000]
-  n_valid: [0, 0, 0, 0, 0]
-  n_valid_evades: [0, 0, 0, 0, 0]
-  precision: [0.632959, 0.644782, 0.648952, 0.654153, 0.627942]
-  recall: [0.587097, 0.659319, 0.635, 0.682664, 0.644068]
+  n_valid: [3999, 4000, 4000, 4000, 4000]
+  n_valid_evades: [1097, 953, 956, 1169, 1168]
+  precision: [0.619926, 0.603632, 0.634291, 0.659878, 0.617566]
+  recall: [0.745195, 0.767956, 0.632724, 0.643496, 0.694802]
 invalid_rows: []
 validation:
   dependencies:

@@ -1,8 +1,8 @@
 attack:
   can_validate: true
-  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 0, norm: inf,
+  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
     num_random_init: 40, random_eps: false, targeted: false, verbose: true}
-  name: PGDConst
+  name: VPGD
 classifier:
   config:
     layers: [64]
@@ -69,45 +69,46 @@ experiment:
     verification_status_Not_Verified: [0, 1]
     verification_status_Source_Verified: [0, 1]
     verification_status_Verified: [0, 1]
-  capture_utc: 1695924756584491984
+  capture_utc: 1696129472411275052
   class_distribution: {0: 10000, 1: 10000}
   config: config/lcld.yaml
   dataset: data/lcld.csv
   description: credit requests dataset that can be accepted or rejected
-  duration_sec: 300.9
-  end: 1695924754791379253
+  duration_sec: 1476.9
+  end: 1696129470729708516
   k_folds: 5
   n_attributes: 48
   n_classes: 2
   n_records: 20000
-  start: 1695924453891954871
+  name: LCLD
+  start: 1696127993780459247
   system:
     cpu_current_frequency: 2199.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 17.7
+    cpu_total_usage: 13.5
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
-    python_runtime: "3.9.18 (main, Aug 25 2023, 13:20:04) \n[GCC 9.4.0]"
+    python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.16GB
-    virtual_mem_percentage: 3.8
+    virtual_mem_available: 30.21GB
+    virtual_mem_percentage: 3.6
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 745.81MB
+    virtual_mem_used: 693.03MB
 folds:
-  accuracy: [0.647, 0.64275, 0.63325, 0.636, 0.63925]
-  f_score: [0.624068, 0.635552, 0.6315, 0.631579, 0.655526]
-  n_evasions: [0, 0, 0, 0, 0]
+  accuracy: [0.642, 0.63825, 0.6425, 0.62475, 0.643]
+  f_score: [0.648503, 0.64121, 0.649853, 0.618745, 0.641746]
+  n_evasions: [2568, 2553, 2570, 2499, 2572]
   n_records: [4000, 4000, 4000, 4000, 4000]
-  n_valid: [4000, 4000, 4000, 4000, 4000]
-  n_valid_evades: [0, 0, 0, 0, 0]
-  precision: [0.691854, 0.643263, 0.630707, 0.643631, 0.614043]
-  recall: [0.56838, 0.628024, 0.632294, 0.61997, 0.703021]
+  n_valid: [4000, 4000, 3998, 3999, 3999]
+  n_valid_evades: [2568, 2553, 2568, 2499, 2571]
+  precision: [0.644076, 0.632274, 0.647949, 0.616397, 0.641424]
+  recall: [0.652991, 0.650402, 0.651768, 0.621112, 0.642068]
 invalid_rows: []
 validation:
   dependencies:
