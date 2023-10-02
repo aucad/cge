@@ -2,10 +2,6 @@ name: URL
 dataset: data/url.csv
 desc: URL dataset of legitimate and phishing URLs
 
-dnn:
-  layers: [ 64, 32, 16 ]
-
-
 cpgd:
   feat_file: "data/feature_url.csv"
 
