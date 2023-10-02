@@ -2,6 +2,9 @@ name: LCLD
 dataset: data/lcld.csv
 desc: credit requests dataset that can be accepted or rejected
 
+dnn:
+  layers: [ 64, 32, 16 ]
+
 cpgd:
   feat_file:  "data/feature_lcld.csv"
 
