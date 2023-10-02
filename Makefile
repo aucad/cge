@@ -28,6 +28,7 @@ original:
 
 plots:
 	python3 -m exp $(DIR)/attacks --plot
+	python3 -m exp $(DIR) --plot
 
 graphs:
 	$(foreach f, $(ALL__CONF), python3 -m exp $(f) --graph; )

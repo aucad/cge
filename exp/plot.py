@@ -46,7 +46,11 @@ class ResultData:
         self.raw_rata = []
         self.directory = directory
         for file in glob(path.join(self.directory, "*.yaml")):
-            self.raw_rata.append(read_yaml(file))
+            # noinspection PyBroadException
+            try:
+                self.raw_rata.append(read_yaml(file))
+            except:
+                pass
 
     @property
     def n_results(self):
@@ -61,7 +65,8 @@ class ResultData:
 
         return [
             r['classifier']['name'],
-            r['experiment']['dataset'],
+            (r['experiment']['name'] if 'name' in r['experiment'] else
+             r['experiment']['dataset']),
             r['attack']['name'],
             f"{100 * mean(r['folds']['accuracy']):.1f}",
             arr_mean(r['folds']['n_evasions']),
@@ -71,7 +76,7 @@ class ResultData:
     def write_table(self, sorter):
         writer = SpaceAlignedTableWriter()
         writer.headers = ('classifier,dataset,attack,accuracy,'
-                          'evades,v+e,dur(s)'.split(','))
+                          'evades,valid-e,dur(s)'.split(','))
         mat = [ResultData.fmt(r) for r in self.raw_rata]
         mat = sorted(mat, key=sorter)
         writer.value_matrix = mat
@@ -82,7 +87,7 @@ class ResultData:
         ts = pd.to_timedelta(sum(
             [r['experiment']['end'] - r['experiment']['start']
              for r in self.raw_rata]))
-        print(f'{div}\nTotal experiment duration: {ts}\n{div}')
+        print(f'{div}\nTotal duration: {ts}\n{div}')
 
 
 def plot_results(directory):

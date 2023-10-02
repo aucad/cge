@@ -82,8 +82,18 @@ make plots
 
 ### Custom usage
 
+The default experiment options are defined statically in `config` files.
+An experiment run can be customized further with command line arguments, to override the static options.
+To run such custom experiments, call the `exp` module directly.
+
 ```
 python3 -m exp [PATH] {ARGS}
+```
+
+For a list of supported arguments, run:
+
+```
+python3 -m exp --help
 ```
 
 <details>
