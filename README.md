@@ -60,7 +60,12 @@ A constraint-validation approach can be enabled or disabled during the attack, t
 
 ## Usage
 
-Runtime requirements: Python 3.9 or higher.
+**Software requirements**
+
+* [Python 3.9 or higher](https://www.python.org/downloads/)
+* [CMake](https://cmake.org/download/)
+
+**Reproducing experiments**
 
 Install dependencies
 
@@ -68,16 +73,23 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-Run experiments for all combinations of data sets, classifiers and attacks.
+Run experiments for all combinations of data sets, classifiers and attacks.  
+_Important: on a 8-core machine, running all experiments requires ≈ 37 hours._
 
 ```
 make attacks
 ```
 
-Generate a table of experiment results
+Generate table plots of experiment results
 
 ```
 make plots
+```
+
+To plot the referential result for comparison, run
+
+```
+make plots DIR=ref_result
 ```
 
 ### Custom usage

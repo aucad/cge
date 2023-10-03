@@ -75,6 +75,8 @@ class ResultData:
             round(r['experiment']['duration_sec'], 0)]
 
     def write_table(self, sorter):
+        file_ext, file_name = 'txt', '__plot'
+        fn = path.join(self.directory, f'{file_name}.{file_ext}')
         writer = SpaceAlignedTableWriter()
         writer.headers = ('classifier,dataset,attack,accuracy,'
                           'evades,valid-e,dur(s)'.split(','))
@@ -83,6 +85,7 @@ class ResultData:
         writer.value_matrix = mat
         print('Results for directory:', self.directory)
         writer.write_table()
+        writer.dump(fn)
 
     def show_duration(self):
         div = 72 * "="
@@ -94,8 +97,6 @@ class ResultData:
 
 def plot_results(directory):
     res = ResultData(directory)
-    if res.n_results == 0:
-        print(f"No results to plot in directory {directory}")
-    else:
+    if res.n_results > 0:
         res.write_table(sorter=lambda x: (x[0], x[1], x[2]))
         res.show_duration()
