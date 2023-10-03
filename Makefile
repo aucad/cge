@@ -1,15 +1,16 @@
 SHELL := /bin/bash
 
-TIMES = 1 2 3 4 5
-CLASSIFIERS = dnn xgb
-ATTACKS = hsj pgd zoo cpgd
-ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name '*_prf*.yaml')
-PERF_CONF = $(shell find config/$(cat) -type f -iname '*_prf*.yaml')
-ALL__CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml' )
-
 ifndef $DIR
 DIR:=result
 endif
+
+TIMES = 1 2 3 4 5
+CLASSIFIERS = dnn xgb
+ATTACKS = hsj pgd zoo cpgd
+ALL_CONF  = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml' )
+ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name '*_prf*.yaml')
+PERF_CONF = $(shell find config/$(cat) -type f -iname '*_prf*.yaml')
+RES_DIRS  = $(shell find $(DIR) -type d -maxdepth 1 )
 
 
 all: graphs attacks
@@ -27,15 +28,10 @@ original:
 	python3 -m exp $(f) -a $(a) -c $(c) --out result/original ; )))
 
 plots:
-	python3 -m exp $(DIR)/attacks --plot
-	python3 -m exp $(DIR) --plot
+	$(foreach d, $(RES_DIRS), python3 -m exp $(d) --plot ; )
 
 graphs:
-	$(foreach f, $(ALL__CONF), python3 -m exp $(f) --graph; )
-
-time:
-	$(foreach f, $(PERF_CONF), $(foreach t, $(TIMES), \
-	python3 -m exp $(f) --fn $(t) ; ))
+	$(foreach f, $(ALL_CONF), python3 -m exp $(f) --graph; )
 
 test:
 	pytest --cov-report term-missing --cov=./exp test

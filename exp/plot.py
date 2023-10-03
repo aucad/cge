@@ -81,6 +81,7 @@ class ResultData:
         mat = [ResultData.fmt(r) for r in self.raw_rata]
         mat = sorted(mat, key=sorter)
         writer.value_matrix = mat
+        print('Results for directory:', self.directory)
         writer.write_table()
 
     def show_duration(self):
@@ -94,7 +95,7 @@ class ResultData:
 def plot_results(directory):
     res = ResultData(directory)
     if res.n_results == 0:
-        print(f"No results found in: {directory}")
+        print(f"No results to plot in directory {directory}")
     else:
         res.write_table(sorter=lambda x: (x[0], x[1], x[2]))
         res.show_duration()
