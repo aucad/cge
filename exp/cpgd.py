@@ -1,6 +1,6 @@
 """
 Implementation of constrained adversarial attacks using CPGD.
-This implementation uses a different constraint validation strategy,
+This implementation uses a different constraint evaluation strategy,
 and the constraint checking is built into the attack. See:
 
 Paper: https://arxiv.org/abs/2112.01156

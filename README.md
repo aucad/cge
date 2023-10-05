@@ -1,8 +1,8 @@
 # Constrained adversarial attacks
 
 This is an experimental setup that demonstrates adding constraints to universal adversarial machine learning evasion attacks.
-We introduce a _constraint validation algorithm_ that guarantees generated evasive adversarial examples satisfy domain constraints.
-We call examples that satisfy domain constraints _valid_.
+We introduce a _constraint validation_ algorithm that guarantees generated evasive adversarial examples satisfy domain constraints.
+We call evasive examples that satisfy domain constraints _valid_.
 
 This implementation allows to run various adversarial evasion attacks, enhanced with our constraint validation algorithm, on different data sets and classifiers.
 The following options are included.
@@ -12,19 +12,19 @@ The following options are included.
 - **Data sets**: 4 different data sets from different domains, see descriptions below.
 
 **Comparison.** We also include a comparison attack, Constrained Projected Gradient Descent (C-PGD).
-It uses a different constraint-validation approach, introduced by Simonetto et al. in ["A Unified Framework for Adversarial Attack and Defense in Constrained Feature Space"](https://arxiv.org/abs/2112.01156).
+It uses a different constraint evaluation approach, introduced by Simonetto et al. in ["A Unified Framework for Adversarial Attack and Defense in Constrained Feature Space"](https://arxiv.org/abs/2112.01156).
 
 **Repository organization**
 
-| Directory    | Description                                           |
-|:-------------|:------------------------------------------------------|
-| `.github`    | Automated workflows                                   |
-| `comparison` | C-PGD attack implementation source code               |
-| `config`     | Experiment configuration files                        |
-| `data`       | Preprocessed input data sets                          |
-| `exp`        | Experiment setup and validation algorithm source code |
-| `ref_result` | Referential result for inspection                     |
-| `test`       | Unit tests to test experiment implementation          |
+| Directory    | Description                                  |
+|:-------------|:---------------------------------------------|
+| `.github`    | Automated workflows                          |
+| `comparison` | C-PGD attack implementation source code      |
+| `config`     | Experiment configuration files               |
+| `data`       | Preprocessed input data sets                 |
+| `exp`        | Experiment setup source code                 |
+| `ref_result` | Referential result for inspection            |
+| `test`       | Unit tests to test experiment implementation |
 
 The Makefile contains pre-configured commands to ease running experiments.
 The software dependencies are listed in `requirements.txt`.

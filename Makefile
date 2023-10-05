@@ -33,7 +33,7 @@ reset:
 	python3 -m exp $(f) -a $(a) -c $(c) --out result/reset --reset 1 ; )))
 
 plots:
-	$(foreach d, $(RES_DIRS), python3 -m exp $(d) --plot ; )
+	$(foreach d, $(RES_DIRS), python3 -m exp $(d) --plot --out $(DIR) ; )
 
 graphs:
 	$(foreach f, $(ALL_CONF), python3 -m exp $(f) --graph; )

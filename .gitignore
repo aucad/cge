@@ -52,4 +52,4 @@ test/__pycache__
 .idea/
 sketch.py
 *.pyc
-__plot.txt
+__plot*.txt

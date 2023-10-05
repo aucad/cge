@@ -118,7 +118,7 @@ if __name__ == '__main__':
     args_ = parse_args(ArgumentParser())
 
     if args_.plot:
-        plot_results(args_.path)
+        plot_results(args_.path, args_.out)
         sys.exit(0)
 
     config_ = build_config(args_)

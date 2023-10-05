@@ -74,12 +74,13 @@ class ResultData:
             arr_mean(r['folds']['n_valid_evades']),
             round(r['experiment']['duration_sec'], 0)]
 
-    def write_table(self, sorter):
-        file_ext, file_name = 'txt', '__plot'
-        fn = path.join(self.directory, f'{file_name}.{file_ext}')
+    def write_table(self, sorter, our_dir):
+        flat_name = self.directory.replace('/', '_')
+        file_ext, file_name = 'txt', f'__plot_{flat_name}'
+        fn = path.join(our_dir, f'{file_name}.{file_ext}')
         writer = SpaceAlignedTableWriter()
-        writer.headers = ('classifier,dataset,attack,accuracy,'
-                          'evades,valid-e,dur(s)'.split(','))
+        writer.headers = ('classifier,data set,attack,accuracy,'
+                          'evades,valid,dur(s)'.split(','))
         mat = [ResultData.fmt(r) for r in self.raw_rata]
         mat = sorted(mat, key=sorter)
         writer.value_matrix = mat
@@ -95,8 +96,10 @@ class ResultData:
         print(f'{div}\nTotal duration: {ts}\n{div}')
 
 
-def plot_results(directory):
+def plot_results(directory, out=None):
     res = ResultData(directory)
     if res.n_results > 0:
-        res.write_table(sorter=lambda x: (x[0], x[1], x[2]))
+        res.write_table(
+            sorter=lambda x: (x[0], x[1], x[2]),
+            our_dir=out or directory)
         res.show_duration()
