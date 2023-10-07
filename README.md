@@ -65,7 +65,7 @@ A constraint-validation approach can be enabled or disabled during the attack, t
 * [Python 3.9 or higher](https://www.python.org/downloads/)
 * [CMake](https://cmake.org/download/)
 
-**Reproducing experiments**
+### Reproducing experiments
 
 Install dependencies
 
@@ -73,28 +73,28 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-Run experiments for all combinations of data sets, classifiers and attacks.  
-_Important: on a 8-core machine, depending on architecture, running all experiments requires 1-2 days._
+**Run attacks.** Run experiments for all combinations of data sets, classifiers and attacks.       
+Important: on a 8-core machine, depending on architecture, running all experiments requires 1-2 days.
 
 ```
 make attacks
 ```
 
-For comparison of the above baseline attacks with validation, run further experiments   
-_Again, latency of each run is 1-2 days._
+**Run comparisons.** For comparison of the above baseline attacks with validation, run further experiments.      
+Again, latency of each experiment is 1-2 days.
 
 <pre>
 make original  -- runs original adversarial attacks, ignoring constraints
-make reset     -- use alternate reset strategy, to correct non-valid instances.
+make reset     -- use alternate reset strategy to correct non-valid instances.
 </pre>
 
-Generate table plots of experiment results
+**Plots.** Generate table plots of experiment results.
 
 ```
 make plots
 ```
 
-To plot the referential result for comparison, run
+**Comparison plot.** To plot the referential result for comparison with your local experiments.
 
 ```
 make plots DIR=ref_result
