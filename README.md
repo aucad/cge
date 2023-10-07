@@ -48,14 +48,13 @@ A single experiment execution consists of training a classification model on a c
 A constraint-validation approach can be enabled or disabled during the attack, to impact the validity of the generated adversarial examples.
 
 <pre>
-     ┌───────────┐      ┌────────────┐      ┌────────────┐      ┌────────────┐
-○────┤   parse   ├──────┤   setup    ├──────┤    run     ├──────┤    end     ├────◎
-     │   args    │      │ experiment │      │ experiment │      │ experiment │
-     └───────────┘      └────────────┘      └────────────┘      └────────────┘
-      inputs:           preprocess data,     k times:            write result
-      - data set        init classifier,     1. train model      
-      - config file     attack, and          2. attack
-      - constraints     validation           3. score
+     ┌───────────────┐      ┌───────────────┐      ┌───────────────┐      ┌───────────────┐ 
+○────┤  args-parser  ├──────┤     setup     ├──────┤      run      ├──────┤      end      ├────◎
+     └───────────────┘      └───────────────┘      └───────────────┘      └───────────────┘
+      inputs: data set       preprocess data,        k times:               write result
+      + a config file        init classifier,        1. train model      
+      with constraints       attack, validation      2. attack
+                                                     3. score
 </pre>
 
 ## Usage
