@@ -5,6 +5,7 @@ from exp import Experiment, AttackPicker, ClsPicker
 from exp.plot import plot_results
 from exp.preproc import pred_parse
 from exp.utility import to_namedtuple, read_yaml
+from exp.validation import ALL as RESET_ALL
 
 
 def parse_args(parser: ArgumentParser):
@@ -53,10 +54,9 @@ def parse_args(parser: ArgumentParser):
         default=-1
     )
     parser.add_argument(
-        '--reset',
-        type=int,
-        choices=[1, 2],
-        help='reset strategy: 1=all, 2=dependencies [default: 2]'
+        '--reset_all',
+        action='store_true',
+        help='for non-valid record, reset all features to original'
     )
     parser.add_argument(
         '--fn',
@@ -106,8 +106,8 @@ def build_config(args):
         config[attack_name]['max_iter'] = args.iter
     config['cls'] = args.cls or config['cls']
     config['out'] = args.out or config['out']
-    if args.reset and int(args.reset) > 0:
-        config['reset_strategy'] = args.reset
+    if args.reset_all:
+        config['reset_strategy'] = RESET_ALL
     config['fn_pattern'] = args.fn if args.fn else None
     config = to_namedtuple(pred_parse(config))
     check_params(config)
