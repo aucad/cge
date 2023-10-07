@@ -30,7 +30,7 @@ original:
 reset:
 	$(foreach f, $(ATTK_CONF), $(foreach a, $(ATTACKS), \
 	$(foreach c, $(CLASSIFIERS), \
-	python3 -m exp $(f) -a $(a) -c $(c) -v --out result/reset --reset 1 ; )))
+	python3 -m exp $(f) -a $(a) -c $(c) -v --out result/reset --reset_all ; )))
 
 plots:
 	$(foreach d, $(RES_DIRS), python3 -m exp $(d) --plot --out $(DIR) ; )
