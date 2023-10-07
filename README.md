@@ -74,11 +74,19 @@ pip install -r requirements.txt
 ```
 
 Run experiments for all combinations of data sets, classifiers and attacks.  
-_Important: on a 8-core machine, running all experiments requires ≈ 37 hours._
+_Important: on a 8-core machine, depending on architecture, running all experiments requires 1-2 days._
 
 ```
 make attacks
 ```
+
+For comparison of the above baseline attacks with validation, run further experiments   
+_Again, latency of each run is 1-2 days._
+
+<pre>
+make original  -- runs original adversarial attacks, ignoring constraints
+make reset     -- use alternate reset strategy, to correct non-valid instances.
+</pre>
 
 Generate table plots of experiment results
 
