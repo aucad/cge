@@ -1,0 +1,26 @@
+name: PT-1-6
+dataset: data/unsw_nb15.csv
+desc: Constraint performance test with 6 correlated constraints
+
+cls: dnn
+attack: pgd
+
+dnn:
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  id: "perf2"
+  feat_file: "data/feature_unsw.csv"
+
+constraints:
+  predicates:
+    - state_INT != 1 or dbytes == 0
+    - service_dns != 1  or smean <= 512
+    - dbytes != 0 or dloss == 0
+    - service_none != 1 or proto_other != 1 or ct_src_dport_ltm >= 1
+    - state_FIN != 1 or ct_dst_sport_ltm >= 1
+    - (dmean >= 10) or (sjit >= djit)
+
+
+
+

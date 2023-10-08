@@ -1,0 +1,21 @@
+name: PT-1-3
+dataset: data/unsw_nb15.csv
+desc: Constraint performance test with 3 correlated constraints
+
+cls: dnn
+attack: pgd
+
+dnn:
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  id: "perf1"
+  feat_file: "data/feature_unsw.csv"
+
+constraints:
+  predicates:
+    - state_INT != 1 or dbytes == 0
+    - service_dns != 1  or smean <= 512
+    - dbytes != 0 or dloss == 0
+
+

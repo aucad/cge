@@ -1,0 +1,19 @@
+name: PT-2-3
+dataset: data/unsw_nb15.csv
+desc: Constraint performance test with 3 unrelated constraints
+
+cls: dnn
+attack: pgd
+
+dnn:
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  id: "perf4"
+  feat_file: "data/feature_unsw.csv"
+
+constraints:
+  predicates:
+    - swin >= 0 and swin <= 255
+    - dwin >= 0 and dwin <= 255
+    - sloss >= 0 and sloss <= 3993

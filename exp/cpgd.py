@@ -28,6 +28,59 @@ from comparison.cpgd.cpgd import CPGD
 from comparison.cpgd.tf_classifier import TensorflowClassifier
 
 
+def get_perf1_constraints() -> List[BaseRelationConstraint]:
+    g1 = Feature(9) != Constant(1) or Feature(12) == Constant(0)
+    g2 = Feature(6) != Constant(1) or Feature(22) <= Constant(512)
+    g3 = Feature(12) != Constant(0) or Feature(15) == Constant(0)
+    return [g1, g2, g3]
+
+
+def get_perf2_constraints() -> List[BaseRelationConstraint]:
+    g4 = (Feature(4) != Constant(1) or Feature(3) != Constant(1) or
+          Feature(27) >= Constant(1))
+    g5 = Feature(8) != Constant(1) or Feature(28) >= Constant(1)
+    g6 = Feature(23) >= Constant(10) or Feature(16) >= Constant(17)
+    return get_perf1_constraints() + [g4, g5, g6]
+
+
+def get_perf3_constraints() -> List[BaseRelationConstraint]:
+    g7 = Feature(9) != Constant(1) or Feature(22) >= Feature(23)
+    g8 = (Feature(24) != Constant(1) or Feature(8) == Constant(1) or
+          Feature(10) == Constant(1))
+    g9 = ((Feature(18) == Constant(0) and Feature(21) == Constant(0))
+          or Feature(23) >= Constant(0))
+    g10 = Feature(8) != Constant(1) or Feature(22) >= Constant(1)
+    g11 = (Feature(10) != Constant(1) or
+           (Feature(22) >= Constant(0) and
+            Feature(23) >= Constant(0)))
+    g12 = Feature(12) >= Constant(0) and Feature(15) >= Constant(0)
+    return get_perf2_constraints() + [g7, g8, g9, g10, g11, g12]
+
+
+def get_perf4_constraints() -> List[BaseRelationConstraint]:
+    g1 = Constant(0) <= Feature(18) <= Constant(255)
+    g2 = Constant(0) <= Feature(21) <= Constant(255)
+    g3 = Constant(0) <= Feature(14) <= Constant(3993)
+    return [g1, g2, g3]
+
+
+def get_perf5_constraints() -> List[BaseRelationConstraint]:
+    g4 = Constant(0) <= Feature(15) <= Constant(2627)
+    g5 = Constant(0) <= Feature(11) <= Constant(7085342)
+    g6 = Constant(0) <= Feature(12) <= Constant(10508068)
+    return get_perf4_constraints() + [g4, g5, g6]
+
+
+def get_perf6_constraints() -> List[BaseRelationConstraint]:
+    g7 = Constant(0) <= Feature(0) <= Constant(60)
+    g8 = Constant(1) <= Feature(25) <= Constant(63)
+    g9 = Constant(1) <= Feature(26) <= Constant(50)
+    g10 = Constant(1) <= Feature(27) <= Constant(50)
+    g11 = Constant(1) <= Feature(28) <= Constant(46)
+    g12 = Constant(1) <= Feature(29) <= Constant(63)
+    return get_perf5_constraints() + [g7, g8, g9, g10, g11, g12]
+
+
 def get_unsw_constraints() -> List[BaseRelationConstraint]:
     g1 = Feature(1) + Feature(2) + Feature(3) == Constant(1)
 
@@ -197,7 +250,19 @@ def get_url_constraints() -> List[BaseRelationConstraint]:
 def init_constraints(feat_file):
     # matches by file name - do not change.
     c_set = None
-    if 'unsw' in feat_file:
+    if 'perf1' in feat_file:
+        c_set = get_perf1_constraints()
+    if 'perf2' in feat_file:
+        c_set = get_perf2_constraints()
+    if 'perf3' in feat_file:
+        c_set = get_perf3_constraints()
+    if 'perf4' in feat_file:
+        c_set = get_perf4_constraints()
+    if 'perf5' in feat_file:
+        c_set = get_perf5_constraints()
+    if 'perf6' in feat_file:
+        c_set = get_perf6_constraints()
+    elif 'unsw' in feat_file:
         c_set = get_unsw_constraints()
     elif 'iot' in feat_file:
         c_set = get_iot_constraints()
@@ -227,8 +292,9 @@ def cpgd_apply_and_predict(
         enable_constr: bool, feat_file: str, **config
 ):
     args_ = {**config['args'], 'enable_constraints': enable_constr}
+    const_key = config['id'] if 'id' in config else feat_file
     constraints = get_constraints_from_file(
-        *init_constraints(feat_file))
+        *init_constraints(const_key))
     scaler = get_scaler(feat_file)
     model = TensorflowClassifier(keras_nn)  # wrap in their interface
     pipe = Pipeline(steps=[("preprocessing", scaler), ("model", model)])

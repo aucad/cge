@@ -1,0 +1,28 @@
+name: PT-2-12
+dataset: data/unsw_nb15.csv
+desc: Constraint performance test with 12 unrelated constraints
+
+cls: dnn
+attack: pgd
+
+dnn:
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  id: "perf6"
+  feat_file: "data/feature_unsw.csv"
+
+constraints:
+  predicates:
+    - swin >= 0 and swin <= 255
+    - dwin >= 0 and dwin <= 255
+    - sloss >= 0 and sloss <= 3993
+    - dloss >= 0 or dloss <= 2627
+    - sbytes >= 0 or sbytes <= 7085342
+    - dbytes >= 0 or dbytes <= 10508068
+    - dur >= 0 and dur <= 60
+    - ct_srv_src >= 1 and ct_srv_src <= 63
+    - ct_dst_ltm >= 1 and ct_dst_ltm <= 50
+    - ct_src_dport_ltm >= 1 and ct_src_dport_ltm <= 50
+    - ct_dst_sport_ltm >= 1 and ct_dst_sport_ltm <= 46
+    - ct_dst_src_ltm >= 1 and ct_dst_src_ltm <= 63
