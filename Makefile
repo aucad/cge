@@ -16,7 +16,7 @@ ALL_CONF  = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.
 ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name 'prf*.yaml')
 PERF_CONF = $(shell find config/$(cat) -type f -iname 'prf*.yaml' | sort -t '\0' -n)
 RES_DIRS  = $(shell find $(DIR) -type d -maxdepth 1 )
-
+UNAME_S := $(shell echo $(shell uname -s) | tr A-Z a-z)
 
 dev: test lint
 
@@ -35,10 +35,10 @@ reset:
 	$(foreach c, $(CLASSIFIERS), \
 	python3 -m exp $(f) -a $(a) -c $(c) -v --out result/reset --reset_all ; )))
 
-%:
+perf:
 	$(foreach f, $(PERF_CONF), $(foreach a, $(PERF_ATTACKS), \
 	$(foreach v, $(V_TOGGLE), \
-	python3 -m exp $(f) -a $(a) $($(v)) --out result/perf/$@ ; )))
+	python3 -m exp $(f) -a $(a) $($(v)) --out result/perf/$(UNAME_S); )))
 
 plots:
 	$(foreach d, $(RES_DIRS), python3 -m exp $(d) --plot --out $(DIR) ; )

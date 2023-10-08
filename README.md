@@ -85,6 +85,7 @@ Again, latency of each experiment is 1-2 days.
 <pre>
 make original  -- runs original adversarial attacks, ignoring constraints
 make reset     -- use alternate reset strategy to correct non-valid instances.
+make perf      -- run constraint performance tests 
 </pre>
 
 **Plots.** Generate table plots of experiment results.
@@ -93,10 +94,16 @@ make reset     -- use alternate reset strategy to correct non-valid instances.
 make plots
 ```
 
-**Comparison plot.** To plot the referential result for comparison with your local experiments.
+**Comparison plot.** To plot results from some other directory, e.g. `ref_result` append directory name.
 
 ```
 make plots DIR=ref_result
+```
+
+**Plot graphs.** Visualize constraints as graphs.
+
+```
+make graphs
 ```
 
 ### Custom usage
