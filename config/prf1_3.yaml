@@ -1,0 +1,31 @@
+name: PT-1-12
+dataset: data/unsw_nb15.csv
+desc: Constraint performance test with 12 correlated constraints
+
+cls: dnn
+attack: pgd
+
+dnn:
+  layers: [ 64, 64, 32 ]
+
+cpgd:
+  id: "perf3"
+  feat_file: "data/feature_unsw.csv"
+
+constraints:
+  predicates:
+    - state_INT != 1 or dbytes == 0
+    - service_dns != 1  or smean <= 512
+    - dbytes != 0 or dloss == 0
+    - service_none != 1 or proto_other != 1 or ct_src_dport_ltm >= 1
+    - state_FIN != 1 or ct_dst_sport_ltm >= 1
+    - (dmean >= 10) or (sjit >= djit)
+    - state_INT != 1 or (smean >= dmean)
+    - trans_depth != 1 or state_FIN == 1 or state_other == 1
+    - (swin == dwin == 0 ) or dmean >= 0
+    - state_FIN != 1 or smean >= 1
+    - state_other != 1 or (smean >= 0 and dmean >= 0)
+    - dbytes >= 0 and dloss >= 0
+
+
+
