@@ -1,0 +1,113 @@
+attack:
+  can_validate: false
+  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
+    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
+  name: ProjectedGradientDescent
+classifier:
+  config:
+    layers: [64, 64, 32]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
+experiment:
+  attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
+    6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
+    11: sbytes, 12: dbytes, 13: rate, 14: sloss, 15: dloss, 16: sjit, 17: djit, 18: swin,
+    19: stcpb, 20: dtcpb, 21: dwin, 22: smean, 23: dmean, 24: trans_depth, 25: ct_srv_src,
+    26: ct_dst_ltm, 27: ct_src_dport_ltm, 28: ct_dst_sport_ltm, 29: ct_dst_src_ltm,
+    30: ct_src_ltm, 31: ct_srv_dst, 32: label}
+  attrs_ranges:
+    ct_dst_ltm: [1, 50]
+    ct_dst_sport_ltm: [1, 46]
+    ct_dst_src_ltm: [1, 63]
+    ct_src_dport_ltm: [1, 50]
+    ct_src_ltm: [1, 50]
+    ct_srv_dst: [1, 62]
+    ct_srv_src: [1, 63]
+    dbytes: [0, 7085342]
+    djit: [0, 199573]
+    dloss: [0, 2627]
+    dmean: [0, 1458]
+    dtcpb: [0, 4294383134]
+    dur: [0, 60]
+    dwin: [0, 255]
+    proto_other: [0, 1]
+    proto_tcp: [0, 1]
+    proto_udp: [0, 1]
+    rate: [0, 1000001]
+    sbytes: [46, 10508068]
+    service_dns: [0, 1]
+    service_http: [0, 1]
+    service_none: [0, 1]
+    service_other: [0, 1]
+    sjit: [0, 1460481]
+    sloss: [0, 3993]
+    smean: [28, 1499]
+    state_FIN: [0, 1]
+    state_INT: [0, 1]
+    state_other: [0, 1]
+    stcpb: [0, 4294729542]
+    swin: [0, 255]
+    trans_depth: [0, 2]
+  capture_utc: 1696821430878480013
+  class_distribution: {0: 5000, 1: 5000}
+  config: config/prf1_1.yaml
+  dataset: data/unsw_nb15.csv
+  description: Constraint performance test with 3 correlated constraints
+  duration_sec: 327.8
+  end: 1696821429872681456
+  k_folds: 5
+  n_attributes: 33
+  n_classes: 2
+  n_records: 10000
+  name: PT-1-03
+  start: 1696821102121190998
+  system:
+    cpu_current_frequency: 2199.998
+    cpu_max_frequency: 0.0
+    cpu_min_frequency: 0.0
+    cpu_physical_cores: 4
+    cpu_total_cores: 8
+    cpu_total_usage: 16.9
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    machine: x86_64
+    processor: ''
+    python_runtime: 3.10.0 (default, Oct  9 2023, 01:41:16) [GCC 12.2.0]
+    release: 6.1.0-12-cloud-amd64
+    system: Linux
+    version: '#1 SMP PREEMPT_DYNAMIC Debian 6.1.52-1 (2023-09-07)'
+    virtual_mem_available: 29.76GB
+    virtual_mem_percentage: 5.1
+    virtual_mem_total_size: 31.36GB
+    virtual_mem_used: 1.15GB
+folds:
+  accuracy: [0.9125, 0.914, 0.909, 0.924, 0.907]
+  f_score: [0.906865, 0.914257, 0.907332, 0.924453, 0.908824]
+  n_evasions: [1822, 1814, 1813, 1835, 1809]
+  n_records: [2000, 2000, 2000, 2000, 2000]
+  n_valid: [1705, 1829, 1782, 1711, 1646]
+  n_valid_evades: [1551, 1665, 1624, 1572, 1486]
+  precision: [0.920086, 0.925328, 0.948882, 0.9375, 0.880342]
+  recall: [0.894019, 0.903448, 0.869268, 0.911765, 0.93921]
+invalid_rows: []
+validation:
+  dependencies:
+    a: [9, 12, 15]
+    b: [6, 22]
+    c: [9, 12, 15]
+  enabled: false
+  immutable: []
+  n_constraints: 3
+  predicates:
+    a:
+      attrs: {9: state_INT, 12: dbytes}
+      exec: 'lambda a: a[0] != 1 or a[1] == 0'
+      text: state_INT != 1 or dbytes == 0
+    b:
+      attrs: {6: service_dns, 22: smean}
+      exec: 'lambda a: a[0] != 1  or a[1] <= 512'
+      text: service_dns != 1  or smean <= 512
+    c:
+      attrs: {12: dbytes, 15: dloss}
+      exec: 'lambda a: a[0] != 0 or a[1] == 0'
+      text: dbytes != 0 or dloss == 0
+  reset_strategy: 2
