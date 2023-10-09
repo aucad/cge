@@ -58,6 +58,21 @@ class ResultData:
         return len(self.raw_rata)
 
     @staticmethod
+    def fmt_attack_name(r):
+        tmp = r['attack']['name']
+        v = (r['validation']['enabled']
+             if 'enabled' in r['validation'] else '?')
+        if tmp == 'ProjectedGradientDescent':
+            return 'PGD'
+        if tmp == 'ZooAttack':
+            return 'Zoo'
+        if tmp == 'HopSkipJump':
+            return 'HSJ'
+        if tmp == 'CPGD' and not v:
+            return 'CPGD -C'
+        return tmp
+
+    @staticmethod
     def fmt(r):
         def arr_mean(x):
             d = sum(x)
@@ -68,7 +83,7 @@ class ResultData:
             r['classifier']['name'],
             (r['experiment']['name'] if 'name' in r['experiment'] else
              r['experiment']['dataset']),
-            r['attack']['name'],
+            ResultData.fmt_attack_name(r),
             f"{100 * mean(r['folds']['accuracy']):.1f}",
             arr_mean(r['folds']['n_evasions']),
             arr_mean(r['folds']['n_valid_evades']),

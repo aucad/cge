@@ -132,6 +132,7 @@ class Experiment:
             'duration_sec': time_sec(self.start, self.end),
             'start': self.start, 'end': self.end,
         }, 'validation': {
+            'enabled': self.validation,
             'n_constraints': len(self.validation.constraints),
             'immutable': self.validation.immutable,
             'predicates': self.conf('p_config'),
