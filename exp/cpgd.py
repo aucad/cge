@@ -289,16 +289,15 @@ def get_scaler(path: str):
 
 def cpgd_apply_and_predict(
         keras_nn: Sequential, x: np.ndarray, y: np.ndarray,
-        enable_constr: bool, feat_file: str, **config
+        feat_file: str, args: dict, **kwargs
 ):
-    args_ = {**config['args'], 'enable_constraints': enable_constr}
-    const_key = config['id'] if 'id' in config else None
+    const_key = kwargs['id'] if 'id' in kwargs else None
     constraints = get_constraints_from_file(
         *init_constraints(feat_file, const_key))
     scaler = get_scaler(feat_file)
     model = TensorflowClassifier(keras_nn)  # wrap in their interface
     pipe = Pipeline(steps=[("preprocessing", scaler), ("model", model)])
-    x_adv = CPGD(pipe, constraints, **args_).generate(x, y)
+    x_adv = CPGD(pipe, constraints, **args).generate(x, y)
     x_adv = x_adv.reshape(-1, x_adv.shape[-1])  # remove extra axis
     y_adv = model.predict(x_adv)
     return x_adv, y_adv

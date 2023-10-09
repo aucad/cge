@@ -60,16 +60,15 @@ class ResultData:
     @staticmethod
     def fmt_attack_name(r):
         tmp = r['attack']['name']
-        v = (r['validation']['enabled']
-             if 'enabled' in r['validation'] else '?')
         if tmp == 'ProjectedGradientDescent':
             return 'PGD'
         if tmp == 'ZooAttack':
             return 'Zoo'
         if tmp == 'HopSkipJump':
             return 'HSJ'
-        if tmp == 'CPGD' and not v:
-            return 'CPGD -C'
+        if tmp == 'CPGD':
+            if not r['attack']['config']['args']['enable_constraints']:
+                return 'CPGD[R]'
         return tmp
 
     @staticmethod
