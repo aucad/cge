@@ -1,0 +1,128 @@
+attack:
+  can_validate: true
+  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
+    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
+  name: VPGD
+classifier:
+  config:
+    layers: [64, 64, 32]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
+experiment:
+  attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
+    6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
+    11: sbytes, 12: dbytes, 13: rate, 14: sloss, 15: dloss, 16: sjit, 17: djit, 18: swin,
+    19: stcpb, 20: dtcpb, 21: dwin, 22: smean, 23: dmean, 24: trans_depth, 25: ct_srv_src,
+    26: ct_dst_ltm, 27: ct_src_dport_ltm, 28: ct_dst_sport_ltm, 29: ct_dst_src_ltm,
+    30: ct_src_ltm, 31: ct_srv_dst, 32: label}
+  attrs_ranges:
+    ct_dst_ltm: [1, 50]
+    ct_dst_sport_ltm: [1, 46]
+    ct_dst_src_ltm: [1, 63]
+    ct_src_dport_ltm: [1, 50]
+    ct_src_ltm: [1, 50]
+    ct_srv_dst: [1, 62]
+    ct_srv_src: [1, 63]
+    dbytes: [0, 7085342]
+    djit: [0, 199573]
+    dloss: [0, 2627]
+    dmean: [0, 1458]
+    dtcpb: [0, 4294383134]
+    dur: [0, 60]
+    dwin: [0, 255]
+    proto_other: [0, 1]
+    proto_tcp: [0, 1]
+    proto_udp: [0, 1]
+    rate: [0, 1000001]
+    sbytes: [46, 10508068]
+    service_dns: [0, 1]
+    service_http: [0, 1]
+    service_none: [0, 1]
+    service_other: [0, 1]
+    sjit: [0, 1460481]
+    sloss: [0, 3993]
+    smean: [28, 1499]
+    state_FIN: [0, 1]
+    state_INT: [0, 1]
+    state_other: [0, 1]
+    stcpb: [0, 4294729542]
+    swin: [0, 255]
+    trans_depth: [0, 2]
+  capture_utc: 1696828939019389237
+  class_distribution: {0: 5000, 1: 5000}
+  config: config/prf2_5.yaml
+  dataset: data/unsw_nb15.csv
+  description: Constraint performance test with 6 unrelated constraints
+  duration_sec: 491.5
+  end: 1696828938014270606
+  k_folds: 5
+  n_attributes: 33
+  n_classes: 2
+  n_records: 10000
+  name: PT-2-06
+  start: 1696828446533287797
+  system:
+    cpu_current_frequency: 2200.196
+    cpu_max_frequency: 0.0
+    cpu_min_frequency: 0.0
+    cpu_physical_cores: 4
+    cpu_total_cores: 8
+    cpu_total_usage: 14.8
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    machine: x86_64
+    processor: x86_64
+    python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
+    release: 5.15.0-1042-gcp
+    system: Linux
+    version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
+    virtual_mem_available: 28.65GB
+    virtual_mem_percentage: 8.6
+    virtual_mem_total_size: 31.34GB
+    virtual_mem_used: 2.29GB
+folds:
+  accuracy: [0.92, 0.917, 0.922, 0.92, 0.907]
+  f_score: [0.919759, 0.916331, 0.920892, 0.92, 0.907186]
+  n_evasions: [1840, 1834, 1844, 1840, 1814]
+  n_records: [2000, 2000, 2000, 2000, 2000]
+  n_valid: [2000, 2000, 2000, 2000, 2000]
+  n_valid_evades: [1840, 1834, 1844, 1840, 1814]
+  precision: [0.924395, 0.91911, 0.925586, 0.913605, 0.922843]
+  recall: [0.91517, 0.913568, 0.916246, 0.926485, 0.892051]
+invalid_rows: []
+validation:
+  dependencies:
+    a: [18]
+    b: [21]
+    c: [14]
+    d: [15]
+    e: [11]
+    f: [12]
+  enabled: true
+  immutable: []
+  n_constraints: 6
+  predicates:
+    a:
+      attrs: {18: swin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: swin >= 0 and swin <= 255
+    b:
+      attrs: {21: dwin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: dwin >= 0 and dwin <= 255
+    c:
+      attrs: {14: sloss}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 3993'
+      text: sloss >= 0 and sloss <= 3993
+    d:
+      attrs: {15: dloss}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 2627'
+      text: dloss >= 0 or dloss <= 2627
+    e:
+      attrs: {11: sbytes}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 7085342'
+      text: sbytes >= 0 or sbytes <= 7085342
+    f:
+      attrs: {12: dbytes}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 10508068'
+      text: dbytes >= 0 or dbytes <= 10508068
+  reset_strategy: 2
