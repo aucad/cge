@@ -47,6 +47,8 @@ class AttackRunner:
         self.adv_y = None
         self.score = None
         self.conf = conf or {}
+        if issubclass(self.attack, CPGD):
+            self.conf['args']['enable_constraints'] = self.constr
 
     def reset(self, cls):
         self.cls = cls
@@ -65,8 +67,7 @@ class AttackRunner:
         """Generate adversarial examples and score."""
         if issubclass(self.attack, CPGD):
             self.adv_x, self.adv_y = cpgd_apply_and_predict(
-                self.cls.model, self.ori_x, self.ori_y,
-                self.constr, **self.conf)
+                self.cls.model, self.ori_x, self.ori_y, **self.conf)
         else:
             aml_attack = self.attack(self.cls.classifier, **self.conf)
             if self.can_validate:

@@ -61,15 +61,21 @@ A constraint-validation approach can be enabled or disabled during the attack, t
 
 **Software requirements**
 
-* [Python 3.9 or higher](https://www.python.org/downloads/)
-* [CMake](https://cmake.org/download/)
+* [Python](https://www.python.org/downloads/) -- version 3.9 or higher
+* [GNU make](https://www.gnu.org/software/make/manual/make.html) -- version 3.81 or later
+
+Check your environment using the following command, and install/upgrade as necessary.
+
+```
+python3 --version && make --version
+```
 
 ### Reproducing experiments
 
 Install dependencies
 
 ```
-pip install -r requirements.txt
+pip install -r requirements.txt --user
 ```
 
 **Run attacks.** Run experiments for all combinations of data sets, classifiers and attacks.       
@@ -80,7 +86,7 @@ make attacks
 ```
 
 **Run comparisons.** For comparison of the above baseline attacks with validation, run further experiments.      
-Again, latency of each experiment is 1-2 days.
+The performance test takes ~2 hours. The other experiments require 1-2 days.
 
 <pre>
 make original  -- runs original adversarial attacks, ignoring constraints
