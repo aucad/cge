@@ -47,8 +47,6 @@ class AttackRunner:
         self.adv_y = None
         self.score = None
         self.conf = conf or {}
-        if issubclass(self.attack, CPGD):
-            self.conf['args']['enable_constraints'] = self.constr
 
     def reset(self, cls):
         self.cls = cls

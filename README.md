@@ -79,14 +79,14 @@ pip install -r requirements.txt --user
 ```
 
 **Run attacks.** Run experiments for all combinations of data sets, classifiers and attacks.       
-Important: on a 8-core machine, depending on architecture, running all experiments requires 1-2 days.
+Important: depending on architecture, running all experiments takes 1-2 days.
 
 ```
 make attacks
 ```
 
 **Run comparisons.** For comparison of the above baseline attacks with validation, run further experiments.      
-A performance test takes ~2-3 hours. The other experiments require 1-2 days.
+Depending on hardware, a performance test takes 30 min -- 3 hours, and the other experiments take 1-2 days.
 
 <pre>
 make original  -- runs original adversarial attacks, ignoring constraints

@@ -1,0 +1,156 @@
+attack:
+  can_validate: true
+  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
+    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
+  name: VPGD
+classifier:
+  config:
+    layers: [64, 64, 32]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
+experiment:
+  attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
+    6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
+    11: sbytes, 12: dbytes, 13: rate, 14: sloss, 15: dloss, 16: sjit, 17: djit, 18: swin,
+    19: stcpb, 20: dtcpb, 21: dwin, 22: smean, 23: dmean, 24: trans_depth, 25: ct_srv_src,
+    26: ct_dst_ltm, 27: ct_src_dport_ltm, 28: ct_dst_sport_ltm, 29: ct_dst_src_ltm,
+    30: ct_src_ltm, 31: ct_srv_dst, 32: label}
+  attrs_ranges:
+    ct_dst_ltm: [1, 50]
+    ct_dst_sport_ltm: [1, 46]
+    ct_dst_src_ltm: [1, 63]
+    ct_src_dport_ltm: [1, 50]
+    ct_src_ltm: [1, 50]
+    ct_srv_dst: [1, 62]
+    ct_srv_src: [1, 63]
+    dbytes: [0, 7085342]
+    djit: [0, 199573]
+    dloss: [0, 2627]
+    dmean: [0, 1458]
+    dtcpb: [0, 4294383134]
+    dur: [0, 60]
+    dwin: [0, 255]
+    proto_other: [0, 1]
+    proto_tcp: [0, 1]
+    proto_udp: [0, 1]
+    rate: [0, 1000001]
+    sbytes: [46, 10508068]
+    service_dns: [0, 1]
+    service_http: [0, 1]
+    service_none: [0, 1]
+    service_other: [0, 1]
+    sjit: [0, 1460481]
+    sloss: [0, 3993]
+    smean: [28, 1499]
+    state_FIN: [0, 1]
+    state_INT: [0, 1]
+    state_other: [0, 1]
+    stcpb: [0, 4294729542]
+    swin: [0, 255]
+    trans_depth: [0, 2]
+  capture_utc: 1696861783125036000
+  class_distribution: {0: 5000, 1: 5000}
+  config: config//prf2_6.yaml
+  dataset: data/unsw_nb15.csv
+  description: Constraint performance test with 12 unrelated constraints
+  duration_sec: 231.7
+  end: 1696861782110412000
+  k_folds: 5
+  n_attributes: 33
+  n_classes: 2
+  n_records: 10000
+  name: PT-2-12
+  start: 1696861550450529000
+  system:
+    cpu_physical_cores: 10
+    cpu_total_cores: 10
+    cpu_total_usage: 19.0
+    cpu_usage_per_core: [17.0, 15.2, 19.8, 14.9, 10.1, 10.0, 12.0, 6.9, 2.0, 2.0]
+    machine: arm64
+    processor: arm
+    python_runtime: 3.10.5 (v3.10.5:f377153967, Jun  6 2022, 12:36:10) [Clang 13.0.0
+      (clang-1300.0.29.30)]
+    release: 22.2.0
+    system: Darwin
+    version: 'Darwin Kernel Version 22.2.0: Fri Nov 11 02:03:51 PST 2022; root:xnu-8792.61.2~4/RELEASE_ARM64_T6000'
+    virtual_mem_available: 4.05GB
+    virtual_mem_percentage: 74.7
+    virtual_mem_total_size: 16.00GB
+    virtual_mem_used: 6.03GB
+folds:
+  accuracy: [0.9285, 0.922, 0.916, 0.913, 0.9075]
+  f_score: [0.929383, 0.922696, 0.915066, 0.908131, 0.910843]
+  n_evasions: [1857, 1844, 1832, 1826, 1815]
+  n_records: [2000, 2000, 2000, 2000, 2000]
+  n_valid: [2000, 2000, 2000, 2000, 2000]
+  n_valid_evades: [1857, 1844, 1832, 1826, 1815]
+  precision: [0.94006, 0.911851, 0.924413, 0.914894, 0.900858]
+  recall: [0.918945, 0.933801, 0.905906, 0.901468, 0.921053]
+invalid_rows: []
+validation:
+  dependencies:
+    a: [18]
+    b: [21]
+    c: [14]
+    d: [15]
+    e: [11]
+    f: [12]
+    g: [0]
+    h: [25]
+    i: [26]
+    j: [27]
+    k: [28]
+    l: [29]
+  enabled: true
+  immutable: []
+  n_constraints: 12
+  predicates:
+    a:
+      attrs: {18: swin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: swin >= 0 and swin <= 255
+    b:
+      attrs: {21: dwin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: dwin >= 0 and dwin <= 255
+    c:
+      attrs: {14: sloss}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 3993'
+      text: sloss >= 0 and sloss <= 3993
+    d:
+      attrs: {15: dloss}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 2627'
+      text: dloss >= 0 or dloss <= 2627
+    e:
+      attrs: {11: sbytes}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 7085342'
+      text: sbytes >= 0 or sbytes <= 7085342
+    f:
+      attrs: {12: dbytes}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 10508068'
+      text: dbytes >= 0 or dbytes <= 10508068
+    g:
+      attrs: {0: dur}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 60'
+      text: dur >= 0 and dur <= 60
+    h:
+      attrs: {25: ct_srv_src}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 63'
+      text: ct_srv_src >= 1 and ct_srv_src <= 63
+    i:
+      attrs: {26: ct_dst_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 50'
+      text: ct_dst_ltm >= 1 and ct_dst_ltm <= 50
+    j:
+      attrs: {27: ct_src_dport_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 50'
+      text: ct_src_dport_ltm >= 1 and ct_src_dport_ltm <= 50
+    k:
+      attrs: {28: ct_dst_sport_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 46'
+      text: ct_dst_sport_ltm >= 1 and ct_dst_sport_ltm <= 46
+    l:
+      attrs: {29: ct_dst_src_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 63'
+      text: ct_dst_src_ltm >= 1 and ct_dst_src_ltm <= 63
+  reset_strategy: 2

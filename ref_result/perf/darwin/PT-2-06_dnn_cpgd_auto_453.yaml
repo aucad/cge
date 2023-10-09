@@ -1,0 +1,128 @@
+attack:
+  can_validate: false
+  config:
+    args: {enable_constraints: true, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
+    feat_file: data/feature_unsw.csv
+    id: perf5
+  name: CPGD
+classifier:
+  config:
+    layers: [64, 64, 32]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
+experiment:
+  attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
+    6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
+    11: sbytes, 12: dbytes, 13: rate, 14: sloss, 15: dloss, 16: sjit, 17: djit, 18: swin,
+    19: stcpb, 20: dtcpb, 21: dwin, 22: smean, 23: dmean, 24: trans_depth, 25: ct_srv_src,
+    26: ct_dst_ltm, 27: ct_src_dport_ltm, 28: ct_dst_sport_ltm, 29: ct_dst_src_ltm,
+    30: ct_src_ltm, 31: ct_srv_dst, 32: label}
+  attrs_ranges:
+    ct_dst_ltm: [1, 50]
+    ct_dst_sport_ltm: [1, 46]
+    ct_dst_src_ltm: [1, 63]
+    ct_src_dport_ltm: [1, 50]
+    ct_src_ltm: [1, 50]
+    ct_srv_dst: [1, 62]
+    ct_srv_src: [1, 63]
+    dbytes: [0, 7085342]
+    djit: [0, 199573]
+    dloss: [0, 2627]
+    dmean: [0, 1458]
+    dtcpb: [0, 4294383134]
+    dur: [0, 60]
+    dwin: [0, 255]
+    proto_other: [0, 1]
+    proto_tcp: [0, 1]
+    proto_udp: [0, 1]
+    rate: [0, 1000001]
+    sbytes: [46, 10508068]
+    service_dns: [0, 1]
+    service_http: [0, 1]
+    service_none: [0, 1]
+    service_other: [0, 1]
+    sjit: [0, 1460481]
+    sloss: [0, 3993]
+    smean: [28, 1499]
+    state_FIN: [0, 1]
+    state_INT: [0, 1]
+    state_other: [0, 1]
+    stcpb: [0, 4294729542]
+    swin: [0, 255]
+    trans_depth: [0, 2]
+  capture_utc: 1696861457468820000
+  class_distribution: {0: 5000, 1: 5000}
+  config: config//prf2_5.yaml
+  dataset: data/unsw_nb15.csv
+  description: Constraint performance test with 6 unrelated constraints
+  duration_sec: 180.8
+  end: 1696861456453057000
+  k_folds: 5
+  n_attributes: 33
+  n_classes: 2
+  n_records: 10000
+  name: PT-2-06
+  start: 1696861275650579000
+  system:
+    cpu_physical_cores: 10
+    cpu_total_cores: 10
+    cpu_total_usage: 20.5
+    cpu_usage_per_core: [26.0, 23.2, 6.0, 5.9, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+    machine: arm64
+    processor: arm
+    python_runtime: 3.10.5 (v3.10.5:f377153967, Jun  6 2022, 12:36:10) [Clang 13.0.0
+      (clang-1300.0.29.30)]
+    release: 22.2.0
+    system: Darwin
+    version: 'Darwin Kernel Version 22.2.0: Fri Nov 11 02:03:51 PST 2022; root:xnu-8792.61.2~4/RELEASE_ARM64_T6000'
+    virtual_mem_available: 4.01GB
+    virtual_mem_percentage: 74.9
+    virtual_mem_total_size: 16.00GB
+    virtual_mem_used: 6.01GB
+folds:
+  accuracy: [0.906, 0.918, 0.9155, 0.921, 0.9285]
+  f_score: [0.902692, 0.919529, 0.913643, 0.922776, 0.927668]
+  n_evasions: [1078, 1812, 1666, 1778, 1033]
+  n_records: [2000, 2000, 2000, 2000, 2000]
+  n_valid: [4, 0, 0, 0, 0]
+  n_valid_evades: [0, 0, 0, 0, 0]
+  precision: [0.923729, 0.918627, 0.90121, 0.940239, 0.926263]
+  recall: [0.882591, 0.920432, 0.926425, 0.90595, 0.929078]
+invalid_rows: []
+validation:
+  dependencies:
+    a: [18]
+    b: [21]
+    c: [14]
+    d: [15]
+    e: [11]
+    f: [12]
+  enabled: true
+  immutable: []
+  n_constraints: 6
+  predicates:
+    a:
+      attrs: {18: swin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: swin >= 0 and swin <= 255
+    b:
+      attrs: {21: dwin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: dwin >= 0 and dwin <= 255
+    c:
+      attrs: {14: sloss}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 3993'
+      text: sloss >= 0 and sloss <= 3993
+    d:
+      attrs: {15: dloss}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 2627'
+      text: dloss >= 0 or dloss <= 2627
+    e:
+      attrs: {11: sbytes}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 7085342'
+      text: sbytes >= 0 or sbytes <= 7085342
+    f:
+      attrs: {12: dbytes}
+      exec: 'lambda a: a[0] >= 0 or a[0] <= 10508068'
+      text: dbytes >= 0 or dbytes <= 10508068
+  reset_strategy: 2
