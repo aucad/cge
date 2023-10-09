@@ -100,6 +100,8 @@ def build_config(args):
     # if defined, override file configs with command arguments
     if args.validate:
         config['validate'] = True
+    config['cpgd']['args']['enable_constraints'] = \
+        config['validate']
     attack_name = config['attack'] = \
         args.attack if args.attack else config['attack']
     if args.iter > 0:
