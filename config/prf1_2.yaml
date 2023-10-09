@@ -1,4 +1,4 @@
-name: PT-1-6
+name: PT-1-06
 dataset: data/unsw_nb15.csv
 desc: Constraint performance test with 6 correlated constraints
 

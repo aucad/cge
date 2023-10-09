@@ -247,28 +247,28 @@ def get_url_constraints() -> List[BaseRelationConstraint]:
             g13, g14, g15, g16]
 
 
-def init_constraints(feat_file):
+def init_constraints(feat_file, key=None):
     # matches by file name - do not change.
-    c_set = None
-    if 'perf1' in feat_file:
+    c_set, match_pattern = None, key or feat_file
+    if 'perf1' in match_pattern:
         c_set = get_perf1_constraints()
-    if 'perf2' in feat_file:
+    if 'perf2' in match_pattern:
         c_set = get_perf2_constraints()
-    if 'perf3' in feat_file:
+    if 'perf3' in match_pattern:
         c_set = get_perf3_constraints()
-    if 'perf4' in feat_file:
+    if 'perf4' in match_pattern:
         c_set = get_perf4_constraints()
-    if 'perf5' in feat_file:
+    if 'perf5' in match_pattern:
         c_set = get_perf5_constraints()
-    if 'perf6' in feat_file:
+    if 'perf6' in match_pattern:
         c_set = get_perf6_constraints()
-    elif 'unsw' in feat_file:
+    elif 'unsw' in match_pattern:
         c_set = get_unsw_constraints()
-    elif 'iot' in feat_file:
+    elif 'iot' in match_pattern:
         c_set = get_iot_constraints()
-    elif 'lcld' in feat_file:
+    elif 'lcld' in match_pattern:
         c_set = get_lcld_constraints()
-    elif 'url' in feat_file:
+    elif 'url' in match_pattern:
         c_set = get_url_constraints()
     if not c_set or len(c_set) < 2:
         g1 = Feature(0) <= Feature(0)
@@ -292,9 +292,9 @@ def cpgd_apply_and_predict(
         enable_constr: bool, feat_file: str, **config
 ):
     args_ = {**config['args'], 'enable_constraints': enable_constr}
-    const_key = config['id'] if 'id' in config else feat_file
+    const_key = config['id'] if 'id' in config else None
     constraints = get_constraints_from_file(
-        *init_constraints(const_key))
+        *init_constraints(feat_file, const_key))
     scaler = get_scaler(feat_file)
     model = TensorflowClassifier(keras_nn)  # wrap in their interface
     pipe = Pipeline(steps=[("preprocessing", scaler), ("model", model)])
