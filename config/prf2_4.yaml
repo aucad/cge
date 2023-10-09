@@ -1,4 +1,4 @@
-name: PT-2-3
+name: PT-2-03
 dataset: data/unsw_nb15.csv
 desc: Constraint performance test with 3 unrelated constraints
 
