@@ -40,6 +40,7 @@ class PGDNumpyConstr(ProjectedGradientDescentNumpy, Validatable):
         x_adv = super()._compute(
             x, x_init, y, mask, eps, eps_step, project,
             random_init, batch_id_ext, decay, momentum)
+
         return self.v_model.enforce(x, x_adv)  # NEW
 
 
