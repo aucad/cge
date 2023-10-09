@@ -93,7 +93,7 @@ class ResultData:
         file_ext, file_name = 'txt', f'__plot_{flat_name}'
         fn = path.join(our_dir, f'{file_name}.{file_ext}')
         writer = SpaceAlignedTableWriter()
-        writer.headers = ('classifier,data set,attack,accuracy,'
+        writer.headers = ('classifier,exp-name,attack,accuracy,'
                           'evades,valid,dur(s)'.split(','))
         mat = [ResultData.fmt(r) for r in self.raw_rata]
         mat = sorted(mat, key=sorter)

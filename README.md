@@ -86,7 +86,7 @@ make attacks
 ```
 
 **Run comparisons.** For comparison of the above baseline attacks with validation, run further experiments.      
-The performance test takes ~2 hours. The other experiments require 1-2 days.
+A performance test takes ~2-3 hours. The other experiments require 1-2 days.
 
 <pre>
 make original  -- runs original adversarial attacks, ignoring constraints
