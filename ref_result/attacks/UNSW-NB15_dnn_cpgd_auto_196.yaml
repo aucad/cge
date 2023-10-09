@@ -1,7 +1,7 @@
 attack:
   can_validate: false
   config:
-    args: {enable_constraints: false, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
+    args: {enable_constraints: true, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
     feat_file: data/feature_unsw.csv
   name: CPGD
 classifier:
