@@ -49,46 +49,46 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696226884200922492
+  capture_utc: 1696958145059409988
   class_distribution: {0: 5000, 1: 5000}
   config: config/unsw.yaml
   dataset: data/unsw_nb15.csv
   description: sampled from 175K training set
-  duration_sec: 874.9
-  end: 1696226882688838761
+  duration_sec: 813.7
+  end: 1696958144054000933
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
   name: UNSW-NB15
-  start: 1696226007821227572
+  start: 1696957330380613942
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 13.1
-    cpu_usage_per_core: [2.0, 0.0, 0.0, 3.0, 0.0, 3.0, 0.0, 0.0]
+    cpu_total_usage: 13.3
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
     python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.25GB
-    virtual_mem_percentage: 3.5
+    virtual_mem_available: 28.65GB
+    virtual_mem_percentage: 8.6
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 649.75MB
+    virtual_mem_used: 2.29GB
 folds:
-  accuracy: [0.9095, 0.9045, 0.908, 0.915, 0.9015]
-  f_score: [0.909545, 0.906327, 0.904266, 0.914573, 0.9046]
-  n_evasions: [900, 1661, 1577, 1792, 1535]
+  accuracy: [0.9325, 0.918, 0.905, 0.9155, 0.9145]
+  f_score: [0.931715, 0.911255, 0.907317, 0.91469, 0.914798]
+  n_evasions: [1688, 1043, 1359, 1831, 1162]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [1063, 1036, 1036, 1010, 1036]
-  n_valid_evades: [338, 791, 736, 850, 758]
-  precision: [0.907278, 0.899708, 0.919577, 0.931423, 0.876995]
-  recall: [0.911824, 0.913043, 0.889458, 0.898322, 0.934]
+  n_valid: [1019, 1061, 1035, 1043, 988]
+  n_valid_evades: [901, 440, 838, 909, 592]
+  precision: [0.933131, 0.936596, 0.922619, 0.948691, 0.905325]
+  recall: [0.930303, 0.88725, 0.892514, 0.883041, 0.924471]
 invalid_rows: []
 validation:
   dependencies:
@@ -98,6 +98,7 @@ validation:
     d: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     e: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     f: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+  enabled: true
   immutable: []
   n_constraints: 6
   predicates:

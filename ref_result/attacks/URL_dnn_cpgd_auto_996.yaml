@@ -1,8 +1,9 @@
 attack:
-  can_validate: true
-  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
-    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
-  name: VPGD
+  can_validate: false
+  config:
+    args: {enable_constraints: true, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
+    feat_file: data/feature_url.csv
+  name: CPGD
 classifier:
   config:
     layers: [64]
@@ -87,26 +88,26 @@ experiment:
     tld_in_subdomain: [0, 1]
     web_traffic: [0, 10767986]
     whois_registered_domain: [0, 1]
-  capture_utc: 1696232017794145117
+  capture_utc: 1696983151001571091
   class_distribution: {0: 5715, 1: 5715}
   config: config/url.yaml
   dataset: data/url.csv
   description: URL dataset of legitimate and phishing URLs
-  duration_sec: 947.1
-  end: 1696232016137334011
+  duration_sec: 1808.1
+  end: 1696983149996073715
   k_folds: 5
   n_attributes: 64
   n_classes: 2
   n_records: 11430
   name: URL
-  start: 1696231069059612370
+  start: 1696981341912280811
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 13.9
+    cpu_total_usage: 12.9
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -114,19 +115,19 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.21GB
-    virtual_mem_percentage: 3.6
+    virtual_mem_available: 28.62GB
+    virtual_mem_percentage: 8.7
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 692.11MB
+    virtual_mem_used: 2.32GB
 folds:
-  accuracy: [0.958005, 0.953631, 0.957568, 0.956255, 0.955381]
-  f_score: [0.957932, 0.954662, 0.95799, 0.955595, 0.954787]
-  n_evasions: [2190, 2180, 2189, 2186, 2184]
+  accuracy: [0.957568, 0.950131, 0.949694, 0.963255, 0.950569]
+  f_score: [0.957549, 0.949912, 0.950707, 0.962633, 0.95011]
+  n_evasions: [1320, 1093, 1798, 1127, 1280]
   n_records: [2286, 2286, 2286, 2286, 2286]
-  n_valid: [2286, 2286, 2286, 2286, 2286]
-  n_valid_evades: [2190, 2180, 2189, 2186, 2184]
-  precision: [0.961302, 0.957118, 0.954271, 0.948018, 0.957333]
-  recall: [0.954585, 0.952218, 0.961739, 0.963295, 0.952255]
+  n_valid: [1120, 1478, 1603, 1424, 1124]
+  n_valid_evades: [388, 345, 1168, 299, 194]
+  precision: [0.960492, 0.956637, 0.948674, 0.9783, 0.937282]
+  recall: [0.954625, 0.943281, 0.952749, 0.947461, 0.963295]
 invalid_rows: []
 validation:
   dependencies:
@@ -156,6 +157,7 @@ validation:
       23, 25, 28]
     n: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21,
       23, 25, 28]
+  enabled: true
   immutable: []
   n_constraints: 14
   predicates:

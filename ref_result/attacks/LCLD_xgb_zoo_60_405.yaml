@@ -1,14 +1,15 @@
 attack:
-  can_validate: false
-  config:
-    args: {enable_constraints: true, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
-    feat_file: data/feature_lcld.csv
-  name: CPGD
+  can_validate: true
+  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
+    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
+  name: VZoo
 classifier:
   config:
-    layers: [64]
-    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
-  name: Neural Network
+    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
+      tree_method: exact}
+    train: {num_boost_round: 20}
+  name: XGBoost
 experiment:
   attrs: {0: loan_amnt, 1: term, 2: int_rate, 3: installment, 4: grade, 5: emp_length,
     6: annual_inc, 7: issue_d, 8: dti, 9: earliest_cr_line, 10: open_acc, 11: pub_rec,
@@ -70,46 +71,46 @@ experiment:
     verification_status_Not_Verified: [0, 1]
     verification_status_Source_Verified: [0, 1]
     verification_status_Verified: [0, 1]
-  capture_utc: 1696165114732457815
+  capture_utc: 1696893933410452183
   class_distribution: {0: 10000, 1: 10000}
   config: config/lcld.yaml
   dataset: data/lcld.csv
   description: credit requests dataset that can be accepted or rejected
-  duration_sec: 3297.3
-  end: 1696165113058456814
+  duration_sec: 2394.4
+  end: 1696893932404594319
   k_folds: 5
   n_attributes: 48
   n_classes: 2
   n_records: 20000
   name: LCLD
-  start: 1696161815769268105
+  start: 1696891538005039767
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 12.9
-    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cpu_total_usage: 99.8
+    cpu_usage_per_core: [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
     machine: x86_64
     processor: x86_64
     python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.21GB
-    virtual_mem_percentage: 3.6
+    virtual_mem_available: 28.66GB
+    virtual_mem_percentage: 8.5
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 688.05MB
+    virtual_mem_used: 2.28GB
 folds:
-  accuracy: [0.62925, 0.653, 0.62875, 0.63525, 0.64025]
-  f_score: [0.625977, 0.636078, 0.633785, 0.643189, 0.651489]
-  n_evasions: [1276, 1399, 1230, 1226, 1216]
+  accuracy: [0.655, 0.6585, 0.6395, 0.65975, 0.648]
+  f_score: [0.650279, 0.659521, 0.641472, 0.664199, 0.658252]
+  n_evasions: [874, 825, 615, 1114, 938]
   n_records: [4000, 4000, 4000, 4000, 4000]
-  n_valid: [0, 0, 0, 0, 0]
-  n_valid_evades: [0, 0, 0, 0, 0]
-  precision: [0.62931, 0.661757, 0.617195, 0.631908, 0.645393]
-  recall: [0.622679, 0.612317, 0.651292, 0.65488, 0.657702]
+  n_valid: [4000, 4000, 4000, 4000, 4000]
+  n_valid_evades: [874, 825, 615, 1114, 938]
+  precision: [0.638944, 0.658209, 0.625606, 0.653398, 0.673621]
+  recall: [0.662023, 0.660839, 0.658163, 0.675364, 0.643569]
 invalid_rows: []
 validation:
   dependencies:
@@ -123,6 +124,7 @@ validation:
     h: [7, 9, 11, 16, 22, 23, 24, 25]
     i: [7, 9, 11, 16, 22, 23, 24, 25]
     j: [7, 9, 11, 16, 22, 23, 24, 25]
+  enabled: true
   immutable: [2, 4, 7, 9, 11, 16, 17, 18, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     32]
   n_constraints: 29
