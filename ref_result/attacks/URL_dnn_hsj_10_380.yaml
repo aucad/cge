@@ -1,15 +1,13 @@
 attack:
   can_validate: true
-  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
-    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
-    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
-  name: VZoo
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
+    norm: 2, targeted: false, verbose: true}
+  name: VHSJ
 classifier:
   config:
-    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
-      tree_method: exact}
-    train: {num_boost_round: 20}
-  name: XGBoost
+    layers: [64]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
 experiment:
   attrs: {0: length_url, 1: length_hostname, 2: ip, 3: nb_dots, 4: nb_hyphens, 5: nb_at,
     6: nb_qm, 7: nb_and, 8: nb_or, 9: nb_eq, 10: nb_underscore, 11: nb_tilde, 12: nb_percent,
@@ -89,46 +87,46 @@ experiment:
     tld_in_subdomain: [0, 1]
     web_traffic: [0, 10767986]
     whois_registered_domain: [0, 1]
-  capture_utc: 1696251192481997032
+  capture_utc: 1696961389385008503
   class_distribution: {0: 5715, 1: 5715}
   config: config/url.yaml
   dataset: data/url.csv
   description: URL dataset of legitimate and phishing URLs
-  duration_sec: 1720.4
-  end: 1696251190776749107
+  duration_sec: 3232.4
+  end: 1696961388379463353
   k_folds: 5
   n_attributes: 64
   n_classes: 2
   n_records: 11430
   name: URL
-  start: 1696249470339308416
+  start: 1696958155965636560
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 99.7
-    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cpu_total_usage: 12.8
+    cpu_usage_per_core: [1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
     python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.27GB
-    virtual_mem_percentage: 3.4
+    virtual_mem_available: 28.62GB
+    virtual_mem_percentage: 8.7
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 629.29MB
+    virtual_mem_used: 2.32GB
 folds:
-  accuracy: [0.96238, 0.954506, 0.959755, 0.961942, 0.956693]
-  f_score: [0.962609, 0.953488, 0.960447, 0.961419, 0.956938]
-  n_evasions: [1856, 1763, 1984, 1832, 1813]
+  accuracy: [0.956255, 0.958443, 0.957568, 0.957568, 0.939195]
+  f_score: [0.955986, 0.957646, 0.958635, 0.957288, 0.940318]
+  n_evasions: [973, 1038, 935, 1071, 957]
   n_records: [2286, 2286, 2286, 2286, 2286]
   n_valid: [2286, 2286, 2286, 2286, 2286]
-  n_valid_evades: [1856, 1763, 1984, 1832, 1813]
-  precision: [0.961772, 0.951786, 0.960447, 0.964413, 0.96238]
-  recall: [0.963446, 0.955197, 0.960447, 0.958444, 0.951557]
+  n_valid_evades: [973, 1038, 935, 1071, 957]
+  precision: [0.959364, 0.967568, 0.963979, 0.941941, 0.925613]
+  recall: [0.952632, 0.947926, 0.95335, 0.973142, 0.955497]
 invalid_rows: []
 validation:
   dependencies:
@@ -158,6 +156,7 @@ validation:
       23, 25, 28]
     n: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21,
       23, 25, 28]
+  enabled: true
   immutable: []
   n_constraints: 14
   predicates:

@@ -1,14 +1,14 @@
 attack:
   can_validate: true
-  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
-    norm: 2, targeted: false, verbose: true}
-  name: VHSJ
+  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
+    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
+  name: VZoo
 classifier:
   config:
-    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
-      tree_method: exact}
-    train: {num_boost_round: 20}
-  name: XGBoost
+    layers: [64, 32]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
 experiment:
   attrs: {0: proto=udp, 1: proto=tcp, 2: proto=icmp, 3: duration, 4: orig_bytes, 5: resp_bytes,
     6: conn_state=S0, 7: conn_state=SF, 8: conn_state=other, 9: missed_bytes, 10: history=D,
@@ -33,46 +33,46 @@ experiment:
     resp_bytes: [0, 164266]
     resp_ip_bytes: [0, 168910]
     resp_pkts: [0, 184]
-  capture_utc: 1696169298425170574
+  capture_utc: 1696922331672424520
   class_distribution: {0: 5000, 1: 5000}
   config: config/iot23.yaml
   dataset: data/ctu_1-8-34.csv
   description: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
-  duration_sec: 565.8
-  end: 1696169296904706321
+  duration_sec: 20157.1
+  end: 1696922330667115455
   k_folds: 5
   n_attributes: 19
   n_classes: 2
   n_records: 10000
   name: IoT-23
-  start: 1696168731154526066
+  start: 1696902173542389789
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 99.2
-    cpu_usage_per_core: [2.9, 0.0, 0.0, 4.0, 0.0, 0.0, 4.0, 0.0]
+    cpu_total_usage: 12.5
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
     machine: x86_64
     processor: x86_64
     python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.32GB
-    virtual_mem_percentage: 3.3
+    virtual_mem_available: 28.66GB
+    virtual_mem_percentage: 8.5
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 581.33MB
+    virtual_mem_used: 2.28GB
 folds:
-  accuracy: [0.9785, 0.98, 0.976, 0.985, 0.9745]
-  f_score: [0.979475, 0.980373, 0.977273, 0.984848, 0.973806]
-  n_evasions: [486, 453, 387, 404, 446]
+  accuracy: [0.9765, 0.9755, 0.9765, 0.9815, 0.9765]
+  f_score: [0.977173, 0.976454, 0.976033, 0.98222, 0.977017]
+  n_evasions: [57, 26, 50, 192, 144]
   n_records: [2000, 2000, 2000, 2000, 2000]
   n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [486, 453, 387, 404, 446]
-  precision: [0.96338, 0.966151, 0.958217, 0.972084, 0.954683]
-  recall: [0.996117, 0.99502, 0.997101, 0.997953, 0.993711]
+  n_valid_evades: [57, 26, 50, 192, 144]
+  precision: [0.955366, 0.953991, 0.953187, 0.965061, 0.955067]
+  recall: [1.0, 1.0, 1.0, 1.0, 1.0]
 invalid_rows: []
 validation:
   dependencies:
@@ -84,6 +84,7 @@ validation:
     f: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
     g: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
     h: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+  enabled: true
   immutable: [0, 1, 2, 6, 7, 8, 10, 11, 12, 13]
   n_constraints: 18
   predicates:
