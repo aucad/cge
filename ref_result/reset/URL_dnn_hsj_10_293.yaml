@@ -1,9 +1,8 @@
 attack:
   can_validate: true
-  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
-    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
-    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
-  name: VZoo
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
+    norm: 2, targeted: false, verbose: true}
+  name: VHSJ
 classifier:
   config:
     layers: [64]
@@ -88,26 +87,26 @@ experiment:
     tld_in_subdomain: [0, 1]
     web_traffic: [0, 10767986]
     whois_registered_domain: [0, 1]
-  capture_utc: 1696662689293212800
+  capture_utc: 1697104574298270170
   class_distribution: {0: 5715, 1: 5715}
   config: config/url.yaml
   dataset: data/url.csv
   description: URL dataset of legitimate and phishing URLs
-  duration_sec: 16662.6
-  end: 1696662688287792976
+  duration_sec: 3336.8
+  end: 1697104573292658830
   k_folds: 5
   n_attributes: 64
   n_classes: 2
   n_records: 11430
   name: URL
-  start: 1696646025692765024
+  start: 1697101236494625967
   system:
-    cpu_current_frequency: 2200.15
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 12.6
+    cpu_total_usage: 12.8
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -115,19 +114,19 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.70GB
-    virtual_mem_percentage: 5.2
+    virtual_mem_available: 28.60GB
+    virtual_mem_percentage: 8.7
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 1.24GB
+    virtual_mem_used: 2.34GB
 folds:
-  accuracy: [0.948819, 0.955818, 0.954068, 0.954943, 0.957568]
-  f_score: [0.947838, 0.955721, 0.953806, 0.955623, 0.958063]
-  n_evasions: [1970, 1979, 2008, 2021, 2026]
+  accuracy: [0.959755, 0.957568, 0.948819, 0.947944, 0.96238]
+  f_score: [0.959825, 0.957881, 0.948796, 0.948596, 0.961641]
+  n_evasions: [781, 703, 843, 713, 694]
   n_records: [2286, 2286, 2286, 2286, 2286]
   n_valid: [2286, 2286, 2286, 2286, 2286]
-  n_valid_evades: [1970, 1979, 2008, 2021, 2026]
-  precision: [0.955076, 0.946181, 0.950044, 0.947054, 0.972783]
-  recall: [0.940708, 0.965456, 0.957597, 0.964348, 0.943782]
+  n_valid_evades: [781, 703, 843, 713, 694]
+  precision: [0.964881, 0.95913, 0.950044, 0.940874, 0.959929]
+  recall: [0.954822, 0.956635, 0.947552, 0.956446, 0.96336]
 invalid_rows: []
 validation:
   dependencies:
@@ -157,6 +156,7 @@ validation:
       23, 25, 28]
     n: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21,
       23, 25, 28]
+  enabled: true
   immutable: []
   n_constraints: 14
   predicates:

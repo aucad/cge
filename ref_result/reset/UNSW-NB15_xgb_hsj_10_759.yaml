@@ -1,14 +1,14 @@
 attack:
   can_validate: true
-  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
-    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
-    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
-  name: VZoo
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
+    norm: 2, targeted: false, verbose: true}
+  name: VHSJ
 classifier:
   config:
-    layers: [64, 64, 32]
-    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
-  name: Neural Network
+    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
+      tree_method: exact}
+    train: {num_boost_round: 20}
+  name: XGBoost
 experiment:
   attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
     6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
@@ -49,46 +49,46 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696638974304898680
+  capture_utc: 1697073064763703738
   class_distribution: {0: 5000, 1: 5000}
   config: config/unsw.yaml
   dataset: data/unsw_nb15.csv
   description: sampled from 175K training set
-  duration_sec: 24712.8
-  end: 1696638973299702223
+  duration_sec: 665.2
+  end: 1697073063758317379
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
   name: UNSW-NB15
-  start: 1696614260475146341
+  start: 1697072398510970783
   system:
-    cpu_current_frequency: 2200.15
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 12.6
-    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cpu_total_usage: 99.4
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
     python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.72GB
-    virtual_mem_percentage: 5.1
+    virtual_mem_available: 28.70GB
+    virtual_mem_percentage: 8.4
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 1.22GB
+    virtual_mem_used: 2.24GB
 folds:
-  accuracy: [0.919, 0.9215, 0.9265, 0.916, 0.912]
-  f_score: [0.916667, 0.917585, 0.92557, 0.916335, 0.910478]
-  n_evasions: [1544, 1402, 1537, 1544, 1473]
+  accuracy: [0.9365, 0.9365, 0.936, 0.936, 0.935]
+  f_score: [0.937098, 0.938019, 0.93476, 0.933953, 0.934542]
+  n_evasions: [7, 6, 6, 11, 11]
   n_records: [2000, 2000, 2000, 2000, 2000]
   n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [1544, 1402, 1537, 1544, 1473]
-  precision: [0.936909, 0.944865, 0.944215, 0.931174, 0.926501]
-  recall: [0.897281, 0.891837, 0.907646, 0.901961, 0.895]
+  n_valid_evades: [7, 6, 6, 11, 11]
+  precision: [0.936634, 0.948667, 0.935714, 0.940748, 0.938322]
+  recall: [0.937562, 0.927606, 0.933809, 0.927254, 0.930792]
 invalid_rows: []
 validation:
   dependencies:
@@ -98,6 +98,7 @@ validation:
     d: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     e: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     f: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+  enabled: true
   immutable: []
   n_constraints: 6
   predicates:

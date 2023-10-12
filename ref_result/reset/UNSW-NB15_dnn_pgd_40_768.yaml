@@ -48,26 +48,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696614250132131276
+  capture_utc: 1697073594773591509
   class_distribution: {0: 5000, 1: 5000}
   config: config/unsw.yaml
   dataset: data/unsw_nb15.csv
   description: sampled from 175K training set
   duration_sec: 523.6
-  end: 1696614249126847388
+  end: 1697073593768153349
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
   name: UNSW-NB15
-  start: 1696613725477762283
+  start: 1697073070128675191
   system:
-    cpu_current_frequency: 2200.15
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 14.4
+    cpu_total_usage: 15.0
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -75,19 +75,19 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.71GB
-    virtual_mem_percentage: 5.2
+    virtual_mem_available: 28.63GB
+    virtual_mem_percentage: 8.6
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 1.23GB
+    virtual_mem_used: 2.31GB
 folds:
-  accuracy: [0.8965, 0.905, 0.924, 0.915, 0.916]
-  f_score: [0.89088, 0.907407, 0.924227, 0.916911, 0.9125]
-  n_evasions: [337, 478, 316, 321, 278]
+  accuracy: [0.9205, 0.913, 0.9205, 0.917, 0.9305]
+  f_score: [0.919494, 0.910861, 0.919084, 0.918387, 0.93088]
+  n_evasions: [439, 567, 250, 401, 358]
   n_records: [2000, 2000, 2000, 2000, 2000]
   n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [337, 478, 316, 321, 278]
-  precision: [0.934735, 0.884981, 0.920556, 0.909796, 0.944984]
-  recall: [0.850957, 0.931, 0.927928, 0.924138, 0.882175]
+  n_valid_evades: [439, 567, 250, 401, 358]
+  precision: [0.930328, 0.93089, 0.902098, 0.918387, 0.947368]
+  recall: [0.908909, 0.891675, 0.936722, 0.918387, 0.914956]
 invalid_rows: []
 validation:
   dependencies:
@@ -97,6 +97,7 @@ validation:
     d: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     e: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     f: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+  enabled: true
   immutable: []
   n_constraints: 6
   predicates:

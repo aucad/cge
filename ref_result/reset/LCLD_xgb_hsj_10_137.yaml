@@ -70,46 +70,46 @@ experiment:
     verification_status_Not_Verified: [0, 1]
     verification_status_Source_Verified: [0, 1]
     verification_status_Verified: [0, 1]
-  capture_utc: 1696544297301055963
+  capture_utc: 1697002688142864681
   class_distribution: {0: 10000, 1: 10000}
   config: config/lcld.yaml
   dataset: data/lcld.csv
   description: credit requests dataset that can be accepted or rejected
-  duration_sec: 1372.6
-  end: 1696544296295052471
+  duration_sec: 1340.2
+  end: 1697002687137126880
   k_folds: 5
   n_attributes: 48
   n_classes: 2
   n_records: 20000
   name: LCLD
-  start: 1696542923645225062
+  start: 1697001346971942736
   system:
-    cpu_current_frequency: 2200.15
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
     cpu_total_usage: 99.6
-    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
     python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.76GB
-    virtual_mem_percentage: 5.0
+    virtual_mem_available: 28.67GB
+    virtual_mem_percentage: 8.5
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 1.19GB
+    virtual_mem_used: 2.27GB
 folds:
-  accuracy: [0.6475, 0.63875, 0.65825, 0.65475, 0.6575]
-  f_score: [0.646794, 0.64365, 0.66155, 0.65604, 0.66438]
-  n_evasions: [562, 294, 387, 361, 554]
+  accuracy: [0.64525, 0.66275, 0.6565, 0.65625, 0.6505]
+  f_score: [0.645339, 0.662497, 0.662905, 0.652515, 0.660019]
+  n_evasions: [416, 311, 447, 439, 407]
   n_records: [4000, 4000, 4000, 4000, 4000]
   n_valid: [4000, 4000, 4000, 4000, 4000]
-  n_valid_evades: [562, 294, 387, 361, 554]
-  precision: [0.631605, 0.635655, 0.660405, 0.65555, 0.660175]
-  recall: [0.662731, 0.651848, 0.662698, 0.65653, 0.668639]
+  n_valid_evades: [416, 311, 447, 439, 407]
+  precision: [0.64647, 0.67004, 0.655189, 0.650706, 0.638889]
+  recall: [0.644212, 0.655121, 0.670804, 0.654334, 0.682596]
 invalid_rows: []
 validation:
   dependencies:
@@ -123,6 +123,7 @@ validation:
     h: [7, 9, 11, 16, 22, 23, 24, 25]
     i: [7, 9, 11, 16, 22, 23, 24, 25]
     j: [7, 9, 11, 16, 22, 23, 24, 25]
+  enabled: true
   immutable: [2, 4, 7, 9, 11, 16, 17, 18, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     32]
   n_constraints: 29
