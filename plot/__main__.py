@@ -1,6 +1,9 @@
 from argparse import ArgumentParser
 
 from plot import plot_results, plot_graph
+from exp.validation import Validation
+from exp.utility import read_dataset
+from exp.__main__ import build_config
 
 OPT_GRAPH = 'graph'
 OPT_TABLE = 'table'
@@ -53,12 +56,7 @@ if __name__ == '__main__':
         plot_results(args.path, args.out)
 
     elif args.which is OPT_GRAPH:
-        from exp.experiment import Validation, Experiment
-        from exp.__main__ import build_config
-
-        exp = Experiment(build_config(args))
-        exp.prepare_input_data()
-        validation = Validation(
-            exp.config.constraints, exp.attrs,
-            exp.config.reset_strategy)
-        plot_graph(validation, exp.config, exp.attrs)
+        conf = build_config(args)
+        attrs, _ = read_dataset(conf.dataset)
+        vm = Validation(conf.constraints, attrs)
+        plot_graph(vm, conf, attrs)

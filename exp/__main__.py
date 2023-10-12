@@ -15,16 +15,6 @@ def parse_args(parser: ArgumentParser):
         help='Configuration file',
     )
     parser.add_argument(
-        '-g', '--graph',
-        action='store_true',
-        help='Plot a constraint graph (without running experiment)'
-    )
-    parser.add_argument(
-        '-p', '--plot',
-        action='store_true',
-        help='Plot results'
-    )
-    parser.add_argument(
         '-v', '--validate',
         action='store_true',
         help='enforce constraints during attack'
