@@ -128,6 +128,14 @@ For a list of supported arguments, run:
 python3 -m exp --help
 ```
 
+All plotting utilities live separately from experiments, in `plot` module.
+For plotting help, run:
+
+```
+python3 -m plot --help
+```
+
+
 <details>
 <summary>
   <strong>Development instructions</strong>

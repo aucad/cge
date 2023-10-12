@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.model_selection import KFold
 
 from exp import Result, Validation, AttackRunner, ClsPicker, \
-    score_valid, plot_graph, machine_details
+    score_valid, machine_details
 from exp.utility import log, time_sec, write_yaml, file_name, \
     read_dataset
 
@@ -60,13 +60,6 @@ class Experiment:
 
         self.result.log()
         write_yaml(file_name(c), self.to_dict())
-
-    def graph(self):
-        self.prepare_input_data()
-        validation = Validation(
-            self.config.constraints, self.attrs,
-            self.config.reset_strategy)
-        plot_graph(validation, self.config, self.attrs)
 
     def prepare_input_data(self):
         np.seterr(divide='ignore', invalid='ignore')
