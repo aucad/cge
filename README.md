@@ -23,6 +23,7 @@ It uses a different constraint evaluation approach, introduced by Simonetto et a
 | `config`     | Experiment configuration files               |
 | `data`       | Preprocessed input data sets                 |
 | `exp`        | Experiment setup source code                 |
+| `plot`       | Utilities for plotting experiment results    |
 | `ref_result` | Referential result for inspection            |
 | `test`       | Unit tests to test experiment implementation |
 
