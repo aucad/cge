@@ -2,7 +2,6 @@ import sys
 from argparse import ArgumentParser
 
 from exp import Experiment, AttackPicker, ClsPicker
-from exp.plot import plot_results
 from exp.preproc import pred_parse
 from exp.utility import to_namedtuple, read_yaml
 from exp.validation import ALL as RESET_ALL
@@ -13,7 +12,7 @@ def parse_args(parser: ArgumentParser):
     parser.add_argument(
         dest='path',
         action='store',
-        help='Configuration file or results directory',
+        help='Configuration file',
     )
     parser.add_argument(
         '-g', '--graph',
@@ -98,19 +97,21 @@ def build_config(args):
     config = {**c, 'config_path': args.path}
 
     # if defined, override file configs with command arguments
-    if args.validate:
+    if 'validate' in args and args.validate:
         config['validate'] = True
     config['cpgd']['args']['enable_constraints'] = \
         config['validate']
     attack_name = config['attack'] = \
-        args.attack if args.attack else config['attack']
-    if args.iter > 0:
+        (args.attack if 'attack' in args and args.attack
+         else config['attack'])
+    if 'iter' in args and args.iter > 0:
         config[attack_name]['max_iter'] = args.iter
-    config['cls'] = args.cls or config['cls']
+    if 'cls' in args:
+        config['cls'] = args.cls or config['cls']
     config['out'] = args.out or config['out']
-    if args.reset_all:
+    if 'reset_all' in args and args.reset_all:
         config['reset_strategy'] = RESET_ALL
-    config['fn_pattern'] = args.fn if args.fn else None
+    config['fn_pattern'] = args.fn if 'fn' in args and args.fn else None
     config = to_namedtuple(pred_parse(config))
     check_params(config)
     return config
@@ -118,14 +119,5 @@ def build_config(args):
 
 if __name__ == '__main__':
     args_ = parse_args(ArgumentParser())
-
-    if args_.plot:
-        plot_results(args_.path, args_.out)
-        sys.exit(0)
-
     config_ = build_config(args_)
-    if args_.graph:
-        Experiment(config_).graph()
-        sys.exit(0)
-
     Experiment(config_).run()
