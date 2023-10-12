@@ -1,9 +1,8 @@
 attack:
   can_validate: true
-  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
-    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
-    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
-  name: VZoo
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
+    norm: 2, targeted: false, verbose: true}
+  name: VHSJ
 classifier:
   config:
     layers: [64]
@@ -70,21 +69,21 @@ experiment:
     verification_status_Not_Verified: [0, 1]
     verification_status_Source_Verified: [0, 1]
     verification_status_Verified: [0, 1]
-  capture_utc: 1696574692122800694
+  capture_utc: 1697001340994405055
   class_distribution: {0: 10000, 1: 10000}
   config: config/lcld.yaml
   dataset: data/lcld.csv
   description: credit requests dataset that can be accepted or rejected
-  duration_sec: 28894.4
-  end: 1696574691117298056
+  duration_sec: 7173.9
+  end: 1697001339988785240
   k_folds: 5
   n_attributes: 48
   n_classes: 2
   n_records: 20000
   name: LCLD
-  start: 1696545796754498736
+  start: 1696994166064122616
   system:
-    cpu_current_frequency: 2200.15
+    cpu_current_frequency: 2200.196
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
@@ -97,19 +96,19 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.70GB
-    virtual_mem_percentage: 5.2
+    virtual_mem_available: 28.61GB
+    virtual_mem_percentage: 8.7
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 1.25GB
+    virtual_mem_used: 2.33GB
 folds:
-  accuracy: [0.6355, 0.634, 0.637, 0.6425, 0.64375]
-  f_score: [0.662187, 0.579068, 0.626543, 0.626046, 0.630542]
-  n_evasions: [1035, 1040, 974, 888, 1092]
+  accuracy: [0.63675, 0.63875, 0.657, 0.63875, 0.64575]
+  f_score: [0.65723, 0.663092, 0.641588, 0.643825, 0.633945]
+  n_evasions: [394, 699, 611, 953, 388]
   n_records: [4000, 4000, 4000, 4000, 4000]
   n_valid: [4000, 4000, 4000, 4000, 4000]
-  n_valid_evades: [1035, 1040, 974, 888, 1092]
-  precision: [0.625109, 0.667772, 0.643083, 0.654098, 0.659079]
-  recall: [0.703941, 0.511168, 0.610832, 0.600301, 0.604374]
+  n_valid_evades: [394, 699, 611, 953, 388]
+  precision: [0.628043, 0.617992, 0.663067, 0.632446, 0.663961]
+  recall: [0.689263, 0.715292, 0.621457, 0.655622, 0.606525]
 invalid_rows: []
 validation:
   dependencies:
@@ -123,6 +122,7 @@ validation:
     h: [7, 9, 11, 16, 22, 23, 24, 25]
     i: [7, 9, 11, 16, 22, 23, 24, 25]
     j: [7, 9, 11, 16, 22, 23, 24, 25]
+  enabled: true
   immutable: [2, 4, 7, 9, 11, 16, 17, 18, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     32]
   n_constraints: 29
