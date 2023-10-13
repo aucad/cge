@@ -26,7 +26,7 @@ class Validation:
         self.constraints = constraints or {}
         self.scalars = attr_range
         self.immutable, self.mutable = x = categorize(self.constraints)
-        self.graph, self.desc = self.desc_graph(*x)
+        self.graph, self.deps = self.dep_graph(*x)
         self.reset = mode if mode in [ALL, DEP] else DEP
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
@@ -52,12 +52,12 @@ class Validation:
             bits = np.apply_along_axis(pred, 1, val_in)  # evaluate
             invalid = np.array((np.where(bits == 0)[0]))
             deps = range(ref.shape[1]) if self.reset == ALL else \
-                self.desc[target]
+                self.deps[target]
             vmap[np.ix_(invalid, deps)] = 0  # apply
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod
-    def desc_graph(immutable, mutable) -> Tuple[Graph, Dict[int, list]]:
+    def dep_graph(immutable, mutable) -> Tuple[Graph, Dict[int, list]]:
         """Construct a dependency graph to model constraints.
 
         This allows to determine which target nodes are reachable

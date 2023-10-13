@@ -16,16 +16,16 @@ It uses a different constraint evaluation approach, introduced by Simonetto et a
 
 **Repository organization**
 
-| Directory    | Description                                  |
-|:-------------|:---------------------------------------------|
-| `.github`    | Automated workflows                          |
-| `comparison` | C-PGD attack implementation source code      |
-| `config`     | Experiment configuration files               |
-| `data`       | Preprocessed input data sets                 |
-| `exp`        | Experiment setup source code                 |
-| `plot`       | Utilities for plotting experiment results    |
-| `ref_result` | Referential result for inspection            |
-| `test`       | Unit tests to test experiment implementation |
+| Directory    | Description                               |
+|:-------------|:------------------------------------------|
+| `.github`    | Automated workflows                       |
+| `comparison` | C-PGD attack implementation source code   |
+| `config`     | Experiment configuration files            |
+| `data`       | Preprocessed input data sets              |
+| `exp`        | Experiment setup source code              |
+| `plot`       | Utilities for plotting experiment results |
+| `ref_result` | Referential result for inspection         |
+| `test`       | Unit tests to test `exp` implementation   |
 
 The Makefile contains pre-configured commands to ease running experiments.
 The software dependencies are listed in `requirements.txt`.
@@ -90,12 +90,12 @@ make attacks
 Depending on hardware, a performance test takes 30 min -- 3 hours, and the other experiments take 1-2 days.
 
 <pre>
-make original  -- runs original adversarial attacks, ignoring constraints
-make reset     -- use alternate reset strategy to correct non-valid instances.
-make perf      -- run constraint performance tests 
+make original  -- run all attacks, but ignore constraints.
+make reset     -- run all attacks, but using naive reset strategy.
+make perf      -- run constraint performance tests. 
 </pre>
 
-**Plots.** Generate table plots of experiment results.
+**Plots.** Generate plots of experiment results.
 
 ```
 make plots
@@ -107,7 +107,7 @@ make plots
 make plots DIR=ref_result
 ```
 
-**Plot graphs.** Visualize constraints as graphs.
+**Plot graphs.** To visualize constraints as graphs.
 
 ```
 make graphs
