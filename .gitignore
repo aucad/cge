@@ -53,3 +53,4 @@ test/__pycache__
 sketch.py
 *.pyc
 __plot*.txt
+!ref_result/__plot*.txt
