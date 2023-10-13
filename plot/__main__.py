@@ -1,15 +1,20 @@
 from argparse import ArgumentParser
 
-from plot import plot_results, plot_graph
-from exp.validation import Validation
-from exp.utility import read_dataset
 from exp.__main__ import build_config
+from exp.utility import read_dataset
+from exp.validation import Validation
+from plot import plot_results, plot_graph
 
 OPT_GRAPH = 'graph'
 OPT_TABLE = 'table'
 
 
-def shared_args(parser: ArgumentParser):
+def shared_args(parser: ArgumentParser, path_help):
+    parser.add_argument(
+        dest='path',
+        action='store',
+        help=path_help,
+    )
     parser.add_argument(
         '-o', '--out',
         action="store",
@@ -21,22 +26,12 @@ def shared_args(parser: ArgumentParser):
 
 def graph_plot(parser: ArgumentParser):
     parser.set_defaults(which=OPT_GRAPH)
-    parser.add_argument(
-        dest='path',
-        action='store',
-        help='Configuration file',
-    )
-    shared_args(parser)
+    shared_args(parser, 'Configuration file')
 
 
 def table_plot(parser: ArgumentParser):
     parser.set_defaults(which=OPT_TABLE)
-    parser.add_argument(
-        dest='path',
-        action='store',
-        help='Results directory',
-    )
-    shared_args(parser)
+    shared_args(parser, 'Results directory')
 
 
 def parse_args(parser: ArgumentParser):

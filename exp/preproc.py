@@ -10,7 +10,7 @@ def categorize(cd: CONSTR_DICT):
     return immutable, mutable
 
 
-def fmt(text, wchar, *attrs):
+def fmt(text, wchar, *attrs) -> str:
     param, fmt_str = (wchar, lambda v: f'{wchar}[{attrs.index(v)}]')
     for t in sorted(attrs, key=len, reverse=True):
         text = text.replace(t, fmt_str(t))
@@ -18,6 +18,7 @@ def fmt(text, wchar, *attrs):
 
 
 def pred_convert(imm: List[str], pred: List[str], attr: List[str]):
+    """Convert text constraints to evaluateable expressions"""
     imm = [(k, ((k,), False)) for k in map(attr.index, imm or [])]
     fd, mut, wchar = {}, {}, first_available(attr)
     for p in (pred or []):
@@ -31,7 +32,8 @@ def pred_convert(imm: List[str], pred: List[str], attr: List[str]):
 
 
 def pred_parse(config):
-    ck, attrs = 'constraints', read_dataset(config['dataset'])[0]
-    config[ck], config['p_config'] = pred_convert(
-        config[ck]['immutable'], config[ck]['predicates'], attrs)
+    attrs = read_dataset(config['dataset'])[0]
+    config['constraints'], config['p_config'] = pred_convert(
+        config['constraints']['immutable'],
+        config['constraints']['predicates'], attrs)
     return config

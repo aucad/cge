@@ -9,7 +9,7 @@ Experiments: https://github.com/serval-uni-lu/moeva2-ijcai22-replication
 
 The comparison implementation is in comparison/ under its own license.
 Minor modifications were applied to make it compatible with more
-recent versions of Python, adversarial-robustness-toolkit than the
+recent versions of Python and adversarial-robustness-toolkit than the
 original distribution.
 """
 
@@ -248,19 +248,18 @@ def get_url_constraints() -> List[BaseRelationConstraint]:
 
 
 def init_constraints(feat_file, key=None):
-    # matches by file name - do not change.
     c_set, match_pattern = None, key or feat_file
     if 'perf1' in match_pattern:
         c_set = get_perf1_constraints()
-    if 'perf2' in match_pattern:
+    elif 'perf2' in match_pattern:
         c_set = get_perf2_constraints()
-    if 'perf3' in match_pattern:
+    elif 'perf3' in match_pattern:
         c_set = get_perf3_constraints()
-    if 'perf4' in match_pattern:
+    elif 'perf4' in match_pattern:
         c_set = get_perf4_constraints()
-    if 'perf5' in match_pattern:
+    elif 'perf5' in match_pattern:
         c_set = get_perf5_constraints()
-    if 'perf6' in match_pattern:
+    elif 'perf6' in match_pattern:
         c_set = get_perf6_constraints()
     elif 'unsw' in match_pattern:
         c_set = get_unsw_constraints()

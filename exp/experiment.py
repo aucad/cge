@@ -107,7 +107,7 @@ class Experiment:
         return {'experiment': {
             'name': self.config.name,
             'dataset': self.config.dataset,
-            'description': self.config.desc,
+            'description': self.config.deps,
             'config': self.config.config_path,
             'k_folds': self.config.folds,
             'n_records': len(self.X),
@@ -129,7 +129,7 @@ class Experiment:
             'n_constraints': len(self.validation.constraints),
             'immutable': self.validation.immutable,
             'predicates': self.conf('p_config'),
-            'dependencies': dict(self.validation.desc.items()),
+            'dependencies': dict(self.validation.deps.items()),
             'reset_strategy': self.config.reset_strategy
         }, 'invalid_rows': self.inv_idx.tolist(),
             'classifier': {**self.cls.to_dict()},

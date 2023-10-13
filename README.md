@@ -95,7 +95,7 @@ make reset     -- use alternate reset strategy to correct non-valid instances.
 make perf      -- run constraint performance tests 
 </pre>
 
-**Plots.** Generate table plots of experiment results.
+**Plots.** Generate plots of experiment results.
 
 ```
 make plots
