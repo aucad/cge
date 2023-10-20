@@ -95,6 +95,8 @@ make reset     -- run all attacks, but using naive reset strategy.
 make perf      -- run constraint performance tests. 
 </pre>
 
+### Visualizations
+
 **Plots.** Generate plots of experiment results.
 
 ```
