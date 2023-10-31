@@ -2,7 +2,6 @@ from argparse import ArgumentParser
 
 from exp.__main__ import build_config
 from exp.utility import read_dataset
-from exp.validation import Validation
 from plot import plot_results, plot_graph
 
 OPT_GRAPH = 'graph'

@@ -1,8 +1,8 @@
-from typing import Dict, Tuple, List, Any, Callable
+from typing import Dict, Tuple, List, Any
 
 import numpy as np
 
-from exp.types import CONSTR_DICT
+from . import CONSTR_DICT
 
 ALL, DEP = 1, 2  # reset strategy
 

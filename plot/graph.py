@@ -3,8 +3,8 @@ from typing import Dict, Tuple
 
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
-from networkx import draw_networkx, shell_layout, Graph, add_path, \
-    descendants, ancestors
+from networkx import draw_networkx, shell_layout, \
+    Graph, add_path, descendants, ancestors
 
 from exp import ensure_dir, Validation
 
@@ -24,7 +24,7 @@ def dep_graph(immutable, mutable) -> Tuple[Graph, Dict[int, list]]:
 
 def plot_graph(c, a):
     """Plot a constraint-dependency graph."""
-    immutable, mutable = x = Validation.categorize(c.constraints)
+    immutable, _ = x = Validation.categorize(c.constraints)
     g, _ = dep_graph(*x)
     gn = sorted(g.nodes)
     if len(gn) > 0:
