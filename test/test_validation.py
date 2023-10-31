@@ -1,5 +1,6 @@
 import numpy as np
 from exp.validation import Validation, ALL, DEP
+from plot.graph import dep_graph
 
 
 def test_no_constraints():
@@ -138,3 +139,15 @@ def test_mutable_reset_all():
     v_model = Validation(constraints, ranges, ALL)
     assert (v_model.enforce(ori, ori) == ori).all()
     assert (v_model.enforce(ori, adv) == exp).all()
+
+
+def test_dep_generation():
+    constraints = {
+        'A': ((0, 1, 2), lambda arr: sum(arr) == 1),
+        'B': ((0, 3), lambda arr: arr[0] == 0 or arr[1] == 1),
+        'C': ((4, 5), lambda arr: arr[0] == 0 or arr[1] == 0),
+        'D': ((4, 6), lambda arr: arr[0] == 0 and arr[1] == 1),
+        'E': ((7,), False)
+    }
+    imm, mut = Validation.categorize(constraints)
+    assert Validation.dep_map(mut) == dep_graph(imm, mut)[1]

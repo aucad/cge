@@ -1,13 +1,6 @@
 from typing import List
 
-from exp import CONSTR_DICT
 from exp.utility import read_dataset, first_available
-
-
-def categorize(cd: CONSTR_DICT):
-    immutable = [k for k, (_, P) in cd.items() if P is False]
-    mutable = dict([x for x in cd.items() if x[0] not in immutable])
-    return immutable, mutable
 
 
 def fmt(text, wchar, *attrs) -> str:

@@ -1,13 +1,13 @@
 import numpy as np
 import sklearn.metrics as skm
 
-from exp import CONSTR_DICT as CD, categorize
+from exp import CONSTR_DICT as CD, Validation
 from exp.utility import sdiv, log, logr, logd, attr_of
 
 
 def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CD, scalars):
     """Adversarial example validity scoring"""
-    immutable, mutable = categorize(cd)
+    immutable, mutable = Validation.categorize(cd)
     invalid = np.array([], dtype=int)
     for ft_i in immutable:
         correct, modified = ori[:, ft_i], adv[:, ft_i]

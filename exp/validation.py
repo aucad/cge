@@ -1,9 +1,8 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List, Any, Callable
 
 import numpy as np
-from networkx import Graph, add_path, descendants, ancestors
 
-from exp import CONSTR_DICT, categorize
+from exp.types import CONSTR_DICT
 
 ALL, DEP = 1, 2  # reset strategy
 
@@ -13,7 +12,7 @@ class Validation:
 
     def __init__(
             self, constraints: CONSTR_DICT,
-            attr_range: list[Tuple[int, int]],
+            attr_range: List[Tuple[int, int]],
             mode=DEP
     ):
         """Initialize validation model
@@ -24,9 +23,10 @@ class Validation:
             mode - reset strategy
         """
         self.constraints = constraints or {}
+        self.immutable, self.mutable = \
+            Validation.categorize(self.constraints)
+        self.deps = self.dep_map(self.mutable)
         self.scalars = attr_range
-        self.immutable, self.mutable = x = categorize(self.constraints)
-        self.deps = self.get_deps(*x)
         self.reset = mode if mode in [ALL, DEP] else DEP
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
@@ -57,7 +57,7 @@ class Validation:
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod
-    def get_deps(immutable, mutable) -> Dict[int, list]:
+    def dep_map(mutable) -> Dict[int, List]:
         """Construct a dependency lookup table to model constraints.
 
         This allows to determine which features are connected through
@@ -66,11 +66,21 @@ class Validation:
         Returns:
             A map of reachable features.
         """
-        g, dep_nodes = Graph(), [s for (s, _) in mutable.values()]
-        nodes = immutable + [c for dn in dep_nodes for c in dn]
-        g.add_nodes_from(list(set(nodes)))
-        for ngr in dep_nodes:
-            add_path(g, ngr)
-        r = [(k, list(({n} | ancestors(g, n) | descendants(g, n))))
-             for k, n in [(k, s[0]) for k, (s, _) in mutable.items()]]
-        return dict(r)
+        deps, result = [set(s) for (s, _) in mutable.values()], {}
+        while deps:
+            x = deps.pop(0)
+            if y := next((y for y in deps if x & y), None):
+                deps.pop(deps.index(y))
+                deps.append(x | y)
+            else:
+                result.update(dict([
+                    (k, sorted(list(x))) for k, (s, _)
+                    in mutable.items() if x & set(s)]))
+        return result
+
+    @staticmethod
+    def categorize(cd: CONSTR_DICT) -> Tuple[List[Any], CONSTR_DICT]:
+        """Categorize attributes."""
+        immutable = [k for k, (_, P) in cd.items() if P is False]
+        mutable = dict([x for x in cd.items() if x[0] not in immutable])
+        return immutable, mutable

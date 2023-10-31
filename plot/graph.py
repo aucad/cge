@@ -1,21 +1,31 @@
 from os import path
+from typing import Dict, Tuple
 
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
-from networkx import draw_networkx, shell_layout,Graph, add_path
+from networkx import draw_networkx, shell_layout, Graph, add_path, \
+    descendants, ancestors
 
-from exp import categorize
-from exp.utility import ensure_dir
+from exp import ensure_dir, Validation
 
 
-def plot_graph(c, a):
-    """Plot a constraint-dependency graph."""
-    immutable, mutable = categorize(c.constraints)
+def dep_graph(immutable, mutable) -> Tuple[Graph, Dict[int, list]]:
+    """Construct a dependency graph to model constraints."""
     g, dep_nodes = Graph(), [s for (s, _) in mutable.values()]
     nodes = immutable + [c for dn in dep_nodes for c in dn]
     g.add_nodes_from(list(set(nodes)))
     for ngr in dep_nodes:
         add_path(g, ngr)
+    r = [(k,
+          sorted(list(({n} | ancestors(g, n) | descendants(g, n)))))
+         for k, n in [(k, s[0]) for k, (s, _) in mutable.items()]]
+    return g, dict(r)
+
+
+def plot_graph(c, a):
+    """Plot a constraint-dependency graph."""
+    immutable, mutable = x = Validation.categorize(c.constraints)
+    g, _ = dep_graph(*x)
     gn = sorted(g.nodes)
     if len(gn) > 0:
         fn = path.join(c.out, f'__graph_{c.name}.pdf')
@@ -41,4 +51,3 @@ def plot_graph(c, a):
         ax.add_artist(legend2)
         ensure_dir(fn)
         plt.savefig(fn, bbox_inches="tight")
-
