@@ -13,9 +13,9 @@ class Validation:
     def __init__(
             self, constraints: CONSTR_DICT,
             attr_range: List[Tuple[int, int]],
-            mode=DEP
+            mode: int = DEP
     ):
-        """Initialize validation model
+        """Initialize validation model.
 
         Arguments:
             constraints - Constraints dictionary
@@ -57,11 +57,14 @@ class Validation:
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod
-    def dep_map(mutable) -> Dict[int, List]:
-        """Construct a dependency lookup table to model constraints.
+    def dep_map(mutable: CONSTR_DICT) -> Dict[int, List]:
+        """Construct a dependency lookup table for mutable constraints.
 
         This allows to determine which features are connected through
         constraints.
+
+        Arguments:
+            mutable - Mutable constraints dictionary
 
         Returns:
             A map of reachable features.
@@ -80,7 +83,14 @@ class Validation:
 
     @staticmethod
     def categorize(cd: CONSTR_DICT) -> Tuple[List[Any], CONSTR_DICT]:
-        """Categorize attributes."""
+        """Categorize constraints by kind.
+
+        Arguments:
+            cd - Constraints dictionary
+
+        Returns:
+            A tuple of constrains where (immutable, mutable).
+        """
         immutable = [k for k, (_, P) in cd.items() if P is False]
         mutable = dict([x for x in cd.items() if x[0] not in immutable])
         return immutable, mutable
