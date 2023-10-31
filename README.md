@@ -28,7 +28,7 @@ It uses a different constraint evaluation approach, introduced by Simonetto et a
 | `exp`        | Experiment setup source code                   |
 | `plot`       | Utilities for plotting experiment results      |
 | `ref_result` | Referential result for inspection              |
-| `test`       | Unit tests to test `exp` implementation        |
+| `test`       | Unit tests                                     |
 
 The Makefile contains pre-configured commands to ease running experiments.
 The software dependencies are listed in `requirements.txt`.
