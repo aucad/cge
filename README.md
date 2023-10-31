@@ -16,16 +16,17 @@ It uses a different constraint evaluation approach, introduced by Simonetto et a
 
 **Repository organization**
 
-| Directory    | Description                               |
-|:-------------|:------------------------------------------|
-| `.github`    | Automated workflows                       |
-| `comparison` | C-PGD attack implementation source code   |
-| `config`     | Experiment configuration files            |
-| `data`       | Preprocessed input data sets              |
-| `exp`        | Experiment setup source code              |
-| `plot`       | Utilities for plotting experiment results |
-| `ref_result` | Referential result for inspection         |
-| `test`       | Unit tests to test `exp` implementation   |
+| Directory    | Description                                    |
+|:-------------|:-----------------------------------------------|
+| `.github`    | Automated workflows                            |
+| `algo`       | Constraint validation algorithm implementation |
+| `comparison` | C-PGD attack implementation                    |
+| `config`     | Experiment configuration files                 |
+| `data`       | Preprocessed input data sets                   |
+| `exp`        | Experiment setup source code                   |
+| `plot`       | Utilities for plotting experiment results      |
+| `ref_result` | Referential result for inspection              |
+| `test`       | Unit tests to test `exp` implementation        |
 
 The Makefile contains pre-configured commands to ease running experiments.
 The software dependencies are listed in `requirements.txt`.
@@ -52,10 +53,10 @@ A constraint-validation approach can be enabled or disabled during the attack, t
      ┌───────────────┐      ┌───────────────┐      ┌───────────────┐      ┌───────────────┐ 
 ○────┤  args-parser  ├──────┤     setup     ├──────┤      run      ├──────┤      end      ├────◎
      └───────────────┘      └───────────────┘      └───────────────┘      └───────────────┘
-      inputs: data set       preprocess data,        k times:               write result
-      + a config file        init classifier,        1. train model      
-      with constraints       attack, validation      2. attack
-                                                     3. score
+      inputs:                * preprocess data       k times:               write result
+      * data set             * init: classifier,     1. train model      
+      * a config file          attack & validation   2. attack
+        with constraints                             3. score
 </pre>
 
 ## Usage

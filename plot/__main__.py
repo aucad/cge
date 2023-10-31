@@ -2,7 +2,6 @@ from argparse import ArgumentParser
 
 from exp.__main__ import build_config
 from exp.utility import read_dataset
-from exp.validation import Validation
 from plot import plot_results, plot_graph
 
 OPT_GRAPH = 'graph'
@@ -52,6 +51,5 @@ if __name__ == '__main__':
 
     elif args.which is OPT_GRAPH:
         conf = build_config(args)
-        attrs, _ = read_dataset(conf.dataset)
-        vm = Validation(conf.constraints, attrs)
-        plot_graph(vm, conf, attrs)
+        attrs = read_dataset(conf.dataset)[0]
+        plot_graph(conf, attrs)
