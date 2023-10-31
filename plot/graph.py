@@ -2,21 +2,28 @@ from os import path
 
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
-from networkx import draw_networkx, shell_layout
+from networkx import draw_networkx, shell_layout,Graph, add_path
 
+from exp import categorize
 from exp.utility import ensure_dir
 
 
-def plot_graph(v, c, a):
+def plot_graph(c, a):
     """Plot a constraint-dependency graph."""
-    gn = sorted(v.graph.nodes)
+    immutable, mutable = categorize(c.constraints)
+    g, dep_nodes = Graph(), [s for (s, _) in mutable.values()]
+    nodes = immutable + [c for dn in dep_nodes for c in dn]
+    g.add_nodes_from(list(set(nodes)))
+    for ngr in dep_nodes:
+        add_path(g, ngr)
+    gn = sorted(g.nodes)
     if len(gn) > 0:
         fn = path.join(c.out, f'__graph_{c.name}.pdf')
         lbl, clr = ['immutable', 'mutable'], ['#CFD8DC', '#FDD835']
-        nc = [clr[0] if n in v.immutable else clr[1] for n in gn]
+        nc = [clr[0] if n in immutable else clr[1] for n in gn]
         ax = plt.figure(1).add_subplot(1, 1, 1)
         draw_networkx(
-            v.graph, ax=ax, pos=shell_layout(v.graph),
+            g, ax=ax, pos=shell_layout(g),
             with_labels=True, node_color=nc, linewidths=.75,
             width=.75, font_size=8, font_weight='bold')
         legend1 = plt.legend(

@@ -26,7 +26,7 @@ class Validation:
         self.constraints = constraints or {}
         self.scalars = attr_range
         self.immutable, self.mutable = x = categorize(self.constraints)
-        self.graph, self.deps = self.dep_graph(*x)
+        self.deps = self.get_deps(*x)
         self.reset = mode if mode in [ALL, DEP] else DEP
 
     def enforce(self, ref: np.ndarray, adv: np.ndarray) -> np.ndarray:
@@ -57,14 +57,14 @@ class Validation:
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod
-    def dep_graph(immutable, mutable) -> Tuple[Graph, Dict[int, list]]:
-        """Construct a dependency graph to model constraints.
+    def get_deps(immutable, mutable) -> Dict[int, list]:
+        """Construct a dependency lookup table to model constraints.
 
-        This allows to determine which target nodes are reachable
-        from each source node.
+        This allows to determine which features are connected through
+        constraints.
 
         Returns:
-            The graph and a map of reachable nodes from each source.
+            A map of reachable features.
         """
         g, dep_nodes = Graph(), [s for (s, _) in mutable.values()]
         nodes = immutable + [c for dn in dep_nodes for c in dn]
@@ -73,4 +73,4 @@ class Validation:
             add_path(g, ngr)
         r = [(k, list(({n} | ancestors(g, n) | descendants(g, n))))
              for k, n in [(k, s[0]) for k, (s, _) in mutable.items()]]
-        return g, dict(r)
+        return dict(r)

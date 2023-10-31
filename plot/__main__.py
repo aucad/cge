@@ -52,6 +52,5 @@ if __name__ == '__main__':
 
     elif args.which is OPT_GRAPH:
         conf = build_config(args)
-        attrs, _ = read_dataset(conf.dataset)
-        vm = Validation(conf.constraints, attrs)
-        plot_graph(vm, conf, attrs)
+        attrs = read_dataset(conf.dataset)[0]
+        plot_graph(conf, attrs)
