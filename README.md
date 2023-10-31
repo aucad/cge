@@ -86,14 +86,14 @@ pip install -r requirements.txt --user
 ```
 
 **Run attacks.** Run experiments for all combinations of data sets, classifiers and attacks.       
-🕒 Important: depending on architecture, running all experiments takes 1-2 days.
+🕒 Running all experiments takes 1--2 days.
 
 ```
 make attacks
 ```
 
 **Run comparisons.** For comparison of the above baseline attacks with validation, run further experiments.      
-🕒 Depending on hardware, a performance test takes 30 min -- 3 hours, and the other experiments take 1-2 days.
+🕒 A performance test takes 30 min -- 3 h, and the other experiments take 1--2 days.
 
 <pre>
 make original  -- run all attacks, but ignore constraints.
@@ -115,7 +115,7 @@ make plots
 make plots DIR=ref_result
 ```
 
-**Plot graphs.** To visualize constraints as graphs.
+**Plot constraints.** Visualize constraints as graphs.
 
 ```
 make graphs
