@@ -78,7 +78,8 @@ def log(label: str, value):
 
 def logr(label: str, n: float, d: float):
     a, b, r = round(n, 0), round(d, 0), sdiv(n, d)
-    return log(label, f'{a} of {b} - {r:.2f} %')
+    r_ftm = "{r:.2f} %" if str(r).isnumeric() else r
+    return log(label, f'{a} of {b} - {r_ftm}')
 
 
 def logd(label: str, n: float, d: float):
