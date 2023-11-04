@@ -57,9 +57,9 @@ class Experiment:
             self.cls.score.log()
             self.attack.score.log()
         self.end = time.time_ns()
-
         self.result.log()
         write_yaml(file_name(c), self.to_dict())
+        return self
 
     def prepare_input_data(self):
         np.seterr(divide='ignore', invalid='ignore')
@@ -107,7 +107,7 @@ class Experiment:
         return {'experiment': {
             'name': self.config.name,
             'dataset': self.config.dataset,
-            'description': self.config.deps,
+            'description': self.config.desc,
             'config': self.config.config_path,
             'k_folds': self.config.folds,
             'n_records': len(self.X),
