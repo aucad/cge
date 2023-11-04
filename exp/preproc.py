@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Tuple, Dict, Any
 
+from exp import CONSTR_DICT
 from exp.utility import read_dataset, first_available
 
 
@@ -10,8 +11,10 @@ def fmt(text, wchar, *attrs) -> str:
     return f'lambda {param}: {text}'.strip()
 
 
-def pred_convert(imm: List[str], pred: List[str], attr: List[str]):
-    """Convert text constraints to evaluateable expressions"""
+def pred_convert(
+        imm: List[str], pred: List[str], attr: List[str]
+) -> Tuple[CONSTR_DICT, Dict[str, Any]]:
+    """Convert text constraints to executable expressions"""
     imm = [(k, ((k,), False)) for k in map(attr.index, imm or [])]
     fd, mut, wchar = {}, {}, first_available(attr)
     for p in (pred or []):

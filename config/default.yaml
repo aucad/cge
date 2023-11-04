@@ -20,6 +20,8 @@ validate: false # enforce constrains during attack
 out: result # output directory
 folds: 5 # K-folds (min: 2)
 reset_strategy: 2 # all=1, deps=2
+fn_pattern: None
+config_path: None
 
 # ============================
 # CLASSIFIERS
