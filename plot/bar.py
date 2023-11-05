@@ -1,5 +1,6 @@
 from statistics import mean
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 import numpy as np
 
 from plot import ResultData
@@ -43,10 +44,15 @@ def multi_bar(ax, results, category_names, colors, shift=True):
         if r == init_r:
             rlabels[i + 1] = None
         init_r = r
-    rlabels = [x for x in rlabels if x]
-    labels = [x[0] if isinstance(x[0], str)
-              else ' '.join(x[0]).lower()
-              for x in results]
+    rlabels, labels = [x for x in rlabels if x], []
+    for x in results:
+        tmp = x[0] if isinstance(x[0], str) else ' '.join(x[0]).lower()
+        if tmp in labels:
+            for i in range(10):
+                if f'{tmp}-{i}' not in labels:
+                    tmp = f'{tmp}-{i}'
+                    break
+        labels.append(tmp)
     data = np.array([r[1] for r in results])
     data_cum = data.cumsum(axis=1)
     if colors is None:
@@ -67,10 +73,11 @@ def multi_bar(ax, results, category_names, colors, shift=True):
         r, g, b, _ = color
 
     for idx, lbl in enumerate(labels):
-        if lbl == "overall":
-            ax.get_yticklabels()[idx].set_fontweight('bold')
-        elif lbl:
-            ax.get_yticklabels()[idx].set_fontweight('light')
+        if idx < len(ax.get_yticklabels()):
+            if lbl == "overall":
+                ax.get_yticklabels()[idx].set_fontweight('bold')
+            elif lbl:
+                ax.get_yticklabels()[idx].set_fontweight('light')
 
     ax.set_title(labels[0], fontsize='small', y=1.0,
                  pad=-13 if shift else -10)
@@ -110,8 +117,9 @@ def plot(data, mean_data, plot_name, groups,
         color_count = len(mean_data)
         colors = get_color_scheme(color_count)
         colors.reverse()
+
     fig, axes = plt.subplots(
-        len(cls_data), 1, figsize=(3, 5),
+        len(cls_data), 1, figsize=(3, 1 + 4 * (len(data) / 24)),
         gridspec_kw={'height_ratios': c_lens})
     plt.subplots_adjust(wspace=0, hspace=0)
 
@@ -125,15 +133,16 @@ def plot(data, mean_data, plot_name, groups,
             empty = [(' ', [0] * len(mean_data))]
             overall = [v / sum(mean_data) * 100 for v in mean_data]
             cdata = cdata + empty + [("overall", overall)]
-        multi_bar(axes[i], cdata, groups, colors=colors,
-                  shift=not last)
+        multi_bar(axes if isinstance(axes, Axes) else axes[i],
+                  cdata, groups, colors=colors,
+                  shift=not last or len(cls_data) == 1)
 
     fig.legend(groups, ncol=4, bbox_to_anchor=(.1, .98),
                loc='upper left', fontsize='small', frameon=False,
                handlelength=.9, handletextpad=0.2,
                columnspacing=1.1, borderpad=0,
                bbox_transform=fig.transFigure)
-    ax = axes[-1]
+    ax = axes if isinstance(axes, Axes) else axes[-1]
     ax.yaxis.set_tick_params(length=0)
     ax.xaxis.set_tick_params(labelsize='small')
     ax.set_xticks([0, 25, 50, 75, 100])
@@ -163,9 +172,7 @@ class BarData(ResultData):
     @staticmethod
     def r_name(r):
         name = ResultData.r_name(r)
-        if name == "UNSW-NB15":
-            return "UNSW"
-        return name
+        return "UNSW" if name == "UNSW-NB15" else name
 
     @staticmethod
     def fmt_attack_name(r):
@@ -174,18 +181,13 @@ class BarData(ResultData):
 
     def get_acc_data(self):
         nums = [BarData.fmt(i, r) for i, r in
-                enumerate([x for x in self.raw_rata if
-                           BarData.fmt_attack_name(x) != "CPGDP"])]
-        m_valid = int(round(sum(
-            [x[1][0] for x in nums]) / len(nums), 0))
-        m_evades = int(round(sum(
-            [x[1][1] for x in nums]) / len(nums), 0))
-        m_acc = int(round(sum(
-            [x[1][2] for x in nums]) / len(nums), 0))
-        m_tot = int(round(sum(
-            [x[1][3] for x in nums]) / len(nums), 0))
-        means = [m_valid, m_evades, m_acc, m_tot]
-        return dict(nums), means
+                enumerate([x for x in self.raw_rata])]
+        if N := len(nums) > 0:
+            means = [int(round(sum(
+                [x[1][i] for x in nums]) / N, 0))
+                     for i in range(len((nums[0][1])))]
+            return dict(nums), means
+        return [], []
 
     @staticmethod
     def fmt(i, r):
@@ -209,7 +211,8 @@ class BarData(ResultData):
 def plot_bars(data_dir, out_dir=None):
     bdata = BarData(data_dir)
     nums, means = bdata.get_acc_data()
-    plot(nums, means,
-         plot_name=bdata.plot_name('bar_acc', out_dir),
-         groups=['valid', 'evasive', 'accurate', 'FP/N'],
-         sort_key=lambda x: (x[0][2], x[0][3]))
+    if len(nums) > 0:
+        plot(nums, means,
+             plot_name=bdata.plot_name('bar_acc', out_dir),
+             groups=['valid', 'evasive', 'accurate', 'FP/N'],
+             sort_key=lambda x: (x[0][2], x[0][3]))
