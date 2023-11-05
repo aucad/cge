@@ -1,42 +1,36 @@
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 import numpy as np
-import datetime as dt
+
+from plot import ResultData
+from exp import ensure_dir
 
 col0 = [240 / 255, 249 / 255, 232 / 255, 1]
 col1 = [186 / 255, 228 / 255, 188 / 255, 1]
 col2 = [123 / 255, 204 / 255, 196 / 255, 1]
 col3 = [43 / 255, 140 / 255, 190 / 255, 1]
-col4 = [8 / 255, 104 / 255, 172 / 255, 1]
+col4 = [220 / 255, 220 / 255, 220 / 255, 1]
+col5 = [8 / 255, 104 / 255, 172 / 255, 1]
 light_blue = [166 / 255, 206 / 255, 227 / 255, 1]
 dark_blue = [15 / 255, 90 / 255, 160 / 255, 1]
-black = [0.2, 0.2, 0.2, 1]
 
-mid_blue = \
-    [0.6 * light_blue[i] + 0.4 * dark_blue[i] for i in range(4)]
-mid_light_blue = \
-    [0.8 * light_blue[i] + 0.2 * dark_blue[i] for i in range(4)]
-mid_dark_blue = \
-    [0.3 * light_blue[i] + 0.7 * dark_blue[i] for i in range(4)]
+
+def gradient(light, dark):
+    def col(n, m):
+        return [n * light[i] + m * dark[i] for i in range(4)]
+
+    return [dark, col(.3, .7), col(.6, .4), col(.8, .2), light]
 
 
 def get_color_scheme(n):
-    if n == 5:
-        return [dark_blue, mid_dark_blue, mid_blue, mid_light_blue,
-                light_blue]
-    if n < 5:
+    if 1 <= n < 5:
         return [col4, col3, col2, col1][-n:]
-
+    if n == 5:
+        return gradient(light_blue, dark_blue)
     assert False
 
 
-def multibar_graph(
-        results, category_names, colors=None,
-        size=(5.8, 3.1), legend=True, log=False
-):
-    if isinstance(results, dict):
-        results = [r for r in results.items()]
-
+def multi_bar(results, category_names, colors=None,
+              size=(5.8, 3.1), legend=True, log=False):
     labels = [r[0] for r in results]
     data = np.array([r[1] for r in results])
     data_cum = data.cumsum(axis=1)
@@ -46,27 +40,24 @@ def multibar_graph(
 
     fig, ax = plt.subplots(figsize=size)
     ax.invert_yaxis()
-    # ax.xaxis.set_visible(True)
 
-    for i, (colname, color) in enumerate(zip(category_names, colors)):
+    for i, (colname, color) in enumerate(
+            zip(category_names, colors)):
         widths = data[:, i]
         starts = data_cum[:, i] - widths
-        heights = [0.8 if label == "overall" else 0.5 for label in
-                   labels]
-        rects = ax.barh(labels, widths, left=starts, height=heights,
-                        label=colname, color=color)
-
+        heights = [0.8 if label == "overall" else 0.5
+                   for label in labels]
+        ax.barh(labels, widths, left=starts, height=heights,
+                label=colname, color=color)
         r, g, b, _ = color
-        # text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
-        # ax.bar_label(rects, label_type='center', color=text_color)
 
     if "overall" in labels:
-        for idx in range(len(labels)):
-            if labels[idx] == "overall":
+        for idx, lbl in enumerate(labels):
+            if lbl == "overall":
                 ax.get_yticklabels()[idx].set_fontweight('bold')
-            else:
+            elif lbl:
                 ax.get_yticklabels()[idx].set_fontweight('light')
-                ax.get_yticklabels()[idx].set_size(8)
+                ax.get_yticklabels()[idx].set_size('small')
 
     if legend:
         ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
@@ -87,83 +78,119 @@ def multibar_graph(
     return fig, ax
 
 
-def plot(dialect_data, mean_data, plot_name, limit=None,
-         sort_key=None, colors=None, groups=None):
-    if groups is not None:
-        pass
-    elif limit is None:
-        groups = [str(i) for i in range(len(mean_data))]
-    else:
-        groups = [str(i) for i in range(limit)] + [f"{limit}+"]
-        dialect_data = {name: r[:limit] + [sum(r[limit:])] for
-                        name, r in dialect_data.items()}
-        mean_data = mean_data[:limit] + [sum(mean_data[limit:])]
-    dialect_results = [(name, r) for name, r in
-                       dialect_data.items()]
-    dialect_results = [(name, [v / sum(val) * 100 for v in val]) for
-                       name, val in dialect_results]
-    if sort_key is not None:
-        dialect_results.sort(key=sort_key)
-    dialect_results = dialect_results + [
-        ("", [0] * len(mean_data))] + [("overall",
-                                        [v / sum(mean_data) * 100
-                                         for v in mean_data])]
+def plot(data, mean_data, plot_name, groups,
+         sort_key=None, colors=None):
+    clss = sorted(list(set([x[1] for x in data.keys()])))
+    plot_data = []
+    for i, cls in enumerate(clss):
+        cls_data = [x for x in data.items() if x[0][1] == cls]
+        if sort_key is not None:
+            cls_data.sort(key=sort_key)
+        cls_data = [(f'{name[0]} {name[2]} {name[3]}', r)
+                    for name, r in cls_data]
+        plot_data = plot_data + cls_data
+
+    plot_data = plot_data + [(' ', [0] * len(mean_data))] + [
+        ("overall", [v / sum(mean_data) * 100
+                     for v in mean_data])]
     if colors is None:
         color_count = len(mean_data)
         colors = get_color_scheme(color_count)
         colors.reverse()
 
-    fig, ax = multibar_graph(
-        dialect_results, groups, size=(3, 4.5),
+    fig, ax = multi_bar(
+        plot_data, groups, size=(3, 4.5),
         colors=colors, legend=False)
+    ax.legend(ncol=4, bbox_to_anchor=(-0.55, 0.97),
+              loc='lower left', fontsize='small', frameon=False,
+              handlelength=.9, handletextpad=0.2,
+              columnspacing=1.1, borderpad=0)
     ax.spines["right"].set_visible(False)
     ax.spines["top"].set_visible(False)
     ax.spines["left"].set_visible(False)
     ax.yaxis.set_tick_params(length=0)
-    ax.legend(ncol=4, bbox_to_anchor=(-0.1, 0.97),
-              loc='lower left', fontsize='small',
-              frameon=False, handlelength=1)
+
     ax.set_xticks([0, 25, 50, 75, 100])
     ax.set_xticklabels(["0%", "25%", "50%", "75%", "100%"])
+    ax.tick_params(axis='x', labelsize='small')
     fig.tight_layout()
+    ensure_dir(plot_name)
     plt.savefig(plot_name, metadata={'CreationDate': None})
     plt.close()
 
 
-if __name__ == "__main__":
-    plot_dir_path = 'result'
-    num_operands_per_dialect = {
-        'builtin': [2, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        'pdl_interp': [6, 24, 3, 1, 0, 0, 0, 0, 0, 0],
-        'pdl': [3, 8, 1, 2, 0, 0, 0, 0, 0, 0],
-        'llvm': [14, 53, 49, 15, 4, 0, 0, 0, 0, 0],
-        'rocdl': [13, 20, 0, 0, 0, 1, 1, 0, 0, 0],
-        'nvvm': [15, 9, 1, 0, 1, 0, 0, 0, 0, 0],
-        'tensor': [0, 4, 3, 1, 1, 1, 0, 0, 0, 0],
-        'complex': [0, 8, 7, 0, 0, 0, 0, 0, 0, 0],
-        'arm_sve': [2, 0, 12, 27, 0, 0, 0, 0, 0, 0],
-        'quant': [0, 10, 0, 0, 0, 0, 0, 0, 0, 0],
-        'x86vector': [0, 2, 4, 3, 0, 6, 0, 0, 0, 0],
-        'async': [2, 17, 6, 0, 0, 0, 0, 0, 0, 0],
-        'emitc': [2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-        'sparse_tensor': [0, 5, 2, 0, 0, 0, 0, 0, 0, 0],
-        'memref': [3, 11, 8, 3, 2, 0, 0, 0, 0, 0],
-        'tosa': [1, 36, 25, 8, 0, 0, 0, 0, 0, 0],
-        'gpu': [12, 6, 2, 6, 0, 0, 0, 1, 0, 1],
-        'linalg': [1, 4, 0, 2, 0, 1, 0, 0, 0, 0],
-        'vector': [1, 11, 8, 6, 7, 2, 0, 0, 0, 0],
-        'std': [1, 22, 31, 5, 0, 0, 0, 0, 0, 0],
-        'affine': [0, 7, 3, 2, 0, 0, 0, 0, 0, 0],
-        'arm_neon': [0, 0, 1, 2, 0, 0, 0, 0, 0, 0],
-        'math': [0, 16, 3, 1, 0, 0, 0, 0, 0, 0],
-        'spv': [21, 56, 86, 15, 3, 0, 0, 0, 0, 0],
-        'shape': [4, 20, 11, 0, 0, 0, 0, 0, 0, 0],
-        'scf': [1, 5, 1, 0, 2, 0, 0, 0, 0, 0],
-        'arith': [1, 12, 22, 0, 0, 0, 0, 0, 0, 0],
-        'amx': [1, 0, 2, 3, 1, 1, 5, 0, 0, 0]}
-    num_operands_mean = [106, 369, 291, 102, 21, 12, 6, 1, 0, 1]
+def get_groups(data, mean_data, limit=3):
+    if limit is None:
+        groups = [str(i) for i in range(len(mean_data))]
+    else:
+        groups = [str(i) for i in range(limit)] + [f"{limit}+"]
+        data = {name: r[:limit] + [sum(r[limit:])]
+                for name, r in data.items()}
+        mean_data = mean_data[:limit] + [sum(mean_data[limit:])]
+    return data, mean_data, groups
 
-    # Number of operands per operation
-    plot(num_operands_per_dialect, num_operands_mean,
-         plot_dir_path + "/numbers.pdf", limit=3,
-         sort_key=lambda x: (-x[1][3], -x[1][2], -x[1][1]))
+
+class BarData(ResultData):
+
+    @staticmethod
+    def r_cls(r):
+        cls = ResultData.r_cls(r)
+        if cls.lower() == "neural network":
+            return "NN"
+        if cls.lower() == "xgboost":
+            return "XGB"
+        return cls
+
+    @staticmethod
+    def r_name(r):
+        name = ResultData.r_name(r)
+        if name == "UNSW-NB15":
+            return "UNSW"
+        return name
+
+    @staticmethod
+    def fmt_attack_name(r):
+        tmp = ResultData.fmt_attack_name(r)
+        return 'CPGD' if tmp == 'CPGD[R]' else tmp
+
+    def get_acc_data(self):
+        nums = [BarData.fmt(i, r) for i, r in
+                enumerate([x for x in self.raw_rata if
+                           BarData.fmt_attack_name(x) != "CPGD"])]
+        m_valid = int(round(sum(
+            [x[1][0] for x in nums]) / len(nums), 0))
+        m_evades = int(round(sum(
+            [x[1][1] for x in nums]) / len(nums), 0))
+        m_acc = int(round(sum(
+            [x[1][2] for x in nums]) / len(nums), 0))
+        m_tot = int(round(sum(
+            [x[1][3] for x in nums]) / len(nums), 0))
+        means = [m_valid, m_evades, m_acc, m_tot]
+        return dict(nums), means
+
+    @staticmethod
+    def fmt(i, r):
+        ac = r['folds']['accuracy']
+        ev = r['folds']['n_evasions']
+        vd = r['folds']['n_valid_evades']
+        cls = BarData.r_cls(r)
+        name = BarData.r_name(r)
+        attack = BarData.fmt_attack_name(r)
+        valid = int(round(BarData.fold_mean(vd, r), 0))
+        evades = int(round(BarData.fold_mean(ev, r), 0)) - valid
+        acc = int(round(BarData.arr_mean(ac), 0)) - evades - valid
+        tot = 100 - acc - evades - valid
+        key = (str(i), cls, name, attack)
+        return key, [valid, evades, acc, tot]
+
+    def plot_name(self, pattern, out_dir):
+        return self.fn_pattern('pdf', pattern, out_dir)
+
+
+def plot_bars(data_dir, out_dir=None):
+    bdata = BarData(data_dir)
+    nums, means = bdata.get_acc_data()
+    plot(nums, means,
+         plot_name=bdata.plot_name('bar_acc', out_dir),
+         groups=['valid', 'evasive', 'accurate', 'FP/N'],
+         sort_key=lambda x: (x[0][2], x[0][3]))
