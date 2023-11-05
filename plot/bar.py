@@ -29,18 +29,22 @@ def get_color_scheme(n):
     assert False
 
 
-def multi_bar(results, category_names, colors=None,
-              size=(5.8, 3.1), legend=True, log=False):
-    labels = [r[0] for r in results]
+def multi_bar(ax, results, category_names, colors, shift=True):
+    # import pandas
+    # df = pandas.DataFrame(
+    #     dict(graph=['Item one', 'Item two', 'Item three'],
+    #          n=[3, 5, 2], m=[6, 1, 3]))
+    # ind = np.arange(len(df))
+    # print(ind + 0.4, len(df), df.n)
+
+    labels = [str(r[0]) for r in results]
     data = np.array([r[1] for r in results])
     data_cum = data.cumsum(axis=1)
     if colors is None:
         colors = plt.get_cmap('RdYlGn')(
             np.linspace(1, 0.5, data.shape[1]))
 
-    fig, ax = plt.subplots(figsize=size)
     ax.invert_yaxis()
-
     for i, (colname, color) in enumerate(
             zip(category_names, colors)):
         widths = data[:, i]
@@ -51,68 +55,75 @@ def multi_bar(results, category_names, colors=None,
                 label=colname, color=color)
         r, g, b, _ = color
 
-    if "overall" in labels:
-        for idx, lbl in enumerate(labels):
-            if lbl == "overall":
-                ax.get_yticklabels()[idx].set_fontweight('bold')
-            elif lbl:
-                ax.get_yticklabels()[idx].set_fontweight('light')
-                ax.get_yticklabels()[idx].set_size('small')
+    for idx, lbl in enumerate(labels):
+        if lbl == "overall":
+            ax.get_yticklabels()[idx].set_fontweight('bold')
+        elif lbl:
+            ax.get_yticklabels()[idx].set_fontweight('light')
+        ax.get_yticklabels()[idx].set_fontsize('small')
 
-    if legend:
-        ax.legend(ncol=len(category_names), bbox_to_anchor=(0, 1),
-                  loc='lower left', fontsize='small', frameon=False,
-                  handlelength=1)
-        fig.tight_layout()
-
-    if log:
-        ax.set_xscale('log')
-    else:
-        ax.set_xlim(0, np.sum(data, axis=1).max())
-
+    ax.set_xlim(0, np.sum(data, axis=1).max())
     ax.spines["right"].set_visible(False)
-    ax.spines["top"].set_visible(False)
     ax.spines["left"].set_visible(False)
+    ax.spines["top"].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
     ax.yaxis.set_tick_params(length=0)
-    fig.tight_layout()
-    return fig, ax
+    ax.xaxis.set_tick_params(bottom=False, top=False)
+    ax.set_xticks([])
+    ax.set_xticklabels([])
+    if shift:
+        box = ax.get_position()
+        box.y0 += 0.05
+        box.y1 += 0.05
+        ax.set_position(box)
 
 
 def plot(data, mean_data, plot_name, groups,
          sort_key=None, colors=None):
-    clss = sorted(list(set([x[1] for x in data.keys()])))
-    plot_data = []
-    for i, cls in enumerate(clss):
-        cls_data = [x for x in data.items() if x[0][1] == cls]
-        if sort_key is not None:
-            cls_data.sort(key=sort_key)
-        cls_data = [(f'{name[0]} {name[2]} {name[3]}', r)
-                    for name, r in cls_data]
-        plot_data = plot_data + cls_data
+    cls_data, c_lens = [], []
+    for cls in sorted(list(set([x[1] for x in data.keys()]))):
+        items = [x for x in data.items() if x[0][1] == cls]
+        cls_data.append((cls, items))
+        c_lens.append(len(items))
+    c_lens[-1] += 2
+    min_h = min(c_lens)
+    c_lens = [x / min_h for x in c_lens]
 
-    plot_data = plot_data + [(' ', [0] * len(mean_data))] + [
-        ("overall", [v / sum(mean_data) * 100
-                     for v in mean_data])]
     if colors is None:
         color_count = len(mean_data)
         colors = get_color_scheme(color_count)
         colors.reverse()
+    fig, axes = plt.subplots(
+        len(cls_data), 1, figsize=(3, 4.5),
+        gridspec_kw={'height_ratios': c_lens})
+    plt.subplots_adjust(wspace=0, hspace=0)
 
-    fig, ax = multi_bar(
-        plot_data, groups, size=(3, 4.5),
-        colors=colors, legend=False)
-    ax.legend(ncol=4, bbox_to_anchor=(-0.55, 0.97),
-              loc='lower left', fontsize='small', frameon=False,
-              handlelength=.9, handletextpad=0.2,
-              columnspacing=1.1, borderpad=0)
-    ax.spines["right"].set_visible(False)
-    ax.spines["top"].set_visible(False)
-    ax.spines["left"].set_visible(False)
+    for i, (cls, cdata) in enumerate(cls_data):
+        if sort_key is not None:
+            cdata.sort(key=sort_key)
+        cdata = [(cls, [0] * len(mean_data))] + \
+                [((name[3], name[2]), r) for name, r in cdata]
+        last = i == len(cls_data) - 1
+        if last:
+            empty = [(' ', [0] * len(mean_data))]
+            overall = [v / sum(mean_data) * 100 for v in mean_data]
+            cdata = cdata + empty + [("overall", overall)]
+        multi_bar(axes[i], cdata, groups, colors=colors,
+                  shift=not last)
+
+    fig.legend(groups, ncol=4, bbox_to_anchor=(.1, .97),
+               loc='upper left', fontsize='small', frameon=False,
+               handlelength=.9, handletextpad=0.2,
+               columnspacing=1.1, borderpad=0,
+               bbox_transform=fig.transFigure)
+    ax = axes[-1]
     ax.yaxis.set_tick_params(length=0)
-
+    ax.xaxis.set_tick_params(labelsize='small')
     ax.set_xticks([0, 25, 50, 75, 100])
     ax.set_xticklabels(["0%", "25%", "50%", "75%", "100%"])
-    ax.tick_params(axis='x', labelsize='small')
+    ax.spines['bottom'].set_visible(True)
+    ax.xaxis.set_tick_params(bottom=True)
+    ax.xaxis.set_visible(True)
     fig.tight_layout()
     ensure_dir(plot_name)
     plt.savefig(plot_name, metadata={'CreationDate': None})
@@ -133,15 +144,6 @@ def get_groups(data, mean_data, limit=3):
 class BarData(ResultData):
 
     @staticmethod
-    def r_cls(r):
-        cls = ResultData.r_cls(r)
-        if cls.lower() == "neural network":
-            return "NN"
-        if cls.lower() == "xgboost":
-            return "XGB"
-        return cls
-
-    @staticmethod
     def r_name(r):
         name = ResultData.r_name(r)
         if name == "UNSW-NB15":
@@ -152,6 +154,15 @@ class BarData(ResultData):
     def fmt_attack_name(r):
         tmp = ResultData.fmt_attack_name(r)
         return 'CPGD' if tmp == 'CPGD[R]' else tmp
+
+    @staticmethod
+    def r_cls(r):
+        tmp = ResultData.r_cls(r)
+        if tmp.lower() == "neural network":
+            return "DNN"
+        if tmp.lower() == "xgboost":
+            return "XGB"
+        return tmp
 
     def get_acc_data(self):
         nums = [BarData.fmt(i, r) for i, r in
