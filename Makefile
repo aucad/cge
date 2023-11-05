@@ -38,7 +38,9 @@ perf:
 	python3 -m exp $(f) -a pgd --out result/perf/$(UNAME_S) ; )
 
 plots:
-	$(foreach d, $(RES_DIRS), python3 -m plot table $(d) --out $(DIR) ; )
+	$(foreach d, $(RES_DIRS), \
+	 python3 -m plot table $(d) --out $(DIR) && \
+	 python3 -m plot bar $(d) --out $(DIR) ; )
 
 graphs:
 	$(foreach f, $(ALL_CONF), python3 -m plot graph $(f) ; )
