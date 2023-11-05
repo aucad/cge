@@ -1,3 +1,4 @@
+from statistics import mean
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -30,28 +31,38 @@ def get_color_scheme(n):
 
 
 def multi_bar(ax, results, category_names, colors, shift=True):
-    # import pandas
-    # df = pandas.DataFrame(
-    #     dict(graph=['Item one', 'Item two', 'Item three'],
-    #          n=[3, 5, 2], m=[6, 1, 3]))
-    # ind = np.arange(len(df))
-    # print(ind + 0.4, len(df), df.n)
-
-    labels = [str(r[0]) for r in results]
+    rlabels = [x[0][-1] if isinstance(x[0], tuple) else ''
+               for x in results[1:]]
+    llabels = ['' if i == 0 else
+               x[0] if isinstance(x[0], str) else x[0][0]
+               for i, x in enumerate(results)]
+    r_off = mean([rlabels.count(x) for x in list(set(rlabels))
+                  if len(x.strip()) > 0])
+    init_r = rlabels[0]
+    for i, r in enumerate(rlabels[1:]):
+        if r == init_r:
+            rlabels[i + 1] = None
+        init_r = r
+    rlabels = [x for x in rlabels if x]
+    labels = [x[0] if isinstance(x[0], str)
+              else ' '.join(x[0]).lower()
+              for x in results]
     data = np.array([r[1] for r in results])
     data_cum = data.cumsum(axis=1)
     if colors is None:
         colors = plt.get_cmap('RdYlGn')(
             np.linspace(1, 0.5, data.shape[1]))
-
     ax.invert_yaxis()
+    ay = ax.secondary_yaxis('right')
+
     for i, (colname, color) in enumerate(
             zip(category_names, colors)):
         widths = data[:, i]
         starts = data_cum[:, i] - widths
-        heights = [0.8 if label == "overall" else 0.5
+        heights = [0.8 if label == "overall" else 0.6
                    for label in labels]
-        ax.barh(labels, widths, left=starts, height=heights,
+        ax.barh(labels,
+                widths, left=starts, height=heights,
                 label=colname, color=color)
         r, g, b, _ = color
 
@@ -60,8 +71,14 @@ def multi_bar(ax, results, category_names, colors, shift=True):
             ax.get_yticklabels()[idx].set_fontweight('bold')
         elif lbl:
             ax.get_yticklabels()[idx].set_fontweight('light')
-        ax.get_yticklabels()[idx].set_fontsize('small')
 
+    ax.set_title(labels[0], fontsize='small', y=1.0,
+                 pad=-13 if shift else -10)
+    ay.set_yticklabels(rlabels, fontsize='small')
+    ay.set_ticks(np.arange(1, len(rlabels) * r_off, r_off))
+    ay.yaxis.set_tick_params(length=0)
+    ay.spines["right"].set_visible(False)
+    ax.set_yticklabels(llabels, fontsize='small')
     ax.set_xlim(0, np.sum(data, axis=1).max())
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_visible(False)
@@ -73,8 +90,8 @@ def multi_bar(ax, results, category_names, colors, shift=True):
     ax.set_xticklabels([])
     if shift:
         box = ax.get_position()
-        box.y0 += 0.05
-        box.y1 += 0.05
+        box.y0 += 0.04
+        box.y1 += 0.04
         ax.set_position(box)
 
 
@@ -94,7 +111,7 @@ def plot(data, mean_data, plot_name, groups,
         colors = get_color_scheme(color_count)
         colors.reverse()
     fig, axes = plt.subplots(
-        len(cls_data), 1, figsize=(3, 4.5),
+        len(cls_data), 1, figsize=(3, 5),
         gridspec_kw={'height_ratios': c_lens})
     plt.subplots_adjust(wspace=0, hspace=0)
 
@@ -111,7 +128,7 @@ def plot(data, mean_data, plot_name, groups,
         multi_bar(axes[i], cdata, groups, colors=colors,
                   shift=not last)
 
-    fig.legend(groups, ncol=4, bbox_to_anchor=(.1, .97),
+    fig.legend(groups, ncol=4, bbox_to_anchor=(.1, .98),
                loc='upper left', fontsize='small', frameon=False,
                handlelength=.9, handletextpad=0.2,
                columnspacing=1.1, borderpad=0,
@@ -155,19 +172,10 @@ class BarData(ResultData):
         tmp = ResultData.fmt_attack_name(r)
         return 'CPGD' if tmp == 'CPGD[R]' else tmp
 
-    @staticmethod
-    def r_cls(r):
-        tmp = ResultData.r_cls(r)
-        if tmp.lower() == "neural network":
-            return "DNN"
-        if tmp.lower() == "xgboost":
-            return "XGB"
-        return tmp
-
     def get_acc_data(self):
         nums = [BarData.fmt(i, r) for i, r in
                 enumerate([x for x in self.raw_rata if
-                           BarData.fmt_attack_name(x) != "CPGD"])]
+                           BarData.fmt_attack_name(x) != "CPGDP"])]
         m_valid = int(round(sum(
             [x[1][0] for x in nums]) / len(nums), 0))
         m_evades = int(round(sum(
