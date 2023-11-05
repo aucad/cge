@@ -12,16 +12,13 @@ class TablePlot(ResultData):
 
     @staticmethod
     def fmt(r):
-        ac = r['folds']['accuracy']
-        ev = r['folds']['n_evasions']
-        vd = r['folds']['n_valid_evades']
         return [
-            TablePlot.r_cls(r),
-            TablePlot.r_name(r),
-            TablePlot.fmt_attack_name(r),
-            f"{TablePlot.arr_mean(ac):.1f}",
-            f"{TablePlot.fold_mean(ev, r):.1f}",
-            f"{TablePlot.fold_mean(vd, r):.1f}",
+            TablePlot.cls(r),
+            TablePlot.name(r),
+            TablePlot.attack(r),
+            f"{TablePlot.acc(r):.1f}",
+            f"{TablePlot.evades(r):.1f}",
+            f"{TablePlot.valid(r):.1f}",
             round(r['experiment']['duration_sec'], 0)]
 
     def write_table(self, sorter, out_dir):

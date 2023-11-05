@@ -35,16 +35,28 @@ class ResultData:
         return 100 * (d / v)
 
     @staticmethod
-    def r_name(r):
+    def name(r):
         e = r['experiment']
         return e['name'] if 'name' in e else e['dataset']
 
     @staticmethod
-    def r_cls(r):
+    def cls(r):
         return r['classifier']['name']
 
     @staticmethod
-    def fmt_attack_name(r):
+    def acc(r):
+        return ResultData.arr_mean(r['folds']['accuracy'])
+
+    @staticmethod
+    def valid(r):
+        return ResultData.fold_mean(r['folds']['n_valid_evades'], r)
+
+    @staticmethod
+    def evades(r):
+        return ResultData.fold_mean(r['folds']['n_evasions'], r)
+
+    @staticmethod
+    def attack(r):
         tmp = r['attack']['name']
         if tmp == 'ProjectedGradientDescent':
             return 'PGD'
@@ -54,7 +66,7 @@ class ResultData:
             return 'HSJ'
         if tmp == 'CPGD':
             if not r['attack']['config']['args']['enable_constraints']:
-                return 'CPGD[R]'
+                return 'CPGDᴿ'
         return tmp
 
     def fn_pattern(self, file_ext, pattern, out_dir=None):

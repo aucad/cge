@@ -74,7 +74,7 @@ A constraint-validation approach can be enabled or disabled during the attack, t
 Check your environment using the following command, and install/upgrade as necessary.
 
 ```
-python3 --version && make --version
+python3 --version & make --version
 ```
 
 ### Reproducing experiments

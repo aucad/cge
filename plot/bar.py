@@ -1,10 +1,10 @@
-from statistics import mean
+from itertools import groupby
+
 import matplotlib.pyplot as plt
-from matplotlib.axes import Axes
 import numpy as np
 
-from plot import ResultData
 from exp import ensure_dir
+from plot import ResultData
 
 col0 = [240 / 255, 249 / 255, 232 / 255, 1]
 col1 = [186 / 255, 228 / 255, 188 / 255, 1]
@@ -25,184 +25,151 @@ def gradient(light, dark):
 
 def get_color_scheme(n):
     if 1 <= n < 5:
-        return [col4, col3, col2, col1][-n:]
+        return [col4, col1, col2, col3][-n:]
     if n == 5:
         return gradient(light_blue, dark_blue)
     assert False
 
 
-def multi_bar(ax, results, category_names, colors, shift=True):
-    rlabels = [x[0][-1] if isinstance(x[0], tuple) else ''
-               for x in results[1:]]
-    llabels = ['' if i == 0 else
-               x[0] if isinstance(x[0], str) else x[0][0]
-               for i, x in enumerate(results)]
-    r_off = mean([rlabels.count(x) for x in list(set(rlabels))
-                  if len(x.strip()) > 0])
-    init_r = rlabels[0]
-    for i, r in enumerate(rlabels[1:]):
-        if r == init_r:
-            rlabels[i + 1] = None
-        init_r = r
-    rlabels, labels = [x for x in rlabels if x], []
-    for x in results:
-        tmp = x[0] if isinstance(x[0], str) else ' '.join(x[0]).lower()
-        if tmp in labels:
-            for i in range(10):
-                if f'{tmp}-{i}' not in labels:
-                    tmp = f'{tmp}-{i}'
-                    break
-        labels.append(tmp)
-    data = np.array([r[1] for r in results])
+def multi_bar(ax, results, cat_names, colors):
+    llbl, rlbl = list(zip(*[(r, l) for (l, r), _ in results]))
+    uniq_rl = [x for k, v in groupby(rlbl)
+               for x in [k] + [' '] * (sum(1 for __ in v) - 1)]
+    labels = [i for i, _ in enumerate(results)]
+    data = np.array([v for _, v in results])
     data_cum = data.cumsum(axis=1)
-    if colors is None:
-        colors = plt.get_cmap('RdYlGn')(
-            np.linspace(1, 0.5, data.shape[1]))
-    ax.invert_yaxis()
     ay = ax.secondary_yaxis('right')
+    ax.invert_yaxis()
 
-    for i, (colname, color) in enumerate(
-            zip(category_names, colors)):
+    for i, (name, color) in enumerate(zip(cat_names, colors)):
         widths = data[:, i]
         starts = data_cum[:, i] - widths
         heights = [0.8 if label == "overall" else 0.6
-                   for label in labels]
-        ax.barh(labels,
-                widths, left=starts, height=heights,
-                label=colname, color=color)
+                   for label in llbl]
+        ax.barh(labels, widths, left=starts, height=heights,
+                label=name, color=color)
         r, g, b, _ = color
 
-    for idx, lbl in enumerate(labels):
-        if idx < len(ax.get_yticklabels()):
-            if lbl == "overall":
-                ax.get_yticklabels()[idx].set_fontweight('bold')
-            elif lbl:
-                ax.get_yticklabels()[idx].set_fontweight('light')
-
-    ax.set_title(labels[0], fontsize='small', y=1.0,
-                 pad=-13 if shift else -10)
-    ay.set_yticklabels(rlabels, fontsize='small')
-    ay.set_ticks(np.arange(1, len(rlabels) * r_off, r_off))
-    ay.yaxis.set_tick_params(length=0)
-    ay.spines["right"].set_visible(False)
-    ax.set_yticklabels(llabels, fontsize='small')
+    ax.set_yticklabels(llbl, weight='light')
+    ax.set_yticks(np.arange(0, len(llbl), 1))
     ax.set_xlim(0, np.sum(data, axis=1).max())
+    ax.yaxis.set_tick_params(length=0)
+    ay.set_yticklabels(uniq_rl, weight='light')
+    ay.set_ticks(np.arange(0, len(rlbl), 1))
+    ay.yaxis.set_tick_params(length=0)
+    for idx, lbl in enumerate(llbl):
+        if idx < len(ax.get_yticklabels()) and lbl == "overall":
+            ax.get_yticklabels()[idx].set_fontweight('bold')
+    ax.get_yticklabels()[0].set_ha("left")
+    ax.get_yticklabels()[0].set_position((.035, 0))
+    ay.spines["right"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_visible(False)
     ax.spines["top"].set_visible(False)
     ax.spines['bottom'].set_visible(False)
-    ax.yaxis.set_tick_params(length=0)
-    ax.xaxis.set_tick_params(bottom=False, top=False)
+    ax.xaxis.set_tick_params(bottom=True, top=False)
     ax.set_xticks([])
     ax.set_xticklabels([])
-    if shift:
-        box = ax.get_position()
-        box.y0 += 0.04
-        box.y1 += 0.04
-        ax.set_position(box)
 
 
-def plot(data, mean_data, plot_name, groups,
-         sort_key=None, colors=None):
-    cls_data, c_lens = [], []
-    for cls in sorted(list(set([x[1] for x in data.keys()]))):
-        items = [x for x in data.items() if x[0][1] == cls]
-        cls_data.append((cls, items))
-        c_lens.append(len(items))
-    c_lens[-1] += 2
-    min_h = min(c_lens)
-    c_lens = [x / min_h for x in c_lens]
-
+def plot_acc(data, mean_data, subplots, plot_name, data_labels,
+             sort_key=None, colors=None, dlen=4):
     if colors is None:
         color_count = len(mean_data)
         colors = get_color_scheme(color_count)
         colors.reverse()
 
+    # determine plot size
+    sp_n = len(subplots)
+    plot_height = 1 + 4.5 * (len(data) / 24.)
+    h_ratios = [1] if sp_n == 1 else \
+        [len([x for x in data.values() if c == x[0][0]]) +
+         (3 if i == sp_n - 1 else 0)
+         for i, c in enumerate(subplots)]
+    min_hr = max(.01, min(h_ratios))
+    h_ratios = [round(h / min_hr, 2) for h in h_ratios]
+
+    # setup figure
     fig, axes = plt.subplots(
-        len(cls_data), 1, figsize=(3, 1 + 4 * (len(data) / 24)),
-        gridspec_kw={'height_ratios': c_lens})
+        sp_n, 1, figsize=(3, plot_height),
+        gridspec_kw={'height_ratios': h_ratios})
+    ax = axes if sp_n == 1 else axes[-1]
     plt.subplots_adjust(wspace=0, hspace=0)
 
-    for i, (cls, cdata) in enumerate(cls_data):
+    # draw sub plots
+    for i, ckey in enumerate(subplots):
+        cdata = [(x[0][1:], x[1]) for x in data.values()
+                 if ckey in x[0][0]]
         if sort_key is not None:
             cdata.sort(key=sort_key)
-        cdata = [(cls, [0] * len(mean_data))] + \
-                [((name[3], name[2]), r) for name, r in cdata]
-        last = i == len(cls_data) - 1
-        if last:
-            empty = [(' ', [0] * len(mean_data))]
+        cdata.insert(0, (('', ckey), [0] * dlen))
+        if ckey == subplots[-1]:
+            empty = [((' ', ' '), [0] * dlen)]
             overall = [v / sum(mean_data) * 100 for v in mean_data]
-            cdata = cdata + empty + [("overall", overall)]
-        multi_bar(axes if isinstance(axes, Axes) else axes[i],
-                  cdata, groups, colors=colors,
-                  shift=not last or len(cls_data) == 1)
+            cdata = cdata + empty + [(('', 'overall'), overall)]
+        multi_bar(axes if len(subplots) == 1 else axes[i],
+                  cdata, data_labels, colors=colors)
 
-    fig.legend(groups, ncol=4, bbox_to_anchor=(.1, .98),
-               loc='upper left', fontsize='small', frameon=False,
+    # full figure formatting
+    fig.legend(data_labels, ncol=2, bbox_to_anchor=(0.22, 1.05),
+               loc='upper left', frameon=False,
                handlelength=.9, handletextpad=0.2,
-               columnspacing=1.1, borderpad=0,
-               bbox_transform=fig.transFigure)
-    ax = axes if isinstance(axes, Axes) else axes[-1]
+               columnspacing=.8, borderpad=0)
     ax.yaxis.set_tick_params(length=0)
-    ax.xaxis.set_tick_params(labelsize='small')
+    # ax.xaxis.set_tick_params(labelsize='small')
     ax.set_xticks([0, 25, 50, 75, 100])
     ax.set_xticklabels(["0%", "25%", "50%", "75%", "100%"])
     ax.spines['bottom'].set_visible(True)
     ax.xaxis.set_tick_params(bottom=True)
     ax.xaxis.set_visible(True)
-    fig.tight_layout()
+    for i, lbl in enumerate(subplots):
+        ax_ = axes if sp_n == 1 else axes[i]
+        shift = 0 if sp_n > 1 and lbl == subplots[-1] else .03
+        box = ax_.get_position()
+        box.y0 += shift
+        box.y1 += shift
+        ax_.set_position(box)
     ensure_dir(plot_name)
-    plt.savefig(plot_name, metadata={'CreationDate': None})
+    fig.tight_layout()
+    plt.savefig(plot_name, bbox_inches='tight',
+                metadata={'CreationDate': None})
     plt.close()
-
-
-def get_groups(data, mean_data, limit=3):
-    if limit is None:
-        groups = [str(i) for i in range(len(mean_data))]
-    else:
-        groups = [str(i) for i in range(limit)] + [f"{limit}+"]
-        data = {name: r[:limit] + [sum(r[limit:])]
-                for name, r in data.items()}
-        mean_data = mean_data[:limit] + [sum(mean_data[limit:])]
-    return data, mean_data, groups
 
 
 class BarData(ResultData):
 
+    def get_acc_data(self):
+        nums = [BarData.fmt(r) for r in self.raw_rata]
+        means = np.rint(np.mean(np.array(
+            [v for _, v in nums]), axis=0)).tolist()
+        cats = sorted(list(set([x for ((x, _, _), _) in nums])))
+        return dict(enumerate(nums)), means, cats
+
     @staticmethod
-    def r_name(r):
-        name = ResultData.r_name(r)
+    def numeric_groups(data, mean_data, limit=3):
+        if limit is None:
+            groups = [str(i) for i in range(len(mean_data))]
+        else:
+            groups = [str(i) for i in range(limit)] + [f"{limit}+"]
+            data = {name: r[:limit] + [sum(r[limit:])]
+                    for name, r in data.items()}
+            mean_data = mean_data[:limit] + [sum(mean_data[limit:])]
+        return data, mean_data, groups
+
+    @staticmethod
+    def name(r):
+        name = ResultData.name(r)
         return "UNSW" if name == "UNSW-NB15" else name
 
     @staticmethod
-    def fmt_attack_name(r):
-        tmp = ResultData.fmt_attack_name(r)
-        return 'CPGD' if tmp == 'CPGD[R]' else tmp
-
-    def get_acc_data(self):
-        nums = [BarData.fmt(i, r) for i, r in
-                enumerate([x for x in self.raw_rata])]
-        if N := len(nums) > 0:
-            means = [int(round(sum(
-                [x[1][i] for x in nums]) / N, 0))
-                     for i in range(len((nums[0][1])))]
-            return dict(nums), means
-        return [], []
-
-    @staticmethod
-    def fmt(i, r):
-        ac = r['folds']['accuracy']
-        ev = r['folds']['n_evasions']
-        vd = r['folds']['n_valid_evades']
-        cls = BarData.r_cls(r)
-        name = BarData.r_name(r)
-        attack = BarData.fmt_attack_name(r)
-        valid = int(round(BarData.fold_mean(vd, r), 0))
-        evades = int(round(BarData.fold_mean(ev, r), 0)) - valid
-        acc = int(round(BarData.arr_mean(ac), 0)) - evades - valid
-        tot = 100 - acc - evades - valid
-        key = (str(i), cls, name, attack)
-        return key, [valid, evades, acc, tot]
+    def fmt(r):
+        keys = (BarData.cls(r), BarData.name(r).lower(),
+                BarData.attack(r).lower())
+        valid = round(BarData.valid(r))
+        evades = round(BarData.evades(r)) - valid
+        accurate = round(BarData.acc(r)) - evades - valid
+        total = 100 - accurate - evades - valid
+        return keys, [valid, evades, accurate, total]
 
     def plot_name(self, pattern, out_dir):
         return self.fn_pattern('pdf', pattern, out_dir)
@@ -210,9 +177,12 @@ class BarData(ResultData):
 
 def plot_bars(data_dir, out_dir=None):
     bdata = BarData(data_dir)
-    nums, means = bdata.get_acc_data()
-    if len(nums) > 0:
-        plot(nums, means,
-             plot_name=bdata.plot_name('bar_acc', out_dir),
-             groups=['valid', 'evasive', 'accurate', 'FP/N'],
-             sort_key=lambda x: (x[0][2], x[0][3]))
+    if bdata.n_results:
+        nums, means, cats = bdata.get_acc_data()
+        plot_acc(nums, means, subplots=cats,
+                 data_labels=['valid', 'evasive', 'accurate', 'FP/FN'],
+                 plot_name=bdata.plot_name('bar_acc', out_dir),
+                 sort_key=
+                 (lambda x: (x[1][-1], x[0][1]))
+                 if 'perf' not in data_dir else
+                 (lambda x: (x[0][0], x[0][1])))
