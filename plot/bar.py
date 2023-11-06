@@ -163,8 +163,7 @@ class BarData(ResultData):
 
     @staticmethod
     def fmt(r):
-        keys = (BarData.cls(r), BarData.name(r).lower(),
-                BarData.attack(r).lower())
+        keys = (BarData.cls(r), BarData.name(r), BarData.attack(r))
         valid = round(BarData.valid(r))
         evades = round(BarData.evades(r)) - valid
         accurate = round(BarData.acc(r)) - evades - valid

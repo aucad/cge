@@ -64,9 +64,9 @@ class ResultData:
             return 'Zoo'
         if tmp == 'HopSkipJump':
             return 'HSJ'
-        if tmp == 'CPGD':
-            if not r['attack']['config']['args']['enable_constraints']:
-                return 'CPGDᴿ'
+        # if tmp == 'CPGD':
+        #     if not r['attack']['config']['args']['enable_constraints']:
+        #         return 'CPGDᴿ'
         return tmp
 
     def fn_pattern(self, file_ext, pattern, out_dir=None):
