@@ -57,7 +57,7 @@ class Validation:
         return adv * vmap + ref * (1 - vmap)
 
     @staticmethod
-    def dep_map(mutable: CONSTR_DICT) -> Dict[int, List]:
+    def dep_map(mutable: CONSTR_DICT) -> Dict[Any, List]:
         """Construct a dependency lookup table for mutable constraints.
 
         This allows to determine which features are connected through
