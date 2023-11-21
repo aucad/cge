@@ -2,6 +2,8 @@ from glob import glob
 from os import path
 from statistics import mean
 
+import pandas as pd
+
 from exp.utility import read_yaml
 
 
@@ -64,12 +66,16 @@ class ResultData:
             return 'Zoo'
         if tmp == 'HopSkipJump':
             return 'HSJ'
-        # if tmp == 'CPGD':
-        #     if not r['attack']['config']['args']['enable_constraints']:
-        #         return 'CPGDᴿ'
         return tmp
 
     def fn_pattern(self, file_ext, pattern, out_dir=None):
         flat_name = self.directory.replace('/', '_')
         file_name = f'__{pattern}_{flat_name}'
         return path.join(out_dir, f'{file_name}.{file_ext}')
+
+    def show_duration(self):
+        div = 72 * "="
+        ts = pd.to_timedelta(sum(
+            [r['experiment']['end'] - r['experiment']['start']
+             for r in self.raw_rata]))
+        print(f'{div}\nTotal duration: {ts}\n{div}')
