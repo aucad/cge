@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/aucad/new-experiments/actions/workflows/build.yml/badge.svg)](https://github.com/aucad/new-experiments/actions/workflows/build.yml)
 
-This is an experimental setup that demonstrates adding constraints to universal adversarial machine learning evasion attacks.
+This implementation demonstrates adding constraints to unconstrained adversarial machine learning evasion attacks.
 We introduce a _constraint validation_ algorithm that guarantees generated evasive adversarial examples satisfy domain constraints.
 We call evasive examples that satisfy domain constraints _valid_.
 
@@ -93,7 +93,7 @@ pip install -r requirements.txt --user
 make attacks
 ```
 
-**Run comparisons.** For comparison of the above baseline attacks, run more experiments.      
+**Run more experiments.** Run more experiments to compare with the above baseline attacks.      
 🕒 A performance test takes 30 min -- 3 h, and the other experiments take 1--2 days.
 
 <pre>
