@@ -11,10 +11,10 @@ The following options are included.
 
 - **Attacks**: Projected Gradient Descent (PGD), Zeroth-Order Optimization (ZOO), HopSkipJump attack. These attacks are modified to use our constraint validation algorithm.
 - **Classifiers**: Keras deep neural network and tree-based ensemble XGBoost.
-- **Data sets**: 4 different data sets from different domains, see descriptions below.
+- **Data sets**: 4 different data sets from different domains.
 
 **Comparison.** We also include a comparison attack, Constrained Projected Gradient Descent (C-PGD).
-It uses a different constraint evaluation approach, introduced by [Simonetto et al.](https://arxiv.org/abs/2112.01156).
+It uses a different constraint evaluation approach, introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
 
 **Data sets**
 
@@ -69,21 +69,27 @@ Install dependencies
 pip install -r requirements.txt --user
 ```
 
-**Run attacks.** Run experiments with validation, for all combinations of data sets, classifiers, and attacks.       
-🕒 Running all experiments takes 1--2 days.
+![duration](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours-FFFF00?style=flat-square) **Run attacks.**   
+Run experiments with validation, for all combinations of data sets, classifiers, and attacks. 
 
 ```
 make attacks
 ```
 
-**Run more experiments.** Run more experiments to compare with the above baseline attacks.      
-🕒 A performance test takes 30 min -- 3 h, and the other experiments take 1--2 days.
+![duration](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours-FFFF00?style=flat-square) **Run alternative experiments.**   
+Run experiment variants to compare with the above attacks. 
 
 <pre>
 make original  -- run all attacks, but without validation (ignore constraints).
 make reset     -- run all attacks, but use naive reset strategy.
-make perf      -- run constraint performance tests. 
 </pre>
+
+![duration](https://img.shields.io/badge/%F0%9F%95%92%2030%20min%20%E2%80%94%203%20h-FFFF00?style=flat-square) **Run performance test.**   
+Uses varying number of constraints on same data set, to measure performance impact on current hardware. 
+
+```
+make perf
+```
 
 ### Visualizations
 
@@ -122,7 +128,7 @@ For plotting help, run:
 python3 -m plot --help
 ```
 
-**Repository organization**
+### Repository organization
 
 | Directory    | Description                                    |
 |:-------------|:-----------------------------------------------|
@@ -136,5 +142,5 @@ python3 -m plot --help
 | `ref_result` | Referential result for comparison              |
 | `test`       | Unit tests                                     |
 
-The Makefile contains pre-configured commands to ease running experiments.
-The software dependencies are listed in `requirements.txt`.
+- The Makefile contains pre-configured commands to ease running experiments.
+- All software dependencies are listed in `requirements.txt`.
