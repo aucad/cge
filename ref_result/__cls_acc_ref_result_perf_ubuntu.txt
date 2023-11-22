@@ -1,7 +1,7 @@
-  classifier    exp-name  accuracy ± std
-Neural Network  PT-1-03   91.5 ± 0.4    
-Neural Network  PT-1-06   91.6 ± 0.0    
-Neural Network  PT-1-12   91.6 ± 0.2    
-Neural Network  PT-2-03   91.8 ± 0.2    
-Neural Network  PT-2-06   91.7 ± 0.1    
-Neural Network  PT-2-12   91.6 ± 0.1    
+  classifier    exp-name  accuracy±σ
+Neural Network  PT-1-03   91.5 ± 0.4
+Neural Network  PT-1-06   91.6 ± 0.0
+Neural Network  PT-1-12   91.6 ± 0.2
+Neural Network  PT-2-03   91.8 ± 0.2
+Neural Network  PT-2-06   91.7 ± 0.1
+Neural Network  PT-2-12   91.6 ± 0.1
