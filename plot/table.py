@@ -96,8 +96,48 @@ class AccuracyPlot(TablePlot):
         self.make_table(fn, mat)
 
 
+class ConfigPlot(TablePlot):
+
+    @property
+    def headers(self):
+        return 'exp-name,records,cls,ft,*-val,#-C,' \
+               '⊥,P,ft/P'.split(',')
+
+    @property
+    def sorter(self):
+        return lambda x: (x[0])
+
+    @staticmethod
+    def fmt(r):
+        ex = r['experiment']
+        attrs = list(ex['attrs'])[:-1]
+        res = [
+            ConfigPlot.name(r),
+            ex['n_records'],
+            ex['n_classes'],
+            len(attrs)]
+        if v := r['validation']:
+            I = v['immutable']
+            P = v['predicates']
+            V = [len(m['attrs']) for m in P.values()]
+            D = [i for x in v['dependencies'].values() for i in x]
+            res.append(len(list(set(attrs) - set(I) - set(D))))
+            res.append(v['n_constraints'])
+            res.append(len(I))
+            res.append(len(P))
+            res.append(f"{sum(V) / len(P):.1f}") if len(P) else None
+        return res
+
+    def write_table(self):
+        fn = self.fn_pattern('txt', 'config', self.out)
+        mat = [tuple(ConfigPlot.fmt(r)) for r in self.raw_rata]
+        self.make_table(fn, list(set(mat)))
+        return self
+
+
 def plot_results(directory, out=None):
     print('Results for directory:', directory)
+    ConfigPlot(directory, (out or directory)).write_table()
     AccuracyPlot(directory, (out or directory)).write_table()
     res = EvasionPlot(directory, (out or directory)).write_table()
     if res.n_results > 0:
