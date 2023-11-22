@@ -16,23 +16,6 @@ The following options are included.
 **Comparison.** We also include a comparison attack, Constrained Projected Gradient Descent (C-PGD).
 It uses a different constraint evaluation approach, introduced by [Simonetto et al.](https://arxiv.org/abs/2112.01156).
 
-**Repository organization**
-
-| Directory    | Description                                    |
-|:-------------|:-----------------------------------------------|
-| `.github`    | Automated workflows, dev instructions          |
-| `algo`       | Constraint validation algorithm implementation |
-| `comparison` | C-PGD attack implementation                    |
-| `config`     | Experiment configuration files                 |
-| `data`       | Preprocessed input data sets                   |
-| `exp`        | Source code for running experiments            |
-| `plot`       | Utilities for plotting experiment results      |
-| `ref_result` | Referential result for comparison              |
-| `test`       | Unit tests                                     |
-
-The Makefile contains pre-configured commands to ease running experiments.
-The software dependencies are listed in `requirements.txt`.
-
 **Data sets**
 
 - [**IoT-23**](https://doi.org/10.5281/zenodo.4743746) - Malicious and benign IoT network traffic; 10,000 rows, 2 classes (sampled).
@@ -138,3 +121,20 @@ For plotting help, run:
 ```
 python3 -m plot --help
 ```
+
+**Repository organization**
+
+| Directory    | Description                                    |
+|:-------------|:-----------------------------------------------|
+| `.github`    | Automated workflows, dev instructions          |
+| `algo`       | Constraint validation algorithm implementation |
+| `comparison` | C-PGD attack implementation                    |
+| `config`     | Experiment configuration files                 |
+| `data`       | Preprocessed input data sets                   |
+| `exp`        | Source code for running experiments            |
+| `plot`       | Utilities for plotting experiment results      |
+| `ref_result` | Referential result for comparison              |
+| `test`       | Unit tests                                     |
+
+The Makefile contains pre-configured commands to ease running experiments.
+The software dependencies are listed in `requirements.txt`.
