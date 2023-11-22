@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/aucad/new-experiments/actions/workflows/build.yml/badge.svg)](https://github.com/aucad/new-experiments/actions/workflows/build.yml)
 
-This implementation demonstrates adding constraints to unconstrained adversarial machine learning evasion attacks.
+This implementation demonstrates an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
 We introduce a _constraint validation_ algorithm that guarantees generated evasive adversarial examples satisfy domain constraints.
 We call evasive examples that satisfy domain constraints _valid_.
 
@@ -14,7 +14,7 @@ The following options are included.
 - **Data sets**: 4 different data sets from different domains, see descriptions below.
 
 **Comparison.** We also include a comparison attack, Constrained Projected Gradient Descent (C-PGD).
-It uses a different constraint evaluation approach, introduced by Simonetto et al. in ["A Unified Framework for Adversarial Attack and Defense in Constrained Feature Space"](https://arxiv.org/abs/2112.01156).
+It uses a different constraint evaluation approach, introduced by [Simonetto et al.](https://arxiv.org/abs/2112.01156).
 
 **Repository organization**
 
@@ -116,7 +116,7 @@ make plots
 make plots DIR=ref_result
 ```
 
-## Extended and custom usage
+## Extended/custom usage
 
 The default experiment options are defined statically in `config` files.
 An experiment run can be customized further with command line arguments, to override the static options.
