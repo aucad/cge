@@ -14,6 +14,11 @@ col4 = [220 / 255, 220 / 255, 220 / 255, 1]
 col5 = [8 / 255, 104 / 255, 172 / 255, 1]
 light_blue = [166 / 255, 206 / 255, 227 / 255, 1]
 dark_blue = [15 / 255, 90 / 255, 160 / 255, 1]
+white = [1, 1, 1, 1]
+
+# global options
+plt.rcParams["font.family"] = "Arial"
+plt.rcParams['hatch.linewidth'] = .4
 
 
 def gradient(light, dark):
@@ -25,7 +30,7 @@ def gradient(light, dark):
 
 def get_color_scheme(n):
     if 1 <= n < 5:
-        return [col4, col1, col2, col3][-n:]
+        return [white, col1, col2, col3][-n:]
     if n == 5:
         return gradient(light_blue, dark_blue)
     assert False
@@ -36,19 +41,24 @@ def multi_bar(ax, results, cat_names, colors):
     uniq_rl = [x for k, v in groupby(rlbl)
                for x in [k] + [' '] * (sum(1 for __ in v) - 1)]
     labels = [i for i, _ in enumerate(results)]
+    has_ov = llbl[-1].lower() == "overall"
     data = np.array([v for _, v in results])
     data_cum = data.cumsum(axis=1)
     ay = ax.secondary_yaxis('right')
     ax.invert_yaxis()
 
+    barh = ([0.6] * (len(llbl) - 2)) + [.8 if has_ov else 0.6]
+    totals = [sum(d) - .75 for d in data[1:]]
     for i, (name, color) in enumerate(zip(cat_names, colors)):
-        widths = data[:, i]
-        starts = data_cum[:, i] - widths
-        heights = [0.8 if label == "overall" else 0.6
-                   for label in llbl]
-        ax.barh(labels, widths, left=starts, height=heights,
-                label=name, color=color)
-        r, g, b, _ = color
+        widths = data[1:, i]
+        starts = data_cum[1:, i] - widths
+        ax.barh(labels[1:], widths, left=starts, height=barh,
+                label=name, color=color, zorder=0)
+    bars = ax.barh(
+        labels[1:], totals, left=.35, height=barh, color='none',
+        lw=.5, edgecolor=[0, 0, 0, .85], zorder=2, hatch=None)
+    for idx in [i for i, tot in enumerate(totals) if tot < 1]:
+        bars[idx].set_linewidth(0)
 
     ax.set_yticklabels(llbl, weight='light')
     ax.set_yticks(np.arange(0, len(llbl), 1))
@@ -57,9 +67,8 @@ def multi_bar(ax, results, cat_names, colors):
     ay.set_yticklabels(uniq_rl, weight='light')
     ay.set_ticks(np.arange(0, len(rlbl), 1))
     ay.yaxis.set_tick_params(length=0)
-    for idx, lbl in enumerate(llbl):
-        if idx < len(ax.get_yticklabels()) and lbl == "overall":
-            ax.get_yticklabels()[idx].set_fontweight('bold')
+    if has_ov:
+        ax.get_yticklabels()[len(llbl) - 1].set_fontweight('bold')
     ax.get_yticklabels()[0].set_ha("left")
     ax.get_yticklabels()[0].set_position((.035, 0))
     ay.spines["right"].set_visible(False)
@@ -111,12 +120,12 @@ def plot_acc(data, mean_data, subplots, plot_name, data_labels,
                   cdata, data_labels, colors=colors)
 
     # full figure formatting
-    fig.legend(data_labels, ncol=2, bbox_to_anchor=(0.22, 1.05),
-               loc='upper left', frameon=False,
-               handlelength=.9, handletextpad=0.2,
-               columnspacing=.8, borderpad=0)
+    leg = fig.legend(data_labels, ncol=2, bbox_to_anchor=(0.22, 1.05),
+                     loc='upper left', frameon=False,
+                     handlelength=.9, handletextpad=0.2,
+                     columnspacing=.8, borderpad=0)
+
     ax.yaxis.set_tick_params(length=0)
-    # ax.xaxis.set_tick_params(labelsize='small')
     ax.set_xticks([0, 25, 50, 75, 100])
     ax.set_xticklabels(["0%", "25%", "50%", "75%", "100%"])
     ax.spines['bottom'].set_visible(True)
@@ -143,23 +152,17 @@ class BarData(ResultData):
         means = np.rint(np.mean(np.array(
             [v for _, v in nums]), axis=0)).tolist()
         cats = sorted(list(set([x for ((x, _, _), _) in nums])))
-        return dict(enumerate(nums)), means, cats
-
-    @staticmethod
-    def numeric_groups(data, mean_data, limit=3):
-        if limit is None:
-            groups = [str(i) for i in range(len(mean_data))]
-        else:
-            groups = [str(i) for i in range(limit)] + [f"{limit}+"]
-            data = {name: r[:limit] + [sum(r[limit:])]
-                    for name, r in data.items()}
-            mean_data = mean_data[:limit] + [sum(mean_data[limit:])]
-        return data, mean_data, groups
+        ndict = dict(enumerate(nums))
+        return ndict, means, cats
 
     @staticmethod
     def name(r):
         name = ResultData.name(r)
         return "UNSW" if name == "UNSW-NB15" else name
+
+    @staticmethod
+    def attack(r):
+        return ResultData.attack(r).upper()
 
     @staticmethod
     def fmt(r):
@@ -179,9 +182,10 @@ def plot_bars(data_dir, out_dir=None):
     if bdata.n_results:
         nums, means, cats = bdata.get_acc_data()
         plot_acc(nums, means, subplots=cats,
-                 data_labels=['valid', 'evasive', 'accurate', 'FP/FN'],
+                 data_labels=[
+                     'valid', 'evasive', 'accurate', 'inaccurate'],
                  plot_name=bdata.plot_name('bar_acc', out_dir),
                  sort_key=
-                 (lambda x: (x[1][-1], x[0][1]))
+                 (lambda x: (x[0][0], x[0][1]))
                  if 'perf' not in data_dir else
                  (lambda x: (x[0][0], x[0][1])))
