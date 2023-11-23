@@ -1,19 +1,19 @@
-  classifier    exp-name  attack  accuracy  evades  valid  dur(s)
-Neural Network  PT-1-03   CPGD        91.9    59.2   34.5     659
-Neural Network  PT-1-03   PGD         91.3    90.9   79.0     328
-Neural Network  PT-1-03   VPGD        91.8    91.8   91.8     474
-Neural Network  PT-1-06   CPGD        91.9    59.4   21.8     812
-Neural Network  PT-1-06   PGD         91.4    88.7   70.5     328
-Neural Network  PT-1-06   VPGD        91.8    91.8   91.8     560
-Neural Network  PT-1-12   CPGD        91.3    68.0    3.0    1072
-Neural Network  PT-1-12   PGD         91.3    90.2   71.7     372
-Neural Network  PT-1-12   VPGD        91.3    91.3   91.3     731
-Neural Network  PT-2-03   CPGD        91.8    64.2    0.0     690
-Neural Network  PT-2-03   PGD         91.2    89.1   89.1     344
-Neural Network  PT-2-03   VPGD        91.3    91.3   91.3     466
-Neural Network  PT-2-06   CPGD        91.6    60.0    0.0     780
-Neural Network  PT-2-06   PGD         91.5    91.1   91.1     323
-Neural Network  PT-2-06   VPGD        91.5    91.5   91.5     549
-Neural Network  PT-2-12   CPGD        91.6    74.6    0.0    1056
-Neural Network  PT-2-12   PGD         91.4    88.8   88.8     323
-Neural Network  PT-2-12   VPGD        91.7    91.7   91.7     721
+  classifier    exp-name  attack  accuracy  evades  valid
+Neural Network  PT-1-03   PGD         91.3    90.9   79.0
+Neural Network  PT-1-03   VPGD        91.8    91.8   91.8
+Neural Network  PT-1-03   CPGD        91.9    59.2   34.5
+Neural Network  PT-1-06   PGD         91.4    88.7   70.5
+Neural Network  PT-1-06   VPGD        91.8    91.8   91.8
+Neural Network  PT-1-06   CPGD        91.9    59.4   21.8
+Neural Network  PT-1-12   PGD         91.3    90.2   71.7
+Neural Network  PT-1-12   CPGD        91.3    68.0    3.0
+Neural Network  PT-1-12   VPGD        91.3    91.3   91.3
+Neural Network  PT-2-03   PGD         91.2    89.1   89.1
+Neural Network  PT-2-03   VPGD        91.3    91.3   91.3
+Neural Network  PT-2-03   CPGD        91.8    64.2    0.0
+Neural Network  PT-2-06   PGD         91.5    91.1   91.1
+Neural Network  PT-2-06   VPGD        91.5    91.5   91.5
+Neural Network  PT-2-06   CPGD        91.6    60.0    0.0
+Neural Network  PT-2-12   PGD         91.4    88.8   88.8
+Neural Network  PT-2-12   VPGD        91.7    91.7   91.7
+Neural Network  PT-2-12   CPGD        91.6    74.6    0.0

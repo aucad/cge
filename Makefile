@@ -11,7 +11,8 @@ ATTACKS = hsj pgd zoo cpgd
 ALL_CONF  = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml' )
 ATTK_CONF = $(shell find config/$(cat) -type f -iname '*.yaml' ! -name 'default.yaml'  ! -name 'prf*.yaml')
 PERF_CONF = $(shell find config/$(cat) -type f -iname 'prf*.yaml' | sort -t '\0' -n)
-RES_DIRS  = $(shell find $(DIR) -type d -maxdepth 2 )
+RES_DIRS  = $(shell find $(DIR) -type d -maxdepth 1  ! -name 'perf' )
+PER_DIRS  = $(shell find $(DIR)/perf -type d -maxdepth 2  )
 UNAME_S := $(shell echo $(shell uname -s) | tr A-Z a-z)
 
 dev: test lint
@@ -38,9 +39,12 @@ perf:
 	python3 -m exp $(f) -a pgd --out result/perf/$(UNAME_S) ; )
 
 plots:
-	$(foreach d, $(RES_DIRS), \
-	 python3 -m plot table $(d) --out $(DIR) && \
-	 python3 -m plot bar $(d) --out $(DIR) ; )
+	$(foreach d, $(PER_DIRS), \
+  	python3 -m plot table $(d) -b $(d) --out $(DIR) && \
+	python3 -m plot bar $(d) --out $(DIR) ;)
+	$(foreach d, $(RES_DIRS),  \
+  	python3 -m plot table $(d) -b $(DIR)/original --out $(DIR) && \
+	python3 -m plot bar $(d) --out $(DIR) ;)
 
 graphs:
 	$(foreach f, $(ALL_CONF), python3 -m plot graph $(f) ; )

@@ -16,11 +16,13 @@ class TablePlot(ResultData):
     def ulist(self, fc):
         return list(set([fc(r) for r in self.raw_rata]))
 
-    def make_table(self, fname, headers, mat, sorter=None):
+    def make_table(self, fname, headers, mat):
         if self.n_results:
             ensure_dir(self.out)
             fn = self.fn_pattern('txt', fname, self.out)
-            srt = sorter or (lambda x: (x[0], x[1], x[2]))
+            srt = (lambda x: (x[0], x[1], len(str(x[2])))) \
+                if 'perf/' in self.directory else \
+                (lambda x: (x[0], x[1], x[2]))
             writer = SpaceAlignedTableWriter()
             writer.headers = headers.split(',')
             writer.value_matrix = sorted(mat, key=srt)
@@ -36,11 +38,10 @@ class TablePlot(ResultData):
                 self.attack(r),
                 f"{self.acc(r):.1f}",
                 f"{self.evades(r):.1f}",
-                f"{self.valid(r):.1f}",
-                f"{r['experiment']['duration_sec']:.0f}"]
+                f"{self.valid(r):.1f}"]
 
         hdr = 'classifier,exp-name,attack,' \
-              'accuracy,evades,valid,dur(s)'
+              'accuracy,evades,valid'
         mat = [fmt(r) for r in self.raw_rata]
         return self.make_table('plot', hdr, mat)
 
@@ -76,11 +77,30 @@ class TablePlot(ResultData):
         hdr = 'exp-name,records,cls,ft,*val,#C,⊥,P,ft/P'
         return self.make_table('config', hdr, mat)
 
+    def duration_plot(self, baseline: ResultData):
+        if baseline.n_results != self.n_results:
+            return
 
-def plot_results(directory, out=None):
+        def fmt(r):
+            c, n, a = self.cls(r), self.name(r), self.attack(r)
+            z, t, s = -1, r['experiment']['duration_sec'], '-'
+            ba = a[1:] if (a[0] == 'V' or a == 'CPGD') else a
+            if b := baseline.find(c, n, ba):
+                z = b['experiment']['duration_sec']
+                s = f"{t / z:.2f}" if z != 0 else s
+            return [c, n, a, f"{z:.0f}", f"{t:.0f}", s]
+
+        hdr = 'classifier,exp-name,attack,t0,t(s),t-ratio'
+        mat = [fmt(r) for r in self.raw_rata]
+        return self.make_table('time', hdr, mat)
+
+
+def plot_results(directory, out=None, baseline=None):
     print('Results for directory:', directory)
     tp = TablePlot(directory, (out or directory)) \
         .config_plot().accuracy_plot().evasion_plot()
+    if baseline:
+        tp.duration_plot(ResultData(baseline))
 
     if tp.n_results > 0:
         tp.show_duration()
