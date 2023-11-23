@@ -31,6 +31,13 @@ def graph_plot(parser: ArgumentParser):
 
 def table_plot(parser: ArgumentParser):
     parser.set_defaults(which=OPT_TABLE)
+    parser.add_argument(
+        '-b',
+        action='store',
+        dest='baseline',
+        help="baseline for comparison",
+        default=None
+    )
     shared_args(parser, 'Results directory')
 
 
@@ -55,7 +62,7 @@ if __name__ == '__main__':
     args = parse_args(ArgumentParser())
 
     if args.which is OPT_TABLE:
-        plot_results(args.path, args.out)
+        plot_results(args.path, args.out, args.baseline)
 
     elif args.which is OPT_GRAPH:
         conf = build_config(args)

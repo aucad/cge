@@ -73,6 +73,14 @@ class ResultData:
         file_name = f'__{pattern}_{flat_name}'
         return path.join(out_dir, f'{file_name}.{file_ext}')
 
+    def find(self, cls=None, name=None, attack=None):
+        """The first record that matches specified args."""
+        for r in self.raw_rata:
+            if (not cls or self.cls(r) == cls) and \
+                    (not name or self.name(r) == name) and \
+                    (not attack or self.attack(r) == attack):
+                return r
+
     def show_duration(self):
         div = 72 * "="
         ts = pd.to_timedelta(sum(

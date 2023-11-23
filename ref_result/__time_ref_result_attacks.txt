@@ -1,0 +1,25 @@
+  classifier    exp-name   attack   t0    t(s)   t-ratio
+Neural Network  IoT-23     CPGD      354    817     2.31
+Neural Network  IoT-23     VHSJ     3720   3492     0.94
+Neural Network  IoT-23     VPGD      354    991     2.80
+Neural Network  IoT-23     VZoo    21105  20157     0.96
+Neural Network  LCLD       CPGD      534   3157     5.92
+Neural Network  LCLD       VHSJ     7601   6998     0.92
+Neural Network  LCLD       VPGD      534   1324     2.48
+Neural Network  LCLD       VZoo    30508  28594     0.94
+Neural Network  UNSW-NB15  CPGD      315    814     2.59
+Neural Network  UNSW-NB15  VHSJ     6185   5870     0.95
+Neural Network  UNSW-NB15  VPGD      315    493     1.57
+Neural Network  UNSW-NB15  VZoo    26665  24638     0.92
+Neural Network  URL        CPGD      384   1808     4.70
+Neural Network  URL        VHSJ     3487   3232     0.93
+Neural Network  URL        VPGD      384    934     2.43
+Neural Network  URL        VZoo    17534  16557     0.94
+XGBoost         IoT-23     VHSJ      569    559     0.98
+XGBoost         IoT-23     VZoo     1110   1203     1.08
+XGBoost         LCLD       VHSJ     1355   1328     0.98
+XGBoost         LCLD       VZoo     2213   2394     1.08
+XGBoost         UNSW-NB15  VHSJ      650    648     1.00
+XGBoost         UNSW-NB15  VZoo     1216   1270     1.04
+XGBoost         URL        VHSJ      808    799     0.99
+XGBoost         URL        VZoo     1504   1625     1.08
