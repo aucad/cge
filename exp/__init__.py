@@ -16,7 +16,7 @@ warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # noinspection PyPep8
-from algo import Validatable, CONSTR_DICT, Validation
+from cge import Validatable, CONSTR_DICT, Validation
 from exp.machine import machine_details
 from exp.utility import ensure_dir
 from exp.scoring import Result, ModelScore, AttackScore, score_valid

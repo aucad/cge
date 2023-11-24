@@ -1,7 +1,7 @@
 # flake8: noqa: F401
 
 """
-Constraints enforcing algorithm.
+Constraints Guaranteed Evasion (CGE) algorithm.
 """
 
 # noinspection PyPep8
