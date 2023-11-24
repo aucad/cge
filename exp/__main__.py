@@ -1,7 +1,7 @@
 import sys
 from argparse import ArgumentParser
 
-from algo.validation import ALL as RESET_ALL
+from cge.validation import ALL as RESET_ALL
 from exp import Experiment, AttackPicker, ClsPicker
 from exp.preproc import pred_parse
 from exp.utility import to_namedtuple, read_yaml

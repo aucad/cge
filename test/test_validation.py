@@ -1,5 +1,5 @@
 import numpy as np
-from algo.validation import Validation, ALL, DEP
+from cge.validation import Validation, ALL, DEP
 from plot.graph import dep_graph
 
 
