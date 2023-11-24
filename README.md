@@ -1,9 +1,9 @@
-# Constrained adversarial evasion attacks
+# Constraint guaranteed evasion attacks
 
 [![Build](https://github.com/aucad/new-experiments/actions/workflows/build.yml/badge.svg)](https://github.com/aucad/new-experiments/actions/workflows/build.yml)
 
 This implementation demonstrates an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
-We introduce a _constraint validation_ algorithm, CGE, that guarantees generated evasive adversarial examples satisfy domain constraints.
+We introduce a constraint validation algorithm CGE, that guarantees generated evasive adversarial examples satisfy domain constraints.
 
 This implementation allows running various adversarial evasion attacks, enhanced with our constraint validation algorithm, on different data sets and classifiers.
 The following options are included.
@@ -72,14 +72,14 @@ pip install -r requirements.txt --user
 Run experiments for combinations of data sets x classifiers x attacks (24 experiment cases). 
 
 <pre>
-make attacks   -- run all attacks, using constraint enforcement
+make attacks   -- run all attacks, using constraint enforcement.
 make original  -- run all attacks, but without validation (ignore constraints).
 make reset     -- run all attacks, but use naive reset strategy.
 </pre>
 
 ![duration](https://img.shields.io/badge/%F0%9F%95%92%2030%20min%20%E2%80%94%203%20h-FFFF00?style=flat-square) **Run constraint performance test.**   
 Uses varying number of constraints to measure performance impact on current hardware. 
-This experiment tests PGD - C-PGD - VPGD only on same data set, UNSW-NB15.
+This experiment tests PGD, CPGD, VPGD on same data set, UNSW-NB15.
 
 ```
 make perf
