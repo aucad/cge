@@ -83,10 +83,11 @@ class TablePlot(ResultData):
 
         def fmt(r):
             c, n, a = self.cls(r), self.name(r), self.attack(r)
-            z, t, s = -1, r['experiment']['duration_sec'], '-'
+            k = r['experiment']['k_folds']
+            z, t, s = -1, r['experiment']['duration_sec']/k, '-'
             ba = a[1:] if (a[0] == 'V' or a == 'CPGD') else a
             if b := baseline.find(c, n, ba):
-                z = b['experiment']['duration_sec']
+                z = b['experiment']['duration_sec']/k
                 s = f"{t / z:.2f}" if z != 0 else s
             return [c, n, a, f"{z:.0f}", f"{t:.0f}", s]
 

@@ -40,7 +40,9 @@ def get_color_scheme(n):
 
 
 def multi_bar(ax, results, cat_names, colors):
-    llbl, rlbl = list(zip(*[(r, l) for (l, r), _ in results]))
+    llbl, rlbl = list(zip(*[
+        (r, l.replace("0", "").replace("PT-1-", "")
+         .replace("PT-2-", "")) for (l, r), _ in results]))
     uniq_rl = [x for k, v in groupby(rlbl)
                for x in [k] + [' '] * (sum(1 for __ in v) - 1)]
     labels = [i for i, _ in enumerate(results)]
@@ -114,7 +116,8 @@ def plot_acc(input_data, plot_name, data_labels,
 
     # draw sub plots
     for i, ckey in enumerate(subplots):
-        cdata = [(x[0][1:], x[1]) for x in data.values()
+        cdata = [(x[0][1:], x[1])
+                 for x in data.values()
                  if ckey == x[0][0]]
         if sort_key is not None:
             cdata.sort(key=sort_key)
