@@ -72,14 +72,14 @@ pip install -r requirements.txt --user
 Run experiments for combinations of data sets x classifiers x attacks (24 experiment cases). 
 
 <pre>
-make attacks   -- run all attacks, using constraint enforcement
+make attacks   -- run all attacks, using constraint enforcement.
 make original  -- run all attacks, but without validation (ignore constraints).
 make reset     -- run all attacks, but use naive reset strategy.
 </pre>
 
 ![duration](https://img.shields.io/badge/%F0%9F%95%92%2030%20min%20%E2%80%94%203%20h-FFFF00?style=flat-square) **Run constraint performance test.**   
 Uses varying number of constraints to measure performance impact on current hardware. 
-This experiment tests PGD - C-PGD - VPGD only on same data set, UNSW-NB15.
+This experiment tests PGD, CPGD, VPGD on same data set, UNSW-NB15.
 
 ```
 make perf
