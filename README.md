@@ -1,9 +1,9 @@
-# Constrained adversarial evasion attacks
+# Constraint guaranteed evasion attacks
 
 [![Build](https://github.com/aucad/new-experiments/actions/workflows/build.yml/badge.svg)](https://github.com/aucad/new-experiments/actions/workflows/build.yml)
 
 This implementation demonstrates an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
-We introduce a _constraint validation_ algorithm, CGE, that guarantees generated evasive adversarial examples satisfy domain constraints.
+We introduce a constraint validation algorithm CGE, that guarantees generated evasive adversarial examples satisfy domain constraints.
 
 This implementation allows running various adversarial evasion attacks, enhanced with our constraint validation algorithm, on different data sets and classifiers.
 The following options are included.
