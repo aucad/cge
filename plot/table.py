@@ -43,7 +43,7 @@ class TablePlot(ResultData):
         hdr = 'classifier,exp-name,attack,' \
               'accuracy,evades,valid'
         mat = [fmt(r) for r in self.raw_rata]
-        return self.make_table('plot', hdr, mat)
+        return self.make_table('evasion', hdr, mat)
 
     def accuracy_plot(self):
         def fmt(m, n):

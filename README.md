@@ -60,15 +60,15 @@ Check your environment using the following command, and install/upgrade as neces
 python3 --version & make --version
 ```
 
-### Reproducing experiments
-
-Install dependencies
+**Install dependencies**
 
 ```
 pip install -r requirements.txt --user
 ```
 
-![duration](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours/each-FFFF00?style=flat-square) **Run attacks evaluations.**   
+### Reproducing experiments
+
+![duration](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours/each-FFFF00?style=flat-square) **Run attack evaluations.**   
 Run experiments for combinations of data sets x classifiers x attacks (24 experiment cases). 
 
 <pre>
