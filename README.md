@@ -3,7 +3,7 @@
 [![Build](https://github.com/aucad/new-experiments/actions/workflows/build.yml/badge.svg)](https://github.com/aucad/new-experiments/actions/workflows/build.yml)
 
 This implementation demonstrates an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
-We introduce a constraint validation algorithm CGE, that guarantees generated evasive adversarial examples satisfy domain constraints.
+We introduce a constraint validation algorithm, CGE, that guarantees generated evasive adversarial examples satisfy domain constraints.
 
 This implementation allows running various adversarial evasion attacks, enhanced with our constraint validation algorithm, on different data sets and classifiers.
 The following options are included.
@@ -12,8 +12,10 @@ The following options are included.
 - **Classifiers**: Keras deep neural network and tree-based ensemble XGBoost.
 - **Data sets**: 4 different data sets from different domains.
 
+Data set constraints are configurable inputs of an experiment. The configuration files in `config/` show examples of how to specify constraints.
+
 **Comparison.** We also include a comparison attack, Constrained Projected Gradient Descent (C-PGD).
-It uses a different constraint evaluation approach, introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
+It uses a different constraint evaluation approach introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
 
 **Data sets**
 
@@ -66,7 +68,7 @@ python3 --version & make --version
 pip install -r requirements.txt --user
 ```
 
-### Reproducing experiments
+### Reproducing paper experiments
 
 ![duration](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours/each-FFFF00?style=flat-square) **Run attack evaluations.**   
 Run experiments for combinations of data sets x classifiers x attacks (24 experiment cases). 
@@ -99,7 +101,7 @@ make plots
 make plots DIR=ref_result
 ```
 
-## Extended/custom usage
+## Extended/Custom usage
 
 The default experiment options are defined statically in `config` files.
 An experiment run can be customized further with command line arguments, to override the static options.
