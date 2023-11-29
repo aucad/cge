@@ -47,7 +47,7 @@ plots:
 	python3 -m plot bar $(d) --out $(DIR) ;)
 
 graphs:
-	$(foreach f, $(ALL_CONF), python3 -m plot graph $(f) ; )
+	$(foreach f, $(ALL_CONF), python3 -m plot graph $(f) --out $(DIR) ; )
 
 test:
 	pytest --cov-report term-missing --cov=./exp test

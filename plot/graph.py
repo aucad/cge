@@ -1,5 +1,6 @@
 from os import path
 from typing import Dict, Tuple
+from textwrap import fill
 
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
@@ -22,6 +23,11 @@ def dep_graph(immutable, mutable) -> Tuple[Graph, Dict[int, list]]:
     return g, dict(r)
 
 
+def lbl_text(a, k, cmax=20):
+    pls = ("..." if len(a[k]) > cmax else "")
+    return f'{k:>2}: {a[k][:cmax] + pls}'
+
+
 def plot_graph(c, a):
     """Plot a constraint-dependency graph."""
     immutable, _ = x = Validation.categorize(c.constraints)
@@ -32,15 +38,19 @@ def plot_graph(c, a):
         lbl, clr = ['immutable', 'mutable'], ['#CFD8DC', '#FDD835']
         nc = [clr[0] if n in immutable else clr[1] for n in gn]
         ax = plt.figure(1).add_subplot(1, 1, 1)
+        split_leg = len(gn) > 25
         draw_networkx(
             g, ax=ax, pos=shell_layout(g),
             with_labels=True, node_color=nc, linewidths=.75,
             width=.75, font_size=8, font_weight='bold')
         legend1 = plt.legend(
-            labels=[f'{k:>2}: {a[k]}' for k in gn], loc='upper left',
+            labels=[lbl_text(a, k, 30) for k in gn],
+            loc='upper left' if split_leg else 'upper left',
+            ncol=2 if split_leg else 1,
+            bbox_to_anchor=(0., -0.0) if split_leg else (1, 1.02),
             handles={Patch(fill=False, alpha=0) for _ in gn},
-            ncol=(len(gn) // 20) + 1 if len(gn) > 25 else 1,
-            bbox_to_anchor=(.93, 1.02), frameon=False)
+            frameon=False, handlelength=0, handletextpad=0,
+            columnspacing=.8, borderpad=0)
         pairs = [(Patch(fill=True, color=clr[i]), lbl[i])
                  for i, _ in enumerate(clr)]
         legend2 = plt.legend(
