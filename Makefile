@@ -41,6 +41,8 @@ perf:
 plots:
 	if [ -d "$(DIR)/original" ] && [ -d "$(DIR)/attacks" ]; \
  	then python3 -m plot bar "$(DIR)/original,$(DIR)/attacks" --out $(DIR); fi
+	if [ -d "$(DIR)/reset" ] && [ -d "$(DIR)/attacks" ]; \
+ 	then python3 -m plot bar "$(DIR)/reset,$(DIR)/attacks" --out $(DIR); fi
 	$(foreach d, $(PER_DIRS), \
   	python3 -m plot table $(d) -b $(d) --out $(DIR) && \
 	python3 -m plot bar $(d) --out $(DIR) ;)

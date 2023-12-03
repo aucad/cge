@@ -143,12 +143,14 @@ def plot_acc(input_data, plot_name, data_labels,
     leg = fig.legend(
         data_labels,
         ncol=len(data_labels) if pl_n > 1 else 2,
-        bbox_to_anchor=((0.22, 1.1) if pl_n > 1 and sp_n == 1
-                        else (0.22, 1.05)),
+        bbox_to_anchor=(
+            (0.22, 1.1) if pl_n > 1 and sp_n == 1
+            else (0.22, 1.05)),
         loc='upper left', frameon=False,
         handlelength=.9, handletextpad=0.4,
         columnspacing=.8 if pl_n == 1 else 1.5,
-        borderpad=0)
+        borderpad=0,
+        **{'prop': {'size': 11} if pl_n > 1 else None})
     for p in leg.get_patches():
         p.set_edgecolor([0, 0, 0, .85])
         p.set_linewidth(.75)
