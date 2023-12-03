@@ -1,6 +1,5 @@
 from os import path
 from typing import Dict, Tuple
-from textwrap import fill
 
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
