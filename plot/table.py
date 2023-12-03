@@ -1,10 +1,9 @@
-from os import path
 from statistics import mean, stdev
 
 from pytablewriter import SpaceAlignedTableWriter
 
-from plot import ResultData
 from exp import ensure_dir
+from plot import ResultData
 
 
 class TablePlot(ResultData):
@@ -84,10 +83,12 @@ class TablePlot(ResultData):
         def fmt(r):
             c, n, a = self.cls(r), self.name(r), self.attack(r)
             k = r['experiment']['k_folds']
-            z, t, s = -1, r['experiment']['duration_sec']/k, '-'
-            ba = a[1:] if (a[0] == 'V' or a == 'CPGD') else a
+            z, t, s = -1, r['experiment']['duration_sec'] / k, '-'
+            ba = a[1:] if (a[0] == 'V' or (
+                    a == 'CPGD' and 'original'
+                    not in self.directory)) else a
             if b := baseline.find(c, n, ba):
-                z = b['experiment']['duration_sec']/k
+                z = b['experiment']['duration_sec'] / k
                 s = f"{t / z:.2f}" if z != 0 else s
             return [c, n, a, f"{z:.0f}", f"{t:.0f}", s]
 

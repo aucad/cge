@@ -1,4 +1,5 @@
 from itertools import groupby
+from os import path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,36 +7,20 @@ import numpy as np
 from exp import ensure_dir
 from plot import ResultData
 
-col0 = [240 / 255, 249 / 255, 232 / 255, 1]
-col1 = [255 / 255, 201 / 255, 71 / 255, 1]
-col2 = [100 / 255, 204 / 255, 197 / 255, 1]
-col3 = [55 / 255, 71 / 255, 79 / 255,
-        1]  # [34 / 255, 40 / 255, 49 / 255, 1]
-col4 = [7 / 255, 102 / 255, 173 / 255, 1]
-col5 = [8 / 255, 104 / 255, 172 / 255, 1]
-light_blue = [166 / 255, 206 / 255, 227 / 255, 1]
-dark_blue = [15 / 255, 90 / 255, 160 / 255, 1]
+# colors
+col1 = [x / 255 for x in [237, 248, 177, 255]]
+col2 = [x / 255 for x in [127, 205, 187, 255]]
+col3 = [x / 255 for x in [44, 127, 184, 255]]
 white = [1] * 4
 
 # global options
 overall = 'overall'
-patterns = [None, None, None, None, None]
 plt.rcParams['font.family'] = ['Arial']
-plt.rcParams['hatch.linewidth'] = .5
-
-
-def gradient(light, dark):
-    def col(n, m):
-        return [n * light[i] + m * dark[i] for i in range(4)]
-
-    return [dark, col(.3, .7), col(.6, .4), col(.8, .2), light]
 
 
 def get_color_scheme(n):
     if 1 <= n < 5:
         return [white, col1, col2, col3][-n:]
-    if n == 5:
-        return gradient(light_blue, dark_blue)
     assert False
 
 
@@ -58,12 +43,10 @@ def multi_bar(ax, results, cat_names, colors):
         widths = data[1:, i]
         starts = data_cum[1:, i] - widths
         ax.barh(labels[1:], widths, left=starts, height=barh,
-                label=name, color=color, zorder=0, lw=0,
-                hatch=patterns[i],
-                edgecolor=[.95, .95, .95, 1])
+                label=name, color=color, zorder=0, lw=0)
     bars = ax.barh(
         labels[1:], totals, left=.1, height=barh, color='none',
-        lw=0.3, edgecolor=[0, 0, 0, 1], zorder=2, hatch=None)
+        lw=0.3, edgecolor=[0, 0, 0, 1], zorder=2)
     for idx in [i for i, tot in enumerate(totals) if tot < 1]:
         bars[idx].set_linewidth(0)
 
@@ -109,49 +92,66 @@ def plot_acc(input_data, plot_name, data_labels,
 
     # setup figure
     fig, axes = plt.subplots(
-        sp_n, pl_n, figsize=(3 * pl_n, plot_height),
+        nrows=sp_n, ncols=pl_n,
+        figsize=(3 * pl_n, plot_height),
         gridspec_kw={'height_ratios': h_ratios})
-    ax = axes if sp_n == 1 else axes[-1]
     plt.subplots_adjust(wspace=0, hspace=0)
 
-    # draw sub plots
-    for i, ckey in enumerate(subplots):
-        cdata = [(x[0][1:], x[1])
-                 for x in data.values()
-                 if ckey == x[0][0]]
-        if sort_key is not None:
-            cdata.sort(key=sort_key)
-        cdata.insert(0, (('', ckey), [0] * dlen))
-        if ckey == subplots[-1] and overall_bar:
-            empty = [((' ', ' '), [0] * dlen)]
-            ov = [v / sum(mean_data) * 100 for v in mean_data]
-            cdata = cdata + empty + [(('', overall), ov)]
-        multi_bar(axes if len(subplots) == 1 else axes[i],
-                  cdata, data_labels, colors=colors)
+    for ix, (data, mean_data, subplots) in enumerate(input_data):
+        if sp_n == 1 and pl_n == 1:
+            ax = sp_ax = axes
+        elif sp_n == 1 and pl_n > 1:
+            sp_ax = [[x] for x in axes]
+            ax = sp_ax[ix][-1]
+        else:
+            axes_ = axes if pl_n > 1 else [[x] for x in axes]
+            sp_ax = [x[ix] for x in axes_]
+            ax = sp_ax[-1]
+
+        # draw sub plots
+        for i, ckey in enumerate(subplots):
+            cdata = [(x[0][1:], x[1])
+                     for x in data.values()
+                     if ckey == x[0][0]]
+            if sort_key is not None:
+                cdata.sort(key=sort_key)
+            cdata.insert(0, (('', ckey), [0] * dlen))
+            if ckey == subplots[-1] and overall_bar:
+                empty = [((' ', ' '), [0] * dlen)]
+                ov = [v / sum(mean_data) * 100 for v in mean_data]
+                cdata = cdata + empty + [(('', overall), ov)]
+            multi_bar(ax if len(subplots) == 1 else sp_ax[i],
+                      cdata, data_labels, colors=colors)
+
+        ax.yaxis.set_tick_params(length=0)
+        ax.set_xticks([0, 25, 50, 75, 100])
+        ax.set_xticklabels(["0%", "25%", "50%", "75%", "100%"])
+        ax.spines['bottom'].set_visible(True)
+        ax.xaxis.set_tick_params(bottom=True)
+        ax.xaxis.set_visible(True)
+        if pl_n == 1:
+            for i, lbl in enumerate(subplots):
+                ax_ = sp_ax if sp_n == 1 else sp_ax[i]
+                shift = 0 if sp_n > 1 and lbl == subplots[-1] else \
+                    (.1 if sp_n == 1 else .03)
+                box = ax_.get_position()
+                box.y0 += shift
+                box.y1 += shift
+                ax_.set_position(box)
 
     # full figure formatting
-    leg = fig.legend(data_labels, ncol=2, bbox_to_anchor=(0.22, 1.05),
-                     loc='upper left', frameon=False,
-                     handlelength=.9, handletextpad=0.4,
-                     columnspacing=.8, borderpad=0)
+    leg = fig.legend(
+        data_labels,
+        ncol=len(data_labels) if pl_n > 1 else 2,
+        bbox_to_anchor=((0.22, 1.1) if pl_n > 1 and sp_n == 1
+                        else (0.22, 1.05)),
+        loc='upper left', frameon=False,
+        handlelength=.9, handletextpad=0.4,
+        columnspacing=.8 if pl_n == 1 else 1.5,
+        borderpad=0)
     for p in leg.get_patches():
         p.set_edgecolor([0, 0, 0, .85])
         p.set_linewidth(.75)
-
-    ax.yaxis.set_tick_params(length=0)
-    ax.set_xticks([0, 25, 50, 75, 100])
-    ax.set_xticklabels(["0%", "25%", "50%", "75%", "100%"])
-    ax.spines['bottom'].set_visible(True)
-    ax.xaxis.set_tick_params(bottom=True)
-    ax.xaxis.set_visible(True)
-    for i, lbl in enumerate(subplots):
-        ax_ = axes if sp_n == 1 else axes[i]
-        shift = 0 if sp_n > 1 and lbl == subplots[-1] else \
-            (.1 if sp_n == 1 else .03)
-        box = ax_.get_position()
-        box.y0 += shift
-        box.y1 += shift
-        ax_.set_position(box)
     ensure_dir(plot_name)
     fig.tight_layout()
     plt.savefig(plot_name, bbox_inches='tight',
@@ -186,6 +186,11 @@ class BarData(ResultData):
     def attack(r):
         return ResultData.attack(r).upper()
 
+    def fn_pattern(self, file_ext, pattern, out_dir=None, in_dirs=None):
+        flat_name = (in_dirs or self.directory).replace('/', '_')
+        file_name = f'__{pattern}_{flat_name}'
+        return path.join(out_dir, f'{file_name}.{file_ext}')
+
     @staticmethod
     def fmt(r, key=None, att=None):
         keys = (key or BarData.cls(r), BarData.name(r),
@@ -196,35 +201,53 @@ class BarData(ResultData):
         total = 100 - accurate - evades - valid
         return keys, [valid, evades, accurate, total]
 
-    def plot_name(self, pattern, out_dir):
-        return self.fn_pattern('pdf', pattern, out_dir)
+    def plot_name(self, pattern, out_dir, dirs=None):
+        return self.fn_pattern('pdf', pattern, out_dir, in_dirs=dirs)
 
 
-def make_plot(bdata, out_dir, is_perf, plot_name, key_test,
-              overall_bar=True):
-    bar_inputs = [[d.get_acc_data(key_test) for d in bdata][0]]
-    # assert (bars have same shape)
-    legend = ['valid', 'evasive', 'accurate', 'inaccurate']
-    plot_acc(bar_inputs,
-             data_labels=legend, overall_bar=overall_bar,
-             plot_name=bdata[0].plot_name(plot_name, out_dir),
-             sort_key=(lambda x: (x[0][0], len(x[0][1]), x[0][1]))
-             if is_perf else
-             (lambda x: (x[0][0], x[0][1])))
+def match_bdata(x, y):
+    for xk in [x[0] for x in x[0].values()]:
+        pair = None
+        for yk in [y[0] for y in y[0].values()]:
+            attm = xk[2] == yk[2] or \
+                   xk[2][1:] == yk[2] or xk[2] == yk[2][1:]
+            if attm and xk[0] == yk[0] and xk[1] == yk[1]:
+                pair = yk
+        assert pair is not None
+
+
+def attack_plot(bdata, out_dir, plot_name, dirs=None):
+    key_test = lambda r: ResultData.attack(r) != 'CPGD'
+    bar_inputs = [d.get_acc_data(key_test) for d in bdata]
+    for b in bar_inputs[1:]:
+        match_bdata(bar_inputs[0], b)
+    plot_acc(
+        bar_inputs, overall_bar=True,
+        data_labels=['valid', 'evasive', 'accurate', 'inaccurate'],
+        plot_name=bdata[0].plot_name(plot_name, out_dir, dirs=dirs),
+        sort_key=(lambda x: (x[0][0], x[0][1])))
+
+
+def perf_plot(bdata, out_dir, plot_name):
+    bar_inputs = [
+        tuple(bdata[0].get_acc_data(
+            lambda r: cats in BarData.name(r)))
+        for cats in ['PT-1', 'PT-2']]
+    plot_acc(
+        bar_inputs, overall_bar=False,
+        data_labels=['valid', 'evasive', 'accurate', 'inaccurate'],
+        plot_name=bdata[0].plot_name(plot_name, out_dir),
+        sort_key=(lambda x: (x[0][0], len(x[0][1]), x[0][1])))
 
 
 def plot_bars(data_dir, out_dir=None):
     dirs = data_dir.split(',')
-    is_perf = 'perf/' in data_dir
     bdata = [BarData(d) for d in dirs]
-    if is_perf:
-        for cats in ['PT-1', 'PT-2']:
-            key_test = lambda r: cats in BarData.name(r)
-            if len(bdata) and bdata[0].n_results:
-                make_plot(
-                    bdata, out_dir, is_perf, 'bar_acc_' + cats,
-                    key_test, overall_bar=False)
+    if not (len(bdata) and bdata[0].n_results):
+        return
+    if 'perf/' in data_dir:
+        return perf_plot(bdata, out_dir, 'bar_acc')
     else:
-        key_test = lambda r: ResultData.attack(r) != 'CPGD'
-        if len(bdata) and bdata[0].n_results:
-            make_plot(bdata, out_dir, is_perf, 'bar_acc', key_test)
+        attack_plot(
+            bdata, out_dir, 'bar_acc',
+            dirs='_'.join(dirs) if len(dirs) > 1 else None)
