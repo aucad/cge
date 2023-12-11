@@ -26,8 +26,8 @@ def get_color_scheme(n):
 
 def multi_bar(ax, results, cat_names, colors):
     llbl, rlbl = list(zip(*[
-        (r, l.replace("0", "").replace("PT-1-", "")
-         .replace("PT-2-", "")) for (l, r), _ in results]))
+        (r, l.replace("0", "").replace("PT-1-", "Const-")
+         .replace("PT-2-", "Const-")) for (l, r), _ in results]))
     uniq_rl = [x for k, v in groupby(rlbl)
                for x in [k] + [' '] * (sum(1 for __ in v) - 1)]
     labels = [i for i, _ in enumerate(results)]
