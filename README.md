@@ -11,7 +11,7 @@ The following options are included.
 - **Attacks**: Projected Gradient Descent (PGD), Zeroth-Order Optimization (ZOO), HopSkipJump attack. 
 - **Classifiers**: Keras deep neural network and tree-based ensemble XGBoost.
 - **Data sets**: Four different data sets, from various domains.
-- **Constraints**: Constraints are configurable inputs of an experiment; the configuration files show how to specify constraints.
+- **Constraints**: Constraints are configurable experiment inputs; configuration files show how to specify them.
 
 **Comparison.** We also include a comparison attack, _Constrained Projected Gradient Descent_ (C-PGD).
 It uses a different constraint evaluation approach introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
@@ -34,6 +34,23 @@ It uses a different constraint evaluation approach introduced by [Simonetto et a
 </ul>
 </details>
 
+### Repository organization
+
+| Directory    | Description                                       |
+|:-------------|:--------------------------------------------------|
+| `.github`    | Automated workflows, development instructions     |
+| `cge`        | CGE algorithm implementation                      |
+| `comparison` | C-PGD attack implementation                       |
+| `config`     | Experiment configuration files                    |
+| `data`       | Preprocessed input data sets                      |
+| `exp`        | Source code for running experiments               |
+| `plot`       | Utilities for plotting experiment results         |
+| `ref_result` | Referential result for comparison                 |
+| `test`       | Unit tests                                        |
+
+- The Makefile contains pre-configured commands to ease running experiments.
+- All software dependencies are listed in `requirements.txt`.
+  
 ## Experiment workflow
 
 A single experiment consists of (1) preprocessing and setup (2) training a classification model on a choice data set (3) applying an adversarial attack to that model (4) scoring and (5) recording the result. A constraint-validation approach can be enabled or disabled during the attack to impact the validity of the generated adversarial examples.
@@ -122,19 +139,4 @@ For plotting help, run:
 python3 -m plot --help
 ```
 
-### Repository organization
 
-| Directory    | Description                               |
-|:-------------|:------------------------------------------|
-| `.github`    | Automated workflows, dev instructions     |
-| `cge`        | CGE algorithm implementation              |
-| `comparison` | C-PGD attack implementation               |
-| `config`     | Experiment configuration files            |
-| `data`       | Preprocessed input data sets              |
-| `exp`        | Source code for running experiments       |
-| `plot`       | Utilities for plotting experiment results |
-| `ref_result` | Referential result for comparison         |
-| `test`       | Unit tests                                |
-
-- The Makefile contains pre-configured commands to ease running experiments.
-- All software dependencies are listed in `requirements.txt`.
