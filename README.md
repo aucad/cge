@@ -49,6 +49,7 @@ It uses a different constraint evaluation approach introduced by [Simonetto et a
 | `test`       | Unit tests                                        |
 
 - The Makefile contains pre-configured commands to ease running experiments.
+- The `data/feature_*.csv` files are exclusively for use with C-PGD attack.
 - All software dependencies are listed in `requirements.txt`.
   
 ## Experiment workflow
