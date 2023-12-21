@@ -85,6 +85,10 @@ class Result:
         def avg(self):
             return sdiv(sum(self), len(self))
 
+        @property
+        def abs_avg(self):
+            return sdiv(sum(self), len(self), mult=False)
+
         def to_dict(self):
             return [round(x, 6) for x in list(self)]
 
@@ -118,4 +122,4 @@ class Result:
         logd('Valid', self.n_valid.avg, self.n_records.avg)
         logd('Valid Evasions',
              self.n_valid_evades.avg, self.n_records.avg)
-        log('Attack Duration', f'{dur_sec(self.dur.avg) :.2f} s')
+        log('Attack Duration', f'{dur_sec(self.dur.abs_avg) :.2f} s')
