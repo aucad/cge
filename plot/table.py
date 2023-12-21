@@ -73,7 +73,7 @@ class TablePlot(ResultData):
                 v['n_constraints'], len(i), len(p), f"{f:.1f}"])
 
         mat = self.ulist(fmt)
-        hdr = 'exp-name,records,cls,ft,*val,#C,⊥,P,ft/P'
+        hdr = 'exp-name,records,cls,#ft,*-val,#C,#⊥,#P,ft/P'
         return self.make_table('config', hdr, mat)
 
     def duration_plot(self, baseline: ResultData):
@@ -81,16 +81,24 @@ class TablePlot(ResultData):
             return
 
         def fmt(r):
-            c, n, a = self.cls(r), self.name(r), self.attack(r)
+            cls, name, attack = self.cls(r), self.name(r), self.attack(r)
             k = r['experiment']['k_folds']
-            z, t, s = -1, r['experiment']['duration_sec'] / k, '-'
-            ba = a[1:] if (a[0] == 'V' or (
-                    a == 'CPGD' and 'original'
-                    not in self.directory)) else a
-            if b := baseline.find(c, n, ba):
-                z = b['experiment']['duration_sec'] / k
-                s = f"{t / z:.2f}" if z != 0 else s
-            return [c, n, a, f"{z:.0f}", f"{t:.0f}", s]
+            t0, t0f, s = -1, f"{'-':>7}", f"{'-':>7}"
+            use_attack_dur = 'dur' in r['folds']
+            t = (mean(r['folds']['dur']) / 1e9) if use_attack_dur \
+                else r['experiment']['duration_sec'] / k
+            ba = attack[1:] if (attack[0] == 'V' or (
+                    attack == 'CPGD' and 'original'
+                    not in self.directory)) else attack
+            if b := baseline.find(cls, name, ba):
+                if use_attack_dur:
+                    if 'dur' in b['folds']:
+                        t0 = (mean(b['folds']['dur']) / 1e9)
+                if t0 == -1:
+                    t0 = b['experiment']['duration_sec'] / k
+                s = f"{(t / t0):.2f}" if t0 != 0 else s
+                t0f = f"{t0:.0f}"
+            return [cls, name, attack, t0f, f"{t:.0f}", s]
 
         hdr = 'classifier,exp-name,attack,t0,t(s),t-ratio'
         mat = [fmt(r) for r in self.raw_rata]
