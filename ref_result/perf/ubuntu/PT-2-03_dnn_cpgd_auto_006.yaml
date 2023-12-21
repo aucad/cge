@@ -3,7 +3,7 @@ attack:
   config:
     args: {enable_constraints: true, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
     feat_file: data/feature_unsw.csv
-    id: perf5
+    id: perf4
   name: CPGD
 classifier:
   config:
@@ -50,26 +50,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696829963274509648
+  capture_utc: 1703124402010246732
   class_distribution: {0: 5000, 1: 5000}
-  config: config/prf2_5.yaml
+  config: config/prf2_4.yaml
   dataset: data/unsw_nb15.csv
-  description: Constraint performance test with 6 unrelated constraints
-  duration_sec: 724.3
-  end: 1696829962269379760
+  description: Constraint performance test with 3 unrelated constraints
+  duration_sec: 463.0
+  end: 1703124401006155989
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
-  name: PT-2-06
-  start: 1696829237920029613
+  name: PT-2-03
+  start: 1703123937979908965
   system:
-    cpu_current_frequency: 2200.196
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 13.6
+    cpu_total_usage: 13.7
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -77,31 +77,29 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 28.66GB
-    virtual_mem_percentage: 8.6
+    virtual_mem_available: 30.41GB
+    virtual_mem_percentage: 3.0
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 2.29GB
+    virtual_mem_used: 555.38MB
 folds:
-  accuracy: [0.916, 0.9105, 0.914, 0.9295, 0.921]
-  f_score: [0.913313, 0.909914, 0.912065, 0.93132, 0.919388]
-  n_evasions: [1826, 1031, 1759, 991, 1321]
+  accuracy: [0.903, 0.9065, 0.921, 0.926, 0.914]
+  dur: [69745362890, 70244492298, 70154467701, 70703410752, 70465345567]
+  f_score: [0.90329, 0.907836, 0.918557, 0.923947, 0.914257]
+  n_evasions: [660, 1587, 1103, 1338, 1617]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [0, 0, 0, 0, 0]
-  n_valid_evades: [0, 0, 0, 0, 0]
-  precision: [0.933544, 0.919634, 0.911134, 0.941872, 0.929825]
-  recall: [0.893939, 0.900398, 0.912999, 0.921002, 0.909183]
+  n_valid: [4, 0, 14, 0, 0]
+  n_valid_evades: [2, 0, 13, 0, 0]
+  precision: [0.894373, 0.928427, 0.929093, 0.934511, 0.916084]
+  recall: [0.912387, 0.888139, 0.908257, 0.913618, 0.912438]
 invalid_rows: []
 validation:
   dependencies:
     a: [18]
     b: [21]
     c: [14]
-    d: [15]
-    e: [11]
-    f: [12]
   enabled: true
   immutable: []
-  n_constraints: 6
+  n_constraints: 3
   predicates:
     a:
       attrs: {18: swin}
@@ -115,16 +113,4 @@ validation:
       attrs: {14: sloss}
       exec: 'lambda a: a[0] >= 0 and a[0] <= 3993'
       text: sloss >= 0 and sloss <= 3993
-    d:
-      attrs: {15: dloss}
-      exec: 'lambda a: a[0] >= 0 or a[0] <= 2627'
-      text: dloss >= 0 or dloss <= 2627
-    e:
-      attrs: {11: sbytes}
-      exec: 'lambda a: a[0] >= 0 or a[0] <= 7085342'
-      text: sbytes >= 0 or sbytes <= 7085342
-    f:
-      attrs: {12: dbytes}
-      exec: 'lambda a: a[0] >= 0 or a[0] <= 10508068'
-      text: dbytes >= 0 or dbytes <= 10508068
   reset_strategy: 2

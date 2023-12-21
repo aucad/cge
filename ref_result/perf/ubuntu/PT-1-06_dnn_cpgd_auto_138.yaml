@@ -1,8 +1,10 @@
 attack:
   can_validate: false
-  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
-    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
-  name: ProjectedGradientDescent
+  config:
+    args: {enable_constraints: true, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
+    feat_file: data/feature_unsw.csv
+    id: perf2
+  name: CPGD
 classifier:
   config:
     layers: [64, 64, 32]
@@ -48,26 +50,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696825227157861469
+  capture_utc: 1703121744142365739
   class_distribution: {0: 5000, 1: 5000}
-  config: config/prf1_3.yaml
+  config: config/prf1_2.yaml
   dataset: data/unsw_nb15.csv
-  description: Constraint performance test with 12 correlated constraints
-  duration_sec: 242.9
-  end: 1696825226152878947
+  description: Constraint performance test with 6 correlated constraints
+  duration_sec: 569.1
+  end: 1703121743138263783
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
-  name: PT-1-12
-  start: 1696824983208165131
+  name: PT-1-06
+  start: 1703121174042185857
   system:
-    cpu_current_frequency: 2200.196
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 17.1
+    cpu_total_usage: 13.3
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -75,37 +77,32 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 28.65GB
-    virtual_mem_percentage: 8.6
+    virtual_mem_available: 30.41GB
+    virtual_mem_percentage: 3.0
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 2.29GB
+    virtual_mem_used: 558.56MB
 folds:
-  accuracy: [0.912, 0.9025, 0.908, 0.9175, 0.9255]
-  f_score: [0.9133, 0.901862, 0.911283, 0.917706, 0.925088]
-  n_evasions: [1824, 1799, 1794, 1783, 1850]
+  accuracy: [0.92, 0.919, 0.918, 0.927, 0.9215]
+  dur: [87213282315, 87265878121, 87076758053, 86463668865, 86718179208]
+  f_score: [0.920477, 0.915537, 0.917505, 0.926039, 0.919363]
+  n_evasions: [801, 1781, 1700, 1032, 943]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [1650, 1712, 1669, 1463, 1718]
-  n_valid_evades: [1506, 1533, 1498, 1312, 1597]
-  precision: [0.899127, 0.895105, 0.880708, 0.929293, 0.929293]
-  recall: [0.927928, 0.908722, 0.944056, 0.906404, 0.920921]
+  n_valid: [1107, 721, 843, 819, 917]
+  n_valid_evades: [636, 643, 710, 262, 854]
+  precision: [0.91774, 0.938034, 0.953975, 0.938398, 0.928423]
+  recall: [0.92323, 0.894094, 0.883721, 0.914, 0.910478]
 invalid_rows: []
 validation:
   dependencies:
-    a: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    b: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    c: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
+    a: [9, 12, 15]
+    b: [6, 22]
+    c: [9, 12, 15]
     d: [3, 4, 27]
-    e: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    f: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    g: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    h: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    i: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    j: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    k: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-    l: [6, 8, 9, 10, 12, 15, 16, 17, 18, 21, 22, 23, 24, 28]
-  enabled: false
+    e: [8, 28]
+    f: [16, 17, 23]
+  enabled: true
   immutable: []
-  n_constraints: 12
+  n_constraints: 6
   predicates:
     a:
       attrs: {9: state_INT, 12: dbytes}
@@ -131,28 +128,4 @@ validation:
       attrs: {16: sjit, 17: djit, 23: dmean}
       exec: 'lambda a: (a[2] >= 10) or (a[0] >= a[1])'
       text: (dmean >= 10) or (sjit >= djit)
-    g:
-      attrs: {9: state_INT, 22: smean, 23: dmean}
-      exec: 'lambda a: a[0] != 1 or (a[1] >= a[2])'
-      text: state_INT != 1 or (smean >= dmean)
-    h:
-      attrs: {8: state_FIN, 10: state_other, 24: trans_depth}
-      exec: 'lambda a: a[2] != 1 or a[0] == 1 or a[1] == 1'
-      text: trans_depth != 1 or state_FIN == 1 or state_other == 1
-    i:
-      attrs: {18: swin, 21: dwin, 23: dmean}
-      exec: 'lambda a: (a[0] == a[1] == 0 ) or a[2] >= 0'
-      text: (swin == dwin == 0 ) or dmean >= 0
-    j:
-      attrs: {8: state_FIN, 22: smean}
-      exec: 'lambda a: a[0] != 1 or a[1] >= 1'
-      text: state_FIN != 1 or smean >= 1
-    k:
-      attrs: {10: state_other, 22: smean, 23: dmean}
-      exec: 'lambda a: a[0] != 1 or (a[1] >= 0 and a[2] >= 0)'
-      text: state_other != 1 or (smean >= 0 and dmean >= 0)
-    l:
-      attrs: {12: dbytes, 15: dloss}
-      exec: 'lambda a: a[0] >= 0 and a[1] >= 0'
-      text: dbytes >= 0 and dloss >= 0
   reset_strategy: 2

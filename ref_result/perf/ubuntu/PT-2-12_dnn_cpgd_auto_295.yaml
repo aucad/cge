@@ -1,8 +1,10 @@
 attack:
-  can_validate: true
-  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
-    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
-  name: VPGD
+  can_validate: false
+  config:
+    args: {enable_constraints: true, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
+    feat_file: data/feature_unsw.csv
+    id: perf6
+  name: CPGD
 classifier:
   config:
     layers: [64, 64, 32]
@@ -48,26 +50,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696828939019389237
+  capture_utc: 1703127323298979283
   class_distribution: {0: 5000, 1: 5000}
-  config: config/prf2_5.yaml
+  config: config/prf2_6.yaml
   dataset: data/unsw_nb15.csv
-  description: Constraint performance test with 6 unrelated constraints
-  duration_sec: 491.5
-  end: 1696828938014270606
+  description: Constraint performance test with 12 unrelated constraints
+  duration_sec: 771.1
+  end: 1703127322294925431
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
-  name: PT-2-06
-  start: 1696828446533287797
+  name: PT-2-12
+  start: 1703126551151365327
   system:
-    cpu_current_frequency: 2200.196
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 14.8
+    cpu_total_usage: 13.4
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -75,19 +77,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 28.65GB
-    virtual_mem_percentage: 8.6
+    virtual_mem_available: 30.40GB
+    virtual_mem_percentage: 3.0
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 2.29GB
+    virtual_mem_used: 561.38MB
 folds:
-  accuracy: [0.92, 0.917, 0.922, 0.92, 0.907]
-  f_score: [0.919759, 0.916331, 0.920892, 0.92, 0.907186]
-  n_evasions: [1840, 1834, 1844, 1840, 1814]
+  accuracy: [0.919, 0.9225, 0.916, 0.924, 0.909]
+  dur: [130201109745, 129070560728, 129129114202, 129618296473, 128937318297]
+  f_score: [0.921739, 0.921836, 0.914198, 0.92657, 0.902674]
+  n_evasions: [1720, 914, 1486, 1195, 1156]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [1840, 1834, 1844, 1840, 1814]
-  precision: [0.924395, 0.91911, 0.925586, 0.913605, 0.922843]
-  recall: [0.91517, 0.913568, 0.916246, 0.926485, 0.892051]
+  n_valid: [0, 0, 0, 0, 134]
+  n_valid_evades: [0, 0, 0, 0, 134]
+  precision: [0.940828, 0.924166, 0.899497, 0.925676, 0.920393]
+  recall: [0.903409, 0.919517, 0.929387, 0.927466, 0.885624]
 invalid_rows: []
 validation:
   dependencies:
@@ -97,9 +100,15 @@ validation:
     d: [15]
     e: [11]
     f: [12]
+    g: [0]
+    h: [25]
+    i: [26]
+    j: [27]
+    k: [28]
+    l: [29]
   enabled: true
   immutable: []
-  n_constraints: 6
+  n_constraints: 12
   predicates:
     a:
       attrs: {18: swin}
@@ -125,4 +134,28 @@ validation:
       attrs: {12: dbytes}
       exec: 'lambda a: a[0] >= 0 or a[0] <= 10508068'
       text: dbytes >= 0 or dbytes <= 10508068
+    g:
+      attrs: {0: dur}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 60'
+      text: dur >= 0 and dur <= 60
+    h:
+      attrs: {25: ct_srv_src}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 63'
+      text: ct_srv_src >= 1 and ct_srv_src <= 63
+    i:
+      attrs: {26: ct_dst_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 50'
+      text: ct_dst_ltm >= 1 and ct_dst_ltm <= 50
+    j:
+      attrs: {27: ct_src_dport_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 50'
+      text: ct_src_dport_ltm >= 1 and ct_src_dport_ltm <= 50
+    k:
+      attrs: {28: ct_dst_sport_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 46'
+      text: ct_dst_sport_ltm >= 1 and ct_dst_sport_ltm <= 46
+    l:
+      attrs: {29: ct_dst_src_ltm}
+      exec: 'lambda a: a[0] >= 1 and a[0] <= 63'
+      text: ct_dst_src_ltm >= 1 and ct_dst_src_ltm <= 63
   reset_strategy: 2

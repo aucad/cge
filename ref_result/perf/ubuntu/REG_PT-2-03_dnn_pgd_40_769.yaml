@@ -1,8 +1,8 @@
 attack:
-  can_validate: true
+  can_validate: false
   config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
     num_random_init: 40, random_eps: false, targeted: false, verbose: true}
-  name: VPGD
+  name: ProjectedGradientDescent
 classifier:
   config:
     layers: [64, 64, 32]
@@ -48,26 +48,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696820997157625457
+  capture_utc: 1703124669772409554
   class_distribution: {0: 5000, 1: 5000}
-  config: config/prf1_1.yaml
+  config: config/prf2_4.yaml
   dataset: data/unsw_nb15.csv
-  description: Constraint performance test with 3 correlated constraints
-  duration_sec: 427.9
-  end: 1696820996152503755
+  description: Constraint performance test with 3 unrelated constraints
+  duration_sec: 258.7
+  end: 1703124668768370609
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
-  name: PT-1-03
-  start: 1696820568256859934
+  name: PT-2-03
+  start: 1703124410048694807
   system:
-    cpu_current_frequency: 2200.196
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 14.6
+    cpu_total_usage: 14.4
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -75,39 +75,40 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 28.64GB
-    virtual_mem_percentage: 8.6
+    virtual_mem_available: 30.39GB
+    virtual_mem_percentage: 3.0
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 2.30GB
+    virtual_mem_used: 574.92MB
 folds:
-  accuracy: [0.925, 0.9105, 0.9245, 0.9105, 0.9125]
-  f_score: [0.923077, 0.907874, 0.924387, 0.906819, 0.91021]
-  n_evasions: [1850, 1821, 1849, 1821, 1825]
+  accuracy: [0.909, 0.919, 0.9155, 0.9245, 0.897]
+  dur: [41072335376, 21339230745, 21180526884, 21273759944, 21110884103]
+  f_score: [0.911479, 0.920276, 0.912208, 0.919122, 0.894791]
+  n_evasions: [1816, 1837, 1788, 1845, 1720]
   n_records: [2000, 2000, 2000, 2000, 2000]
   n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [1850, 1821, 1849, 1821, 1825]
-  precision: [0.948367, 0.925498, 0.945697, 0.946739, 0.922037]
-  recall: [0.899101, 0.890909, 0.904016, 0.87013, 0.898683]
+  n_valid_evades: [1816, 1837, 1788, 1845, 1720]
+  precision: [0.890684, 0.931275, 0.939037, 0.931596, 0.946004]
+  recall: [0.933267, 0.909533, 0.886869, 0.906977, 0.848837]
 invalid_rows: []
 validation:
   dependencies:
-    a: [9, 12, 15]
-    b: [6, 22]
-    c: [9, 12, 15]
-  enabled: true
+    a: [18]
+    b: [21]
+    c: [14]
+  enabled: false
   immutable: []
   n_constraints: 3
   predicates:
     a:
-      attrs: {9: state_INT, 12: dbytes}
-      exec: 'lambda a: a[0] != 1 or a[1] == 0'
-      text: state_INT != 1 or dbytes == 0
+      attrs: {18: swin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: swin >= 0 and swin <= 255
     b:
-      attrs: {6: service_dns, 22: smean}
-      exec: 'lambda a: a[0] != 1  or a[1] <= 512'
-      text: service_dns != 1  or smean <= 512
+      attrs: {21: dwin}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 255'
+      text: dwin >= 0 and dwin <= 255
     c:
-      attrs: {12: dbytes, 15: dloss}
-      exec: 'lambda a: a[0] != 0 or a[1] == 0'
-      text: dbytes != 0 or dloss == 0
+      attrs: {14: sloss}
+      exec: 'lambda a: a[0] >= 0 and a[0] <= 3993'
+      text: sloss >= 0 and sloss <= 3993
   reset_strategy: 2

@@ -48,26 +48,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696831372243169945
+  capture_utc: 1703125980290347925
   class_distribution: {0: 5000, 1: 5000}
-  config: config/prf2_6.yaml
+  config: config/prf2_5.yaml
   dataset: data/unsw_nb15.csv
-  description: Constraint performance test with 12 unrelated constraints
-  duration_sec: 266.6
-  end: 1696831371237819487
+  description: Constraint performance test with 6 unrelated constraints
+  duration_sec: 276.5
+  end: 1703125979286200883
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
-  name: PT-2-12
-  start: 1696831104668592815
+  name: PT-2-06
+  start: 1703125702775192682
   system:
-    cpu_current_frequency: 2200.196
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 17.5
+    cpu_total_usage: 14.8
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -75,19 +75,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 28.65GB
-    virtual_mem_percentage: 8.6
+    virtual_mem_available: 30.40GB
+    virtual_mem_percentage: 3.0
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 2.29GB
+    virtual_mem_used: 568.30MB
 folds:
-  accuracy: [0.9235, 0.916, 0.926, 0.909, 0.905]
-  f_score: [0.923462, 0.908992, 0.925703, 0.914232, 0.906496]
-  n_evasions: [1842, 1820, 1851, 1798, 1808]
+  accuracy: [0.914, 0.9145, 0.919, 0.916, 0.918]
+  dur: [21997035714, 41058520398, 22196009934, 21693339855, 21678144800]
+  f_score: [0.915187, 0.913593, 0.919881, 0.915152, 0.918164]
+  n_evasions: [1820, 1824, 1826, 1797, 1819]
   n_records: [2000, 2000, 2000, 2000, 2000]
   n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [1842, 1820, 1851, 1798, 1808]
-  precision: [0.912957, 0.946953, 0.919242, 0.876242, 0.935976]
-  recall: [0.934211, 0.873958, 0.932255, 0.955665, 0.878817]
+  n_valid_evades: [1820, 1824, 1826, 1797, 1819]
+  precision: [0.888038, 0.921509, 0.914454, 0.925434, 0.928355]
+  recall: [0.944049, 0.905812, 0.925373, 0.905095, 0.908193]
 invalid_rows: []
 validation:
   dependencies:
@@ -97,15 +98,9 @@ validation:
     d: [15]
     e: [11]
     f: [12]
-    g: [0]
-    h: [25]
-    i: [26]
-    j: [27]
-    k: [28]
-    l: [29]
   enabled: false
   immutable: []
-  n_constraints: 12
+  n_constraints: 6
   predicates:
     a:
       attrs: {18: swin}
@@ -131,28 +126,4 @@ validation:
       attrs: {12: dbytes}
       exec: 'lambda a: a[0] >= 0 or a[0] <= 10508068'
       text: dbytes >= 0 or dbytes <= 10508068
-    g:
-      attrs: {0: dur}
-      exec: 'lambda a: a[0] >= 0 and a[0] <= 60'
-      text: dur >= 0 and dur <= 60
-    h:
-      attrs: {25: ct_srv_src}
-      exec: 'lambda a: a[0] >= 1 and a[0] <= 63'
-      text: ct_srv_src >= 1 and ct_srv_src <= 63
-    i:
-      attrs: {26: ct_dst_ltm}
-      exec: 'lambda a: a[0] >= 1 and a[0] <= 50'
-      text: ct_dst_ltm >= 1 and ct_dst_ltm <= 50
-    j:
-      attrs: {27: ct_src_dport_ltm}
-      exec: 'lambda a: a[0] >= 1 and a[0] <= 50'
-      text: ct_src_dport_ltm >= 1 and ct_src_dport_ltm <= 50
-    k:
-      attrs: {28: ct_dst_sport_ltm}
-      exec: 'lambda a: a[0] >= 1 and a[0] <= 46'
-      text: ct_dst_sport_ltm >= 1 and ct_dst_sport_ltm <= 46
-    l:
-      attrs: {29: ct_dst_src_ltm}
-      exec: 'lambda a: a[0] >= 1 and a[0] <= 63'
-      text: ct_dst_src_ltm >= 1 and ct_dst_src_ltm <= 63
   reset_strategy: 2

@@ -48,26 +48,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696824977931761971
+  capture_utc: 1703122561984626180
   class_distribution: {0: 5000, 1: 5000}
   config: config/prf1_3.yaml
   dataset: data/unsw_nb15.csv
   description: Constraint performance test with 12 correlated constraints
-  duration_sec: 647.9
-  end: 1696824976926574239
+  duration_sec: 543.8
+  end: 1703122560980390846
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
   name: PT-1-12
-  start: 1696824329064636989
+  start: 1703122017208179157
   system:
-    cpu_current_frequency: 2200.196
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 14.2
+    cpu_total_usage: 14.0
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -75,19 +75,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 28.65GB
-    virtual_mem_percentage: 8.6
+    virtual_mem_available: 30.40GB
+    virtual_mem_percentage: 3.0
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 2.29GB
+    virtual_mem_used: 564.00MB
 folds:
-  accuracy: [0.911, 0.9255, 0.914, 0.916, 0.9195]
-  f_score: [0.907292, 0.923629, 0.914767, 0.916749, 0.917983]
-  n_evasions: [1822, 1850, 1828, 1832, 1839]
+  accuracy: [0.9155, 0.9205, 0.9045, 0.9225, 0.922]
+  dur: [79397496039, 79422238019, 79840974734, 81754139663, 80632099562]
+  f_score: [0.915879, 0.919738, 0.898888, 0.922616, 0.918495]
+  n_evasions: [1831, 1841, 1809, 1845, 1844]
   n_records: [2000, 2000, 2000, 2000, 2000]
   n_valid: [2000, 2000, 2000, 2000, 2000]
-  n_valid_evades: [1822, 1850, 1828, 1832, 1839]
-  precision: [0.922669, 0.93952, 0.929507, 0.922233, 0.927909]
-  recall: [0.892418, 0.908266, 0.900488, 0.91133, 0.908266]
+  n_valid_evades: [1831, 1841, 1809, 1845, 1844]
+  precision: [0.926485, 0.945021, 0.924837, 0.922156, 0.956474]
+  recall: [0.905512, 0.895772, 0.874356, 0.923077, 0.883417]
 invalid_rows: []
 validation:
   dependencies:
