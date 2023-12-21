@@ -2,7 +2,7 @@ import numpy as np
 import sklearn.metrics as skm
 
 from exp import CONSTR_DICT as CD, Validation
-from exp.utility import sdiv, log, logr, logd, attr_of
+from exp.utility import sdiv, log, logr, logd, attr_of, dur_sec
 
 
 def score_valid(ori: np.ndarray, adv: np.ndarray, cd: CD, scalars):
@@ -41,7 +41,8 @@ class ModelScore:
 
     def log(self):
         for a in attr_of(self, (int, float)):
-            log(a.capitalize(), f'{getattr(self, a) * 100:.2f} %')
+            log(a.capitalize().replace('_', '-'),
+                f'{getattr(self, a) * 100:.2f} %')
 
 
 class AttackScore:
@@ -53,8 +54,9 @@ class AttackScore:
         self.n_records = 0
         self.n_valid = 0
         self.n_valid_evades = 0
+        self.dur = 0
 
-    def calculate(self, attack, constraints, attr_range):
+    def calculate(self, attack, constraints, attr_range, dur):
         ori_x, ori_y = attack.ori_x, attack.ori_y
         adv_x, adv_y = attack.adv_x, attack.adv_y
         original = attack.cls.predict(ori_x, ori_y)
@@ -67,11 +69,13 @@ class AttackScore:
         self.n_evasions = len(self.evasions)
         self.n_valid_evades = len(self.valid_evades)
         self.n_records = ori_x.shape[0]
+        self.dur = dur
 
     def log(self):
         logr('Evasions', self.n_evasions, self.n_records)
         logr('Valid', self.n_valid, self.n_records)
         logr('Valid+Evades', self.n_valid_evades, self.n_records)
+        log('Attack Duration', f'{dur_sec(self.dur) :.2f} s')
 
 
 class Result:
@@ -93,6 +97,7 @@ class Result:
         self.n_evasions = Result.AvgList()
         self.n_valid = Result.AvgList()
         self.n_valid_evades = Result.AvgList()
+        self.dur = Result.AvgList()
 
     def append(self, obj):
         for a in attr_of(obj, (int, float)):
@@ -113,3 +118,4 @@ class Result:
         logd('Valid', self.n_valid.avg, self.n_records.avg)
         logd('Valid Evasions',
              self.n_valid_evades.avg, self.n_records.avg)
+        log('Attack Duration', f'{dur_sec(self.dur.avg) :.2f} s')

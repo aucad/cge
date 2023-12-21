@@ -1,4 +1,5 @@
 import sys
+import time
 
 import numpy as np
 # noinspection PyPackageRequirements
@@ -47,6 +48,7 @@ class AttackRunner:
         self.adv_y = None
         self.score = None
         self.conf = conf or {}
+        self.start = self.end = 0
 
     def reset(self, cls):
         self.cls = cls
@@ -55,6 +57,7 @@ class AttackRunner:
         self.ori_x = cls.test_x.copy()
         self.adv_x = None
         self.adv_y = None
+        self.start = self.end = 0
         return self
 
     @property
@@ -63,6 +66,7 @@ class AttackRunner:
 
     def run(self, v_model: Validation):
         """Generate adversarial examples and score."""
+        self.start = time.time_ns()
         if issubclass(self.attack, CPGD):
             self.adv_x, self.adv_y = cpgd_apply_and_predict(
                 self.cls.model, self.ori_x, self.ori_y, **self.conf)
@@ -73,13 +77,18 @@ class AttackRunner:
             self.adv_x = aml_attack.generate(x=self.ori_x)
             self.adv_y = np.array(self.cls.predict(
                 self.adv_x, self.ori_y).flatten())
+        self.end = time.time_ns()
         sys.stdout.write('\x1b[1A')
         sys.stdout.write('\x1b[2K')
 
         self.score.calculate(
-            self, v_model.constraints, v_model.scalars)
+            self, v_model.constraints, v_model.scalars,
+            dur=self.end - self.start)
         return self
 
     def to_dict(self):
-        return {'name': self.name, 'config': self.conf,
-                'can_validate': self.can_validate}
+        return {
+            'name': self.name,
+            'config': self.conf,
+            'can_validate': self.can_validate
+        }
