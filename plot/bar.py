@@ -223,11 +223,17 @@ def attack_plot(bdata, out_dir, plot_name, dirs=None):
     bar_inputs = [d.get_acc_data(key_test) for d in bdata]
     for b in bar_inputs[1:]:
         match_bdata(bar_inputs[0], b)
+    labels = ['valid', 'evasive', 'accurate', 'inaccurate']
+    name = bdata[0].plot_name(plot_name, out_dir, dirs=dirs)
     plot_acc(
-        bar_inputs, overall_bar=True,
-        data_labels=['valid', 'evasive', 'accurate', 'inaccurate'],
-        plot_name=bdata[0].plot_name(plot_name, out_dir, dirs=dirs),
-        sort_key=(lambda x: (x[0][0], x[0][1])))
+        bar_inputs, overall_bar=True, data_labels=labels,
+        plot_name=name, sort_key=(lambda x: (x[0][0], x[0][1])))
+    if dirs is None:
+        print("=" * 40)
+        print("Overall Accuracy, cumulative", name)
+        print("\n".join([f"{l:<13}: {x:.2f}" for (l, x) in
+                         zip(labels, bar_inputs[-1][1])]))
+        print("=" * 40)
 
 
 def perf_plot(bdata, out_dir, plot_name):
