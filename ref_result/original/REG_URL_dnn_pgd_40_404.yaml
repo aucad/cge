@@ -1,15 +1,13 @@
 attack:
   can_validate: false
-  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
-    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
-    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
-  name: ZooAttack
+  config: {batch_size: 2000, decay: null, eps: 0.4, eps_step: 0.1, max_iter: 40, norm: inf,
+    num_random_init: 40, random_eps: false, targeted: false, verbose: true}
+  name: ProjectedGradientDescent
 classifier:
   config:
-    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
-      tree_method: exact}
-    train: {num_boost_round: 20}
-  name: XGBoost
+    layers: [64]
+    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
+  name: Neural Network
 experiment:
   attrs: {0: length_url, 1: length_hostname, 2: ip, 3: nb_dots, 4: nb_hyphens, 5: nb_at,
     6: nb_qm, 7: nb_and, 8: nb_or, 9: nb_eq, 10: nb_underscore, 11: nb_tilde, 12: nb_percent,
@@ -89,26 +87,26 @@ experiment:
     tld_in_subdomain: [0, 1]
     web_traffic: [0, 10767986]
     whois_registered_domain: [0, 1]
-  capture_utc: 1696415529730742928
+  capture_utc: 1703350404407811522
   class_distribution: {0: 5715, 1: 5715}
   config: config/url.yaml
   dataset: data/url.csv
   description: URL dataset of legitimate and phishing URLs
-  duration_sec: 1504.0
-  end: 1696415528723956910
+  duration_sec: 293.4
+  end: 1703350403403575737
   k_folds: 5
   n_attributes: 64
   n_classes: 2
   n_records: 11430
   name: URL
-  start: 1696414024734577626
+  start: 1703350109984861525
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 99.7
+    cpu_total_usage: 14.2
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -116,19 +114,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.97GB
-    virtual_mem_percentage: 4.4
+    virtual_mem_available: 30.36GB
+    virtual_mem_percentage: 3.1
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 940.94MB
+    virtual_mem_used: 599.68MB
 folds:
-  accuracy: [0.961942, 0.963692, 0.961505, 0.962817, 0.956693]
-  f_score: [0.962548, 0.962426, 0.961806, 0.962138, 0.95771]
-  n_evasions: [2195, 2201, 2194, 2196, 2181]
+  accuracy: [0.954943, 0.954506, 0.951006, 0.954943, 0.95888]
+  dur: [29442031493, 28487566446, 27979220684, 28302257269, 41064445211]
+  f_score: [0.954364, 0.954023, 0.951431, 0.95512, 0.95859]
+  n_evasions: [1695, 1591, 1637, 1482, 1750]
   n_records: [2286, 2286, 2286, 2286, 2286]
-  n_valid: [1933, 1945, 1877, 1922, 1944]
-  n_valid_evades: [1844, 1865, 1790, 1835, 1846]
-  precision: [0.963793, 0.966364, 0.963478, 0.960854, 0.955669]
-  recall: [0.961307, 0.958521, 0.960139, 0.963426, 0.95976]
+  n_valid: [863, 918, 948, 936, 859]
+  n_valid_evades: [619, 632, 691, 603, 651]
+  precision: [0.962466, 0.958259, 0.958079, 0.951389, 0.960282]
+  recall: [0.946397, 0.949824, 0.944875, 0.95888, 0.956904]
 invalid_rows: []
 validation:
   dependencies:
@@ -158,6 +157,7 @@ validation:
       23, 25, 28]
     n: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21,
       23, 25, 28]
+  enabled: false
   immutable: []
   n_constraints: 14
   predicates:

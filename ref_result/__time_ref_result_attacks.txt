@@ -1,25 +1,25 @@
   classifier    exp-name   attack   t0   t(s)  t-ratio
-Neural Network  IoT-23     CPGD      71   163     2.31
-Neural Network  IoT-23     VHSJ     744   698     0.94
-Neural Network  IoT-23     VPGD      71   198     2.80
-Neural Network  IoT-23     VZoo    4221  4031     0.96
-Neural Network  LCLD       CPGD     107   631     5.92
-Neural Network  LCLD       VHSJ    1520  1400     0.92
-Neural Network  LCLD       VPGD     107   265     2.48
-Neural Network  LCLD       VZoo    6102  5719     0.94
-Neural Network  UNSW-NB15  CPGD      63   163     2.59
-Neural Network  UNSW-NB15  VHSJ    1237  1174     0.95
-Neural Network  UNSW-NB15  VPGD      63    99     1.57
-Neural Network  UNSW-NB15  VZoo    5333  4928     0.92
-Neural Network  URL        CPGD      77   362     4.70
-Neural Network  URL        VHSJ     697   646     0.93
-Neural Network  URL        VPGD      77   187     2.43
-Neural Network  URL        VZoo    3507  3311     0.94
-XGBoost         IoT-23     VHSJ     114   112     0.98
-XGBoost         IoT-23     VZoo     222   241     1.08
-XGBoost         LCLD       VHSJ     271   266     0.98
-XGBoost         LCLD       VZoo     443   479     1.08
-XGBoost         UNSW-NB15  VHSJ     130   130     1.00
-XGBoost         UNSW-NB15  VZoo     243   254     1.04
-XGBoost         URL        VHSJ     162   160     0.99
-XGBoost         URL        VZoo     301   325     1.08
+Neural Network  IoT-23     CPGD      41   105     2.55
+Neural Network  IoT-23     VHSJ     507   483     0.95
+Neural Network  IoT-23     VPGD      41   144     3.49
+Neural Network  IoT-23     VZoo    2875  2916     1.01
+Neural Network  LCLD       CPGD      34   451    13.28
+Neural Network  LCLD       VHSJ    1008  1000     0.99
+Neural Network  LCLD       VPGD      34   165     4.85
+Neural Network  LCLD       VZoo    4236  4080     0.96
+Neural Network  UNSW-NB15  CPGD      21    97     4.74
+Neural Network  UNSW-NB15  VHSJ     850   771     0.91
+Neural Network  UNSW-NB15  VPGD      21    57     2.77
+Neural Network  UNSW-NB15  VZoo    3560  3430     0.96
+Neural Network  URL        CPGD      31   256     8.25
+Neural Network  URL        VHSJ     477   441     0.92
+Neural Network  URL        VPGD      31   107     3.43
+Neural Network  URL        VZoo    2479  2351     0.95
+XGBoost         IoT-23     VHSJ      78    78     0.99
+XGBoost         IoT-23     VZoo     151   163     1.08
+XGBoost         LCLD       VHSJ     184   187     1.02
+XGBoost         LCLD       VZoo     305   334     1.10
+XGBoost         UNSW-NB15  VHSJ      91    90     0.99
+XGBoost         UNSW-NB15  VZoo     163   175     1.08
+XGBoost         URL        VHSJ     112   110     0.98
+XGBoost         URL        VZoo     209   226     1.08

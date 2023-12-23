@@ -1,9 +1,9 @@
   classifier    exp-name   accuracy±σ
 Neural Network  IoT-23     97.7 ± 0.0
-Neural Network  LCLD       64.4 ± 0.2
-Neural Network  UNSW-NB15  91.5 ± 0.2
-Neural Network  URL        95.4 ± 0.1
-XGBoost         IoT-23     97.9 ± 0.0
-XGBoost         LCLD       65.3 ± 0.1
-XGBoost         UNSW-NB15  93.8 ± 0.0
+Neural Network  LCLD       64.3 ± 0.1
+Neural Network  UNSW-NB15  91.7 ± 0.3
+Neural Network  URL        95.3 ± 0.1
+XGBoost         IoT-23     97.8 ± 0.1
+XGBoost         LCLD       65.3 ± 0.0
+XGBoost         UNSW-NB15  93.7 ± 0.0
 XGBoost         URL        96.2 ± 0.1

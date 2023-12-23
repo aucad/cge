@@ -1,14 +1,14 @@
 attack:
   can_validate: false
-  config:
-    args: {enable_constraints: false, eps: 0.2, eps_step: 0.1, norm: 2, verbose: 1}
-    feat_file: data/feature_unsw.csv
-  name: CPGD
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
+    norm: 2, targeted: false, verbose: true}
+  name: HopSkipJump
 classifier:
   config:
-    layers: [64, 64, 32]
-    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
-  name: Neural Network
+    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
+      tree_method: exact}
+    train: {num_boost_round: 20}
+  name: XGBoost
 experiment:
   attrs: {0: dur, 1: proto_tcp, 2: proto_udp, 3: proto_other, 4: service_none, 5: service_http,
     6: service_dns, 7: service_other, 8: state_FIN, 9: state_INT, 10: state_other,
@@ -49,26 +49,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696391767197930828
+  capture_utc: 1703327584233622102
   class_distribution: {0: 5000, 1: 5000}
   config: config/unsw.yaml
   dataset: data/unsw_nb15.csv
   description: sampled from 175K training set
-  duration_sec: 498.7
-  end: 1696391766192463964
+  duration_sec: 456.2
+  end: 1703327583229454999
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
   name: UNSW-NB15
-  start: 1696391267532114223
+  start: 1703327127047035480
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 14.1
+    cpu_total_usage: 98.6
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -76,19 +76,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.94GB
-    virtual_mem_percentage: 4.5
+    virtual_mem_available: 30.44GB
+    virtual_mem_percentage: 2.8
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 970.53MB
+    virtual_mem_used: 509.79MB
 folds:
-  accuracy: [0.916, 0.9165, 0.9325, 0.9115, 0.9135]
-  f_score: [0.913934, 0.913516, 0.932331, 0.908527, 0.916707]
-  n_evasions: [940, 1833, 1762, 1580, 1771]
+  accuracy: [0.946, 0.934, 0.9375, 0.9275, 0.943]
+  dur: [93634171636, 93946772333, 90182506681, 88768598148, 88685596275]
+  f_score: [0.945619, 0.932653, 0.937469, 0.92545, 0.943953]
+  n_evasions: [1883, 1858, 1875, 1855, 1886]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [1008, 1043, 1029, 1043, 1004]
-  n_valid_evades: [601, 926, 815, 732, 868]
-  precision: [0.924352, 0.922594, 0.934673, 0.942122, 0.914505]
-  recall: [0.903749, 0.904615, 0.93, 0.877246, 0.918919]
+  n_valid: [15, 23, 3, 14, 12]
+  n_valid_evades: [5, 10, 3, 12, 11]
+  precision: [0.950405, 0.939363, 0.947422, 0.925926, 0.958084]
+  recall: [0.940882, 0.926039, 0.927723, 0.924974, 0.930233]
 invalid_rows: []
 validation:
   dependencies:
@@ -98,6 +99,7 @@ validation:
     d: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     e: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     f: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+  enabled: false
   immutable: []
   n_constraints: 6
   predicates:

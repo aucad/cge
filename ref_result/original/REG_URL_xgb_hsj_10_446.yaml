@@ -5,9 +5,10 @@ attack:
   name: HopSkipJump
 classifier:
   config:
-    layers: [64]
-    model_fit: {batch_size: 32, epochs: 80, shuffle: true, verbose: 0}
-  name: Neural Network
+    params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
+      tree_method: exact}
+    train: {num_boost_round: 20}
+  name: XGBoost
 experiment:
   attrs: {0: length_url, 1: length_hostname, 2: ip, 3: nb_dots, 4: nb_hyphens, 5: nb_at,
     6: nb_qm, 7: nb_and, 8: nb_or, 9: nb_eq, 10: nb_underscore, 11: nb_tilde, 12: nb_percent,
@@ -87,26 +88,26 @@ experiment:
     tld_in_subdomain: [0, 1]
     web_traffic: [0, 10767986]
     whois_registered_domain: [0, 1]
-  capture_utc: 1696395266292363182
+  capture_utc: 1703350101450262570
   class_distribution: {0: 5715, 1: 5715}
   config: config/url.yaml
   dataset: data/url.csv
   description: URL dataset of legitimate and phishing URLs
-  duration_sec: 3486.7
-  end: 1696395265286369081
+  duration_sec: 559.5
+  end: 1703350100445772129
   k_folds: 5
   n_attributes: 64
   n_classes: 2
   n_records: 11430
   name: URL
-  start: 1696391778552671155
+  start: 1703349540944167098
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 12.8
+    cpu_total_usage: 98.7
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -114,19 +115,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.91GB
-    virtual_mem_percentage: 4.6
+    virtual_mem_available: 30.41GB
+    virtual_mem_percentage: 2.9
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 1000.13MB
+    virtual_mem_used: 540.49MB
 folds:
-  accuracy: [0.956693, 0.957568, 0.952756, 0.947944, 0.953631]
-  f_score: [0.957492, 0.95799, 0.953964, 0.946227, 0.951331]
-  n_evasions: [1072, 1083, 1059, 1120, 1144]
+  accuracy: [0.962817, 0.954068, 0.965442, 0.96238, 0.959318]
+  dur: [111650967001, 112131006065, 111624351793, 110832099903, 111372249853]
+  f_score: [0.962339, 0.954604, 0.965963, 0.960874, 0.960137]
+  n_evasions: [2201, 2181, 2207, 2200, 2193]
   n_records: [2286, 2286, 2286, 2286, 2286]
-  n_valid: [1988, 1845, 1972, 1953, 1914]
-  n_valid_evades: [783, 657, 751, 805, 787]
-  precision: [0.960379, 0.956747, 0.9459, 0.965867, 0.962825]
-  recall: [0.954623, 0.959237, 0.962167, 0.927369, 0.940109]
+  n_valid: [1790, 1777, 1827, 1889, 1852]
+  n_valid_evades: [1726, 1688, 1765, 1817, 1769]
+  precision: [0.961913, 0.957502, 0.964716, 0.960874, 0.962199]
+  recall: [0.962766, 0.951724, 0.967213, 0.960874, 0.958084]
 invalid_rows: []
 validation:
   dependencies:
@@ -156,6 +158,7 @@ validation:
       23, 25, 28]
     n: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21,
       23, 25, 28]
+  enabled: false
   immutable: []
   n_constraints: 14
   predicates:

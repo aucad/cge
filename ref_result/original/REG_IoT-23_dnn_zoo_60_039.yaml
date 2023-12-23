@@ -33,45 +33,46 @@ experiment:
     resp_bytes: [0, 164266]
     resp_ip_bytes: [0, 168910]
     resp_pkts: [0, 184]
-  capture_utc: 1696354713910683218
+  capture_utc: 1703321705043361177
   class_distribution: {0: 5000, 1: 5000}
   config: config/iot23.yaml
   dataset: data/ctu_1-8-34.csv
   description: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
-  duration_sec: 21105.0
-  end: 1696354712904626199
+  duration_sec: 14403.5
+  end: 1703321704039330826
   k_folds: 5
   n_attributes: 19
   n_classes: 2
   n_records: 10000
   name: IoT-23
-  start: 1696333607888731172
+  start: 1703307300526825120
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
     cpu_total_usage: 12.5
-    cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    cpu_usage_per_core: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
     python_runtime: 3.10.13 (main, Aug 25 2023, 13:20:03) [GCC 9.4.0]
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.93GB
-    virtual_mem_percentage: 4.5
+    virtual_mem_available: 30.38GB
+    virtual_mem_percentage: 3.0
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 975.89MB
+    virtual_mem_used: 572.11MB
 folds:
-  accuracy: [0.977, 0.975, 0.9755, 0.979, 0.98]
-  f_score: [0.977778, 0.975657, 0.97524, 0.979769, 0.980469]
-  n_evasions: [1058, 971, 939, 1016, 946]
+  accuracy: [0.98, 0.983, 0.9735, 0.976, 0.974]
+  dur: [3169452272027, 2852986208268, 2746790251053, 2785044782877, 2821132164305]
+  f_score: [0.980843, 0.983685, 0.973671, 0.976789, 0.973658]
+  n_evasions: [1274, 978, 922, 1018, 957]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [1065, 1141, 1361, 541, 976]
-  n_valid_evades: [570, 406, 468, 377, 374]
-  precision: [0.956522, 0.952471, 0.951677, 0.96034, 0.961686]
+  n_valid: [584, 1112, 1425, 1478, 1176]
+  n_valid_evades: [503, 445, 424, 530, 379]
+  precision: [0.962406, 0.967894, 0.948693, 0.954631, 0.948667]
   recall: [1.0, 1.0, 1.0, 1.0, 1.0]
 invalid_rows: []
 validation:
@@ -84,6 +85,7 @@ validation:
     f: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
     g: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
     h: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+  enabled: false
   immutable: [0, 1, 2, 6, 7, 8, 10, 11, 12, 13]
   n_constraints: 18
   predicates:

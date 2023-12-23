@@ -1,8 +1,9 @@
 attack:
   can_validate: false
-  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
-    norm: 2, targeted: false, verbose: true}
-  name: HopSkipJump
+  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
+    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
+  name: ZooAttack
 classifier:
   config:
     params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
@@ -33,26 +34,26 @@ experiment:
     resp_bytes: [0, 164266]
     resp_ip_bytes: [0, 168910]
     resp_pkts: [0, 184]
-  capture_utc: 1696333236424367374
+  capture_utc: 1703322469012036654
   class_distribution: {0: 5000, 1: 5000}
   config: config/iot23.yaml
   dataset: data/ctu_1-8-34.csv
   description: sampled from IoT-23 malware captures 1-1, 8-1, 34-1
-  duration_sec: 568.9
-  end: 1696333235418378460
+  duration_sec: 754.9
+  end: 1703322468007641727
   k_folds: 5
   n_attributes: 19
   n_classes: 2
   n_records: 10000
   name: IoT-23
-  start: 1696332666472296928
+  start: 1703321713124359282
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 99.3
+    cpu_total_usage: 99.2
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -60,19 +61,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 30.00GB
-    virtual_mem_percentage: 4.3
+    virtual_mem_available: 30.44GB
+    virtual_mem_percentage: 2.9
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 907.17MB
+    virtual_mem_used: 518.93MB
 folds:
-  accuracy: [0.9785, 0.981, 0.983, 0.976, 0.976]
-  f_score: [0.978744, 0.981, 0.983732, 0.976812, 0.975855]
-  n_evasions: [1957, 1962, 1966, 1952, 1952]
+  accuracy: [0.978, 0.971, 0.982, 0.9815, 0.9745]
+  dur: [150473036128, 149282374239, 151638299913, 152025353516, 150883339513]
+  f_score: [0.978558, 0.97168, 0.982541, 0.981764, 0.974462]
+  n_evasions: [1921, 1911, 1938, 1931, 1923]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [272, 266, 242, 257, 247]
-  n_valid_evades: [268, 261, 236, 246, 243]
-  precision: [0.961165, 0.965551, 0.970727, 0.959203, 0.958498]
-  recall: [0.996979, 0.996951, 0.99709, 0.995079, 0.993852]
+  n_valid: [1108, 977, 1090, 1121, 1003]
+  n_valid_evades: [1068, 946, 1058, 1083, 975]
+  precision: [0.962608, 0.944919, 0.971237, 0.969815, 0.952055]
+  recall: [0.995045, 1.0, 0.994112, 0.994012, 0.997949]
 invalid_rows: []
 validation:
   dependencies:
@@ -84,6 +86,7 @@ validation:
     f: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
     g: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
     h: [0, 1, 6, 7, 8, 10, 11, 14, 15, 16, 17]
+  enabled: false
   immutable: [0, 1, 2, 6, 7, 8, 10, 11, 12, 13]
   n_constraints: 18
   predicates:

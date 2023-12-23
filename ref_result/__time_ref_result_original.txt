@@ -1,25 +1,25 @@
   classifier    exp-name   attack   t0   t(s)  t-ratio
-Neural Network  IoT-23     CPGD      70    70        1
-Neural Network  IoT-23     HSJ      744   744        1
-Neural Network  IoT-23     PGD       71    71        1
-Neural Network  IoT-23     Zoo     4221  4221        1
-Neural Network  LCLD       CPGD     182   182        1
-Neural Network  LCLD       HSJ     1520  1520        1
-Neural Network  LCLD       PGD      107   107        1
-Neural Network  LCLD       Zoo     6102  6102        1
-Neural Network  UNSW-NB15  CPGD     100   100        1
-Neural Network  UNSW-NB15  HSJ     1237  1237        1
-Neural Network  UNSW-NB15  PGD       63    63        1
-Neural Network  UNSW-NB15  Zoo     5333  5333        1
-Neural Network  URL        CPGD     102   102        1
-Neural Network  URL        HSJ      697   697        1
-Neural Network  URL        PGD       77    77        1
-Neural Network  URL        Zoo     3507  3507        1
-XGBoost         IoT-23     HSJ      114   114        1
-XGBoost         IoT-23     Zoo      222   222        1
-XGBoost         LCLD       HSJ      271   271        1
-XGBoost         LCLD       Zoo      443   443        1
-XGBoost         UNSW-NB15  HSJ      130   130        1
-XGBoost         UNSW-NB15  Zoo      243   243        1
-XGBoost         URL        HSJ      162   162        1
-XGBoost         URL        Zoo      301   301        1
+Neural Network  IoT-23     CPGD      45    45        1
+Neural Network  IoT-23     HSJ      507   507        1
+Neural Network  IoT-23     PGD       41    41        1
+Neural Network  IoT-23     Zoo     2875  2875        1
+Neural Network  LCLD       CPGD      78    78        1
+Neural Network  LCLD       HSJ     1008  1008        1
+Neural Network  LCLD       PGD       34    34        1
+Neural Network  LCLD       Zoo     4236  4236        1
+Neural Network  UNSW-NB15  CPGD      52    52        1
+Neural Network  UNSW-NB15  HSJ      850   850        1
+Neural Network  UNSW-NB15  PGD       21    21        1
+Neural Network  UNSW-NB15  Zoo     3560  3560        1
+Neural Network  URL        CPGD      47    47        1
+Neural Network  URL        HSJ      477   477        1
+Neural Network  URL        PGD       31    31        1
+Neural Network  URL        Zoo     2479  2479        1
+XGBoost         IoT-23     HSJ       78    78        1
+XGBoost         IoT-23     Zoo      151   151        1
+XGBoost         LCLD       HSJ      184   184        1
+XGBoost         LCLD       Zoo      305   305        1
+XGBoost         UNSW-NB15  HSJ       91    91        1
+XGBoost         UNSW-NB15  Zoo      163   163        1
+XGBoost         URL        HSJ      112   112        1
+XGBoost         URL        Zoo      209   209        1

@@ -1,8 +1,9 @@
 attack:
   can_validate: false
-  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
-    norm: 2, targeted: false, verbose: true}
-  name: HopSkipJump
+  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
+    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
+    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
+  name: ZooAttack
 classifier:
   config:
     params: {eta: 0.3, gamma: 0, max_depth: 6, min_child_weight: 1, objective: 'multi:softprob',
@@ -88,21 +89,21 @@ experiment:
     tld_in_subdomain: [0, 1]
     web_traffic: [0, 10767986]
     whois_registered_domain: [0, 1]
-  capture_utc: 1696396081503252545
+  capture_utc: 1703364048165821372
   class_distribution: {0: 5715, 1: 5715}
   config: config/url.yaml
   dataset: data/url.csv
   description: URL dataset of legitimate and phishing URLs
-  duration_sec: 808.2
-  end: 1696396080497178882
+  duration_sec: 1048.5
+  end: 1703364047161246349
   k_folds: 5
   n_attributes: 64
   n_classes: 2
   n_records: 11430
   name: URL
-  start: 1696395272259304435
+  start: 1703362998675642965
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
@@ -115,19 +116,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.96GB
-    virtual_mem_percentage: 4.4
+    virtual_mem_available: 30.43GB
+    virtual_mem_percentage: 2.9
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 946.83MB
+    virtual_mem_used: 529.79MB
 folds:
-  accuracy: [0.962817, 0.958005, 0.961942, 0.967192, 0.961067]
-  f_score: [0.963124, 0.956757, 0.961892, 0.967853, 0.960913]
-  n_evasions: [2188, 2190, 2199, 2211, 2197]
+  accuracy: [0.968504, 0.966317, 0.959318, 0.961067, 0.956255]
+  dur: [208009443747, 207312013139, 212697467729, 214946847210, 203940148850]
+  f_score: [0.967943, 0.96564, 0.960034, 0.961588, 0.95656]
+  n_evasions: [2213, 2208, 2187, 2179, 2186]
   n_records: [2286, 2286, 2286, 2286, 2286]
-  n_valid: [1860, 1855, 1875, 1848, 1885]
-  n_valid_evades: [1775, 1778, 1804, 1787, 1809]
-  precision: [0.959378, 0.968978, 0.95728, 0.969931, 0.960492]
-  recall: [0.966899, 0.94484, 0.966549, 0.965783, 0.961336]
+  n_valid: [1995, 1876, 1835, 1938, 1954]
+  n_valid_evades: [1924, 1803, 1742, 1833, 1858]
+  precision: [0.968806, 0.966935, 0.957976, 0.961173, 0.955729]
+  recall: [0.967082, 0.964349, 0.962102, 0.962003, 0.957391]
 invalid_rows: []
 validation:
   dependencies:
@@ -157,6 +159,7 @@ validation:
       23, 25, 28]
     n: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21,
       23, 25, 28]
+  enabled: false
   immutable: []
   n_constraints: 14
   predicates:

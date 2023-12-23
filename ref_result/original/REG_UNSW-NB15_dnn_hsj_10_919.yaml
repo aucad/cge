@@ -1,9 +1,8 @@
 attack:
   can_validate: false
-  config: {abort_early: true, batch_size: 1, binary_search_steps: 10, confidence: 0.8,
-    initial_const: 0.001, learning_rate: 0.1, max_iter: 60, nb_parallel: 5, targeted: false,
-    use_importance: false, use_resize: false, variable_h: 0.6, verbose: true}
-  name: ZooAttack
+  config: {batch_size: 64, init_eval: 100, init_size: 100, max_eval: 1000, max_iter: 10,
+    norm: 2, targeted: false, verbose: true}
+  name: HopSkipJump
 classifier:
   config:
     layers: [64, 64, 32]
@@ -49,26 +48,26 @@ experiment:
     stcpb: [0, 4294729542]
     swin: [0, 255]
     trans_depth: [0, 2]
-  capture_utc: 1696390039507158376
+  capture_utc: 1703327118923424281
   class_distribution: {0: 5000, 1: 5000}
   config: config/unsw.yaml
   dataset: data/unsw_nb15.csv
   description: sampled from 175K training set
-  duration_sec: 26665.2
-  end: 1696390038501360934
+  duration_sec: 4367.7
+  end: 1703327117919280945
   k_folds: 5
   n_attributes: 33
   n_classes: 2
   n_records: 10000
   name: UNSW-NB15
-  start: 1696363373285990055
+  start: 1703322750251963429
   system:
-    cpu_current_frequency: 2199.998
+    cpu_current_frequency: 2249.998
     cpu_max_frequency: 0.0
     cpu_min_frequency: 0.0
     cpu_physical_cores: 4
     cpu_total_cores: 8
-    cpu_total_usage: 12.6
+    cpu_total_usage: 12.7
     cpu_usage_per_core: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     machine: x86_64
     processor: x86_64
@@ -76,19 +75,20 @@ experiment:
     release: 5.15.0-1042-gcp
     system: Linux
     version: '#50~20.04.1-Ubuntu SMP Mon Sep 11 03:30:57 UTC 2023'
-    virtual_mem_available: 29.92GB
-    virtual_mem_percentage: 4.5
+    virtual_mem_available: 30.37GB
+    virtual_mem_percentage: 3.1
     virtual_mem_total_size: 31.34GB
-    virtual_mem_used: 989.58MB
+    virtual_mem_used: 582.26MB
 folds:
-  accuracy: [0.915, 0.919, 0.921, 0.9195, 0.9065]
-  f_score: [0.911734, 0.917093, 0.919797, 0.92002, 0.909705]
-  n_evasions: [1747, 1782, 1781, 1794, 1737]
+  accuracy: [0.914, 0.916, 0.915, 0.9275, 0.924]
+  dur: [878506655570, 849928045918, 836366304943, 857091662355, 829799378861]
+  f_score: [0.913481, 0.917566, 0.916585, 0.923885, 0.926782]
+  n_evasions: [1764, 1832, 1830, 1855, 1848]
   n_records: [2000, 2000, 2000, 2000, 2000]
-  n_valid: [1711, 1751, 1668, 1714, 1728]
-  n_valid_evades: [1477, 1553, 1466, 1522, 1490]
-  precision: [0.944086, 0.928497, 0.911469, 0.919563, 0.907514]
-  recall: [0.881526, 0.905966, 0.928279, 0.920477, 0.911907]
+  n_valid: [83, 12, 8, 8, 16]
+  n_valid_evades: [10, 11, 4, 6, 15]
+  precision: [0.892822, 0.917566, 0.920197, 0.93617, 0.912713]
+  recall: [0.935118, 0.917566, 0.913001, 0.911917, 0.941292]
 invalid_rows: []
 validation:
   dependencies:
@@ -98,6 +98,7 @@ validation:
     d: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     e: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
     f: [0, 1, 2, 3, 8, 9, 10, 12, 18, 19, 20, 21]
+  enabled: false
   immutable: []
   n_constraints: 6
   predicates:
