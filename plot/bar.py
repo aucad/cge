@@ -240,7 +240,7 @@ def perf_plot(bdata, out_dir, plot_name):
     bar_inputs = [
         tuple(bdata[0].get_acc_data(
             lambda r: cats in BarData.name(r)))
-        for cats in ['PT-1', 'PT-2']]
+        for cats in ['PT-2', 'PT-1']]
     plot_acc(
         bar_inputs, overall_bar=False,
         data_labels=['valid', 'evasive', 'accurate', 'inaccurate'],
