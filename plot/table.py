@@ -26,6 +26,7 @@ class TablePlot(ResultData):
             writer.headers = headers.split(',')
             writer.value_matrix = sorted(mat, key=srt)
             writer.write_table()
+            ensure_dir(fn)
             writer.dump(fn)
         return self
 
@@ -88,8 +89,8 @@ class TablePlot(ResultData):
             t = (mean(r['folds']['dur']) / 1e9) if use_attack_dur \
                 else r['experiment']['duration_sec'] / k
             ba = attack[1:] if (attack[0] == 'V' or (
-                    attack == 'CPGD' and 'original'
-                    not in self.directory)) else attack
+                    attack == 'CPGD' and 'perf'
+                    in self.directory)) else attack
             if b := baseline.find(cls, name, ba):
                 if use_attack_dur:
                     if 'dur' in b['folds']:
