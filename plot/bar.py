@@ -185,6 +185,11 @@ class BarData(ResultData):
         return "UNSW" if name == "UNSW-NB15" else name
 
     @staticmethod
+    def cls(r):
+        name = ResultData.cls(r)
+        return "Deep " + name if name == "Neural Network" else name
+
+    @staticmethod
     def attack(r):
         return ResultData.attack(r).upper()
 
