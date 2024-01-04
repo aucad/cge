@@ -73,7 +73,8 @@ def multi_bar(ax, results, cat_names, colors):
 
 
 def plot_acc(input_data, plot_name, data_labels,
-             sort_key=None, colors=None, dlen=4, overall_bar=True):
+             sort_key=None, colors=None, dlen=4,
+             overall_bar=True):
     data, mean_data, subplots = input_data[0]
     if colors is None:
         color_count = len(mean_data)
@@ -110,8 +111,7 @@ def plot_acc(input_data, plot_name, data_labels,
 
         # draw sub plots
         for i, ckey in enumerate(subplots):
-            cdata = [(x[0][1:], x[1])
-                     for x in data.values()
+            cdata = [(x[0][1:], x[1]) for x in data.values()
                      if ckey == x[0][0]]
             if sort_key is not None:
                 cdata.sort(key=sort_key)
@@ -144,8 +144,8 @@ def plot_acc(input_data, plot_name, data_labels,
         data_labels,
         ncol=len(data_labels) if pl_n > 1 else 2,
         bbox_to_anchor=(
-            (0.22, 1.1) if pl_n > 1 and sp_n == 1
-            else (0.22, 1.05)),
+            ((0.22, 1.18) if plot_height < 2 else (0.22, 1.1))
+            if pl_n > 1 and sp_n == 1 else (0.22, 1.05)),
         loc='upper left', frameon=False,
         handlelength=.9, handletextpad=0.4,
         columnspacing=.8 if pl_n == 1 else 1.5,
@@ -164,17 +164,9 @@ def plot_acc(input_data, plot_name, data_labels,
 class BarData(ResultData):
 
     def get_acc_data(self, key_test):
-        is_perf = 'perf' in self.directory
         nums = [BarData.fmt(r) for r in self.raw_rata if key_test(r)]
         means = np.rint(np.mean(np.array(
             [v for _, v in nums]), axis=0)).tolist()
-        if not is_perf:
-            cnums = [BarData.fmt(
-                r, key="Comparison", att="CPGD")
-                for r in self.raw_rata if
-                ResultData.attack(r) == 'CPGD']
-            if len(cnums):
-                nums += cnums
         cats = sorted(list(set([x for ((x, _, _), _) in nums])))
         ndict = dict(enumerate(nums))
         return ndict, means, cats
@@ -224,11 +216,11 @@ def match_bdata(x, y):
 
 
 def attack_plot(bdata, out_dir, plot_name, dirs=None):
+    labels = ['valid', 'evasive', 'accurate', 'inaccurate']
     key_test = lambda r: ResultData.attack(r) != 'CPGD'
     bar_inputs = [d.get_acc_data(key_test) for d in bdata]
     for b in bar_inputs[1:]:
         match_bdata(bar_inputs[0], b)
-    labels = ['valid', 'evasive', 'accurate', 'inaccurate']
     name = bdata[0].plot_name(plot_name, out_dir, dirs=dirs)
     plot_acc(
         bar_inputs, overall_bar=True, data_labels=labels,
@@ -239,6 +231,15 @@ def attack_plot(bdata, out_dir, plot_name, dirs=None):
         print("\n".join([f"{l:<13}: {x:.2f}" for (l, x) in
                          zip(labels, bar_inputs[-1][1])]))
         print("=" * 40)
+    else:
+        key_test = lambda r: ResultData.attack(r) == 'CPGD'
+        bar_inputs = [d.get_acc_data(key_test) for d in bdata]
+        for b in bar_inputs[1:]:
+            match_bdata(bar_inputs[0], b)
+        name = bdata[0].plot_name(
+            plot_name + '_cpgd', out_dir, dirs=dirs)
+        plot_acc(bar_inputs, overall_bar=True, data_labels=labels,
+                 plot_name=name, sort_key=(lambda x: (x[0][0], x[0][1])))
 
 
 def perf_plot(bdata, out_dir, plot_name):
