@@ -40,7 +40,7 @@ It uses a different constraint evaluation approach introduced by [Simonetto et a
 |:-------------|:--------------------------------------------------|
 | `.github`    | Automated workflows, development instructions     |
 | `cge`        | CGE algorithm implementation                      |
-| `comparison` | C-PGD attack implementation                       |
+| `comparison` | C-PGD attack implementation and its license       |
 | `config`     | Experiment configuration files                    |
 | `data`       | Preprocessed input data sets                      |
 | `exp`        | Source code for running experiments               |
@@ -87,7 +87,7 @@ pip install -r requirements.txt --user
 
 ### Reproducing paper experiments
 
-![duration](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours/each-FFFF00?style=flat-square) **Run attack evaluations.**   
+![](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours/each-FFFF00?style=flat-square) **Run attack evaluations.**   
 Run experiments for combinations of data sets $\times$ classifiers $\times$ attacks (24 experiment cases). 
 
 <pre>
@@ -95,7 +95,7 @@ make attacks   -- run all attacks, using constraint enforcement.
 make original  -- run all attacks, but without validation (ignore constraints).
 </pre>
 
-![duration](https://img.shields.io/badge/%F0%9F%95%92%2030%20min%20%E2%80%94%203%20h-FFFF00?style=flat-square) **Run constraint performance test.**   
+![](https://img.shields.io/badge/%F0%9F%95%92%2030%20min%20%E2%80%94%203%20h-FFFF00?style=flat-square) **Run constraint performance test.**   
 Uses varying number of constraints to measure performance impact on current hardware. 
 This experiment tests PGD, CPGD, VPGD attacks on UNSW-NB15 data set.
 
@@ -139,5 +139,3 @@ For plotting help, run:
 ```
 python3 -m plot --help
 ```
-
-
