@@ -88,7 +88,7 @@ pip install -r requirements.txt --user
 ### Reproducing paper experiments
 
 ![](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours/each-FFFF00?style=flat-square) **Run attack evaluations.**   
-Run experiments for combinations of data sets $\times$ classifiers $\times$ attacks (24 experiment cases). 
+Run experiments for combinations of data sets $\times$ classifiers $\times$ attacks (20 experiment cases). 
 
 <pre>
 make attacks   -- run all attacks, using constraint enforcement.
