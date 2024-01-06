@@ -41,7 +41,7 @@ class PGDNumpyConstr(ProjectedGradientDescentNumpy, Validatable):
             x, x_init, y, mask, eps, eps_step, project,
             random_init, batch_id_ext, decay, momentum)
 
-        return self.v_model.enforce(x, x_adv)  # NEW
+        return self.cge.enforce(x, x_adv)  # NEW
 
 
 class VPGD(ProjectedGradientDescent, Validatable):

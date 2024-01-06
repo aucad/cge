@@ -16,7 +16,7 @@ CONSTR_DICT = Dict[Any, Tuple[Tuple[int, ...], Union[PREDICATE, bool]]]
 
 class Validatable:
     """Base class for an attack with constraints"""
-    v_model = None
+    cge = None
 
     def vhost(self):
         """validation model owner"""

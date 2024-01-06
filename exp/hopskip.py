@@ -23,6 +23,6 @@ class VHSJ(HopSkipJump, Validatable):
             target, mask, clip_min, clip_max)
 
         # adjust shape: 1d -> 2d -> 1d
-        return self.v_model.enforce(
+        return self.cge.enforce(
             np.array([original_sample]),
             np.array([x_adv]))[0]  # NEW

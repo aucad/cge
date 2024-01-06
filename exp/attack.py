@@ -64,7 +64,7 @@ class AttackRunner:
     def can_validate(self):
         return issubclass(self.attack, Validatable)
 
-    def run(self, v_model: Validation):
+    def run(self, cge: Validation):
         """Generate adversarial examples and score."""
         self.start = time.time_ns()
         if issubclass(self.attack, CPGD):
@@ -73,7 +73,7 @@ class AttackRunner:
         else:
             aml_attack = self.attack(self.cls.classifier, **self.conf)
             if self.can_validate:
-                aml_attack.vhost().v_model = v_model
+                aml_attack.vhost().cge = cge
             self.adv_x = aml_attack.generate(x=self.ori_x)
             self.adv_y = np.array(self.cls.predict(
                 self.adv_x, self.ori_y).flatten())
@@ -82,7 +82,7 @@ class AttackRunner:
         sys.stdout.write('\x1b[2K')
 
         self.score.calculate(
-            self, v_model.constraints, v_model.scalars,
+            self, cge.constraints, cge.scalars,
             dur=self.end - self.start)
         return self
 
