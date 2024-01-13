@@ -67,12 +67,11 @@ Examples showing how to integrate CGE into existing adversarial evasion attacks 
 | `exp`        | Source code for running experiments           |
 | `plot`       | Plotting of experiment results                |
 | `ref_result` | Referential result for comparison             |
-| `test`       | Unit tests                                    |
+| `test`       | Unit tests (for development)                  |
 
 - The Makefile contains pre-configured commands to ease running experiments.
 - The `data/feature_*.csv` files are exclusively for use with C-PGD attack.
 - All software dependencies are listed in `requirements.txt`.
-  
 
 
 ## ✴️ Reproducing paper experiments
