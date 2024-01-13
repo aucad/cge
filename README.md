@@ -2,31 +2,26 @@
 
 [![Build](https://github.com/aucad/new-experiments/actions/workflows/build.yml/badge.svg)](https://github.com/aucad/new-experiments/actions/workflows/build.yml)
 
-This implementation demonstrates an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
-We develop a constraint validation algorithm, _Contraint Guaranteed Evasion_ (CGE), that guarantees generated evasive adversarial examples satisfy domain constraints.
+**This implementation demonstrates an approach to introduce constraints to _unconstrained_ adversarial machine learning evasion attacks.
+We develop a constraint validation algorithm, _Contraint Guaranteed Evasion_ (CGE), that guarantees generated evasive adversarial examples also satisfy domain constraints.**
 
-Complete implementation of the CGE algorithm is in [`/cge`](https://github.com/aucad/cge/tree/main/cge) directory.
-Examples of how to define constraints can be found, e.g., [here](https://github.com/aucad/cge/blob/main/config/iot23.yaml).
-The constraints are converted to executable form using this [preprocessor](https://github.com/aucad/cge/blob/main/exp/preproc.py#L14-L27).
-Examples showing how to integrate CGE into existing adversarial evasion attacks are [here](https://github.com/aucad/cge/blob/main/exp/hopskip.py#L26-L28) and [here](https://github.com/aucad/cge/blob/main/exp/pgd.py#L44) and [here](https://github.com/aucad/cge/blob/main/exp/zoo.py#L44).
-
-This repository also includes an experimental setup for running various adversarial evasion attacks, enhanced with CGE, on different data sets and victim classifiers.
-The following options are included.
+This repository also includes the full CGE implemenation and an experimental setup for running various adversarial evasion attacks, enhanced with CGE, on different data sets and victim classifiers.
+The following experimental options are included.
 
 - **Attacks**: Projected Gradient Descent (PGD), Zeroth-Order Optimization (ZOO), HopSkipJump attack. 
 - **Classifiers**: Keras deep neural network and tree-based ensemble XGBoost.
-- **Data sets**: Four different data sets, from various domains.
-- **Constraints**: Constraints are configurable experiment inputs; configuration files show how to specify them.
+- **Data sets**: Four different data sets from various domains.
+- **Constraints**: Constraints are configurable experiment inputs and config files show how to specify them.
 
 **Comparison.** We also include a comparison attack, _Constrained Projected Gradient Descent_ (C-PGD).
 It uses a different constraint evaluation approach introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
-The C-PGD implementation is from [here](https://github.com/serval-uni-lu/constrained-attacks) and has its own, separate software license.
+The C-PGD implementation is from [here](https://github.com/serval-uni-lu/constrained-attacks) and has its own separate software license.
 
 **Data sets**
 
 - [**IoT-23**](https://doi.org/10.5281/zenodo.4743746) - Malicious and benign IoT network traffic; 10,000 rows, 2 classes (sampled).
 - [**UNSW-NB15**](https://doi.org/10.1109/MilCIS.2015.7348942) - Network intrusion dataset with 9 attacks; 10,000 rows, 2 classes (sampled). 
-- [**URL**](https://doi.org/10.1016/j.engappai.2021.104347) - Legitimate and phishing URLs; 11,430 rows, 2 classes.
+- [**URL**](https://doi.org/10.1016/j.engappai.2021.104347) - Legitimate and phishing URLs; 11,430 rows, 2 classes (full data, not sampled).
 - [**LCLD**](https://www.kaggle.com/datasets/wordsforthewise/lending-club) - Kaggle's All Lending Club loan data; 20,000 rows, 2 classes (sampled).
 
 <details>
@@ -40,7 +35,27 @@ The C-PGD implementation is from [here](https://github.com/serval-uni-lu/constra
 </ul>
 </details>
 
+### Experiment workflow
+
+A single experiment consists of (1) preprocessing and setup (2) training a classification model on a choice data set (3) applying an adversarial attack to that model (4) scoring and (5) recording the result. 
+A constraint-validation approach can be enabled or disabled during the attack, impacting the validity of the generated adversarial examples.
+
+<pre>
+    ┌───────────────┐     ┌───────────────┐     ┌───────────────┐     ┌───────────────┐ 
+○───┤  args-parser  ├─────┤     setup     ├─────┤      run      ├─────┤      end      ├───◎
+    └───────────────┘     └───────────────┘     └───────────────┘     └───────────────┘
+     inputs:              * preprocess data      k times:                write result
+     * data set           * init classifier      1. train model     
+     * constraints        * init attack          2. attack
+     * other configs      * init validation      3. score
+</pre>
+
 ### Repository organization
+
+Complete implementation of the CGE algorithm is in [`/cge`](https://github.com/aucad/cge/tree/main/cge) directory.
+An example of how to define constraints can be found [here](https://github.com/aucad/cge/blob/main/config/iot23.yaml).
+The constraints are converted to executable form using this [preprocessor](https://github.com/aucad/cge/blob/main/exp/preproc.py#L14-L27).
+Examples showing how to integrate CGE into existing adversarial evasion attacks are [here](https://github.com/aucad/cge/blob/main/exp/hopskip.py#L26-L28) and [here](https://github.com/aucad/cge/blob/main/exp/pgd.py#L44) and [here](https://github.com/aucad/cge/blob/main/exp/zoo.py#L44).
 
 | Directory    | Description                                   |
 |:-------------|:----------------------------------------------|
@@ -58,22 +73,9 @@ The C-PGD implementation is from [here](https://github.com/serval-uni-lu/constra
 - The `data/feature_*.csv` files are exclusively for use with C-PGD attack.
 - All software dependencies are listed in `requirements.txt`.
   
-## Experiment workflow
 
-A single experiment consists of (1) preprocessing and setup (2) training a classification model on a choice data set (3) applying an adversarial attack to that model (4) scoring and (5) recording the result. 
-A constraint-validation approach can be enabled or disabled during the attack to impact the validity of the generated adversarial examples.
 
-<pre>
-    ┌───────────────┐     ┌───────────────┐     ┌───────────────┐     ┌───────────────┐ 
-○───┤  args-parser  ├─────┤     setup     ├─────┤      run      ├─────┤      end      ├───◎
-    └───────────────┘     └───────────────┘     └───────────────┘     └───────────────┘
-     inputs:              * preprocess data      k times:                write result
-     * data set           * init classifier      1. train model     
-     * constraints        * init attack          2. attack
-     * other configs      * init validation      3. score
-</pre>
-
-## Reproducing paper experiments
+## ✴️ Reproducing paper experiments
 
 **Software requirements**
 
@@ -92,25 +94,25 @@ python3 --version & make --version
 pip install -r requirements.txt --user
 ```
 
-### Reproducing paper experiments
+### 📐 Repeating evaluations
 
-![](https://img.shields.io/badge/%F0%9F%95%92%2024%E2%80%9448%20hours/each-FFFF00?style=flat-square) **Run attack evaluations.**   
-Run experiments for combinations of data sets $\times$ classifiers $\times$ attacks (20 experiment cases). 
+`⏱️ 24—48h` **Run attack evaluations.**   
+Run experiments for all supported combinations of data sets $\times$ classifiers $\times$ attacks (20 experiment cases). 
 
 <pre>
 make attacks   -- run all attacks, using constraint enforcement.
 make original  -- run all attacks, but without validation (ignore constraints).
 </pre>
 
-![](https://img.shields.io/badge/%F0%9F%95%92%2030%20min%20%E2%80%94%203%20h-FFFF00?style=flat-square) **Run constraint performance test.**   
-Uses varying number of constraints to measure performance impact on current hardware. 
-This experiment tests PGD, CPGD, VPGD attacks on UNSW-NB15 data set.
+`⏱️ 30 min—3 h` **Run constraint performance test.**   
+Uses increasing number of constraints and increasing complexity of constraints, to measure performance impact of introducing constraints to an attack. 
+This experiment runs PGD and CPGD and VPGD attacks on a neural network classifier trained on UNSW-NB15 data set.
 
 ```
 make perf
 ```
 
-### Visualizations
+### 📊 Visualizing
 
 **Plots.** Generate plots of experiment results.
 
