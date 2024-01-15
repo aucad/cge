@@ -249,6 +249,14 @@ def attack_plot(bdata, out_dir, plot_name, dirs=None, comparison=False):
             plot_name + '_cpgd', out_dir, dirs=dirs)
         plot_acc(bar_inputs, overall_bar=True, data_labels=labels,
                  plot_name=name, sort_key=(lambda x: x[0][1]))
+        print("Overall Accuracy, cumulative", name)
+        print("\n".join([f"{l:<13}: {x:.2f}" for (l, x) in
+                         zip(labels, bar_inputs[0][1])]))
+        print("=" * 40)
+        print("Overall Accuracy, cumulative", name)
+        print("\n".join([f"{l:<13}: {x:.2f}" for (l, x) in
+                         zip(labels, bar_inputs[-1][1])]))
+        print("=" * 40)
 
 
 def perf_plot(bdata, out_dir, plot_name):
