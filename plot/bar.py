@@ -237,14 +237,14 @@ def attack_plot(bdata, out_dir, plot_name, dirs=None, comparison=False):
                          zip(labels, bar_inputs[-1][1])]))
         print("=" * 40)
     if comparison:
-        args = lambda x: \
+        args = lambda x, y=None: \
             {'key_test': lambda r: ResultData.attack(r) == x,
-             'key_label': lambda _: x,
+             'key_label': lambda _: y or x,
              'att_label': lambda r: BarData.name(r),
              'name_label': lambda _: ' '}
         bar_inputs = [
-            bdata[0].get_acc_data(**args('CPGD')),
-            bdata[0].get_acc_data(**args('VPGD'))]
+            bdata[0].get_acc_data(**args('VPGD')),
+            bdata[0].get_acc_data(**args('CPGD', 'C-PGD'))]
         name = bdata[0].plot_name(
             plot_name + '_cpgd', out_dir, dirs=dirs)
         plot_acc(bar_inputs, overall_bar=True, data_labels=labels,
