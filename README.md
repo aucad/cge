@@ -6,16 +6,14 @@
 The technique is founded on a constraint validation algorithm, _Contraint Guaranteed Evasion_ (CGE), that guarantees generated adversarial examples also satisfy domain constraints.**
 
 This repository includes the full CGE implemenation, and an experimental setup for running various adversarial evasion attacks, enhanced with CGE, on different data sets and victim classifiers.
-The following experimental options are included.
+
+**Experiment options**
 
 - **Attacks**: Projected Gradient Descent (PGD), Zeroth-Order Optimization (ZOO), HopSkipJump attack. 
 - **Classifiers**: Keras deep neural network and tree-based ensemble XGBoost.
 - **Data sets**: Four different data sets from various domains.
 - **Constraints**: Constraints are configurable experiment inputs and config files show how to specify them.
-
-**Comparison attack.** We compare CGE-enhanced PGD to _Constrained Projected Gradient Descent_ (C-PGD).
-C-PGD uses a different constraint evaluation approach introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
-The C-PGD implementation is from [here](https://github.com/serval-uni-lu/constrained-attacks) and has its own separate software license.
+- **Comparison attack**: _Constrained Projected Gradient Descent_ (C-PGD) by [Simonetto et al](https://arxiv.org/abs/2112.01156).
 
 **Data sets**
 
@@ -52,10 +50,10 @@ A constraint-validation approach can be enabled or disabled during the attack, i
 
 ### The CGE algorithm
 
-* Complete implementation of the CGE algorithm is in [`/cge`](https://github.com/aucad/cge/tree/main/cge) directory.
-* An example of how to define constraints can be found [here](https://github.com/aucad/cge/blob/main/config/iot23.yaml).
-* The constraints are converted to executable form using this [preprocessor](https://github.com/aucad/cge/blob/main/exp/preproc.py#L14-L27).
-* Examples showing how to integrate CGE into existing adversarial evasion attacks are [here](https://github.com/aucad/cge/blob/main/exp/hopskip.py#L26-L28) and [here](https://github.com/aucad/cge/blob/main/exp/pgd.py#L44) and [here](https://github.com/aucad/cge/blob/main/exp/zoo.py#L44).
+* Complete implementation of the CGE algorithm is in [`cge`](https://github.com/aucad/cge/tree/main/cge) directory.
+* Examples of (static) constraint definitions are in [`config`](https://github.com/aucad/cge/blob/main/config/iot23.yaml).
+* Constraints are converted to executable form using a [preprocessor](https://github.com/aucad/cge/blob/main/exp/preproc.py#L14-L27).
+* Examples of integrating CGE to evasion attacks: [example 1](https://github.com/aucad/cge/blob/main/exp/hopskip.py#L26-L28), [example 2](https://github.com/aucad/cge/blob/main/exp/pgd.py#L44), [example 3](https://github.com/aucad/cge/blob/main/exp/zoo.py#L44).
 
 ### Repository organization
 
