@@ -75,7 +75,7 @@ A constraint-validation approach can be enabled or disabled during the attack, i
 └─ requirements.txt   Software dependencies
 </pre>
 
----
+<br/>
 
 ## ✴️ Reproducing paper experiments
 
@@ -128,7 +128,7 @@ make plots
 make plots DIR=ref_result
 ```
 
----
+<br/>
 
 ## Extended use
 
