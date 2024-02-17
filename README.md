@@ -57,22 +57,23 @@ A constraint-validation approach can be enabled or disabled during the attack, i
 
 ### Repository organization
 
-
-| Directory    | Description                                   |
-|:-------------|:----------------------------------------------|
-| `.github`    | Automated workflows, development instructions |
-| `cge`        | CGE algorithm implementation                  |
-| `comparison` | C-PGD attack implementation and its license   |
-| `config`     | Experiment configuration files                |
-| `data`       | Preprocessed input data sets                  |
-| `exp`        | Source code for running experiments           |
-| `plot`       | Plotting of experiment results                |
-| `ref_result` | Referential result for comparison             |
-| `test`       | Unit tests (for development)                  |
-
-- The Makefile contains pre-configured commands to ease running experiments.
-- The `data/feature_*.csv` files are exclusively for use with C-PGD attack.
-- All software dependencies are listed in `requirements.txt`.
+<pre>
+.
+├─ .github/           Automated workflows, development instructions
+├─ cge/               CGE algorithm implementation   
+├─ comparison/        C-PGD attack implementation and its license
+├─ config/            Experiment configuration files 
+├─ data/              
+   ├─ feature_*.csv   C-PGD feature files
+   └─ *               Preprocessed input data 
+├─ exp/               Source code for running experiments
+├─ plot/              Plotting of experiment results
+├─ ref_result/        Referential result for comparison
+├─ test/              Unit tests (for development) 
+├─ LICENSE          
+├─ Makefile           Pre-configured commands to ease running experiments
+└─ requirements.txt   Software dependencies
+</pre>
 
 ---
 
