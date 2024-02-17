@@ -2,8 +2,8 @@
 
 # Constraint guaranteed evasion attacks
 
-<h4>We present an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
-The technique is founded on a constraint validation algorithm, Contraint Guaranteed Evasion (CGE), that guarantees generated adversarial examples also satisfy domain constraints.</h4>
+**We present an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
+The technique is founded on a constraint validation algorithm, Contraint Guaranteed Evasion (CGE), that guarantees generated adversarial examples also satisfy domain constraints.**
 
 This repository includes the full CGE implemenation, and an experimental setup for running various adversarial evasion attacks, enhanced with CGE, on different data sets and victim classifiers.
 The following experimental options are included.
