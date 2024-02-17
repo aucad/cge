@@ -1,11 +1,11 @@
-# Constraint guaranteed evasion attacks
-
 [![Build](https://github.com/aucad/new-experiments/actions/workflows/build.yml/badge.svg)](https://github.com/aucad/new-experiments/actions/workflows/build.yml)
 
-**This implementation demonstrates an approach to introduce constraints to _unconstrained_ adversarial machine learning evasion attacks.
-We develop a constraint validation algorithm, _Contraint Guaranteed Evasion_ (CGE), that guarantees generated adversarial examples also satisfy domain constraints.**
+# Constraint guaranteed evasion attacks
 
-This repository includes the full CGE implemenation and an experimental setup for running various adversarial evasion attacks, enhanced with CGE, on different data sets and victim classifiers.
+<h3>We present an approach to introduce constraints to unconstrained adversarial machine learning evasion attacks.
+The technique is founded on a constraint validation algorithm, Contraint Guaranteed Evasion (CGE), that guarantees generated adversarial examples also satisfy domain constraints.</h3>
+
+<br/>This repository includes the full CGE implemenation, and an experimental setup for running various adversarial evasion attacks, enhanced with CGE, on different data sets and victim classifiers.
 The following experimental options are included.
 
 - **Attacks**: Projected Gradient Descent (PGD), Zeroth-Order Optimization (ZOO), HopSkipJump attack. 
@@ -13,8 +13,8 @@ The following experimental options are included.
 - **Data sets**: Four different data sets from various domains.
 - **Constraints**: Constraints are configurable experiment inputs and config files show how to specify them.
 
-**Comparison.** We also include a comparison attack, _Constrained Projected Gradient Descent_ (C-PGD).
-It uses a different constraint evaluation approach introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
+**Comparison.** We compare CGE-enhanced PGD to _Constrained Projected Gradient Descent_ (C-PGD).
+C-PGD uses a different constraint evaluation approach introduced by [Simonetto et al](https://arxiv.org/abs/2112.01156).
 The C-PGD implementation is from [here](https://github.com/serval-uni-lu/constrained-attacks) and has its own separate software license.
 
 **Data sets**
@@ -50,12 +50,15 @@ A constraint-validation approach can be enabled or disabled during the attack, i
      * other configs      * init validation      3. score
 </pre>
 
+### The CGE algorithm
+
+* Complete implementation of the CGE algorithm is in [`/cge`](https://github.com/aucad/cge/tree/main/cge) directory.
+* An example of how to define constraints can be found [here](https://github.com/aucad/cge/blob/main/config/iot23.yaml).
+* The constraints are converted to executable form using this [preprocessor](https://github.com/aucad/cge/blob/main/exp/preproc.py#L14-L27).
+* Examples showing how to integrate CGE into existing adversarial evasion attacks are [here](https://github.com/aucad/cge/blob/main/exp/hopskip.py#L26-L28) and [here](https://github.com/aucad/cge/blob/main/exp/pgd.py#L44) and [here](https://github.com/aucad/cge/blob/main/exp/zoo.py#L44).
+
 ### Repository organization
 
-Complete implementation of the CGE algorithm is in [`/cge`](https://github.com/aucad/cge/tree/main/cge) directory.
-An example of how to define constraints can be found [here](https://github.com/aucad/cge/blob/main/config/iot23.yaml).
-The constraints are converted to executable form using this [preprocessor](https://github.com/aucad/cge/blob/main/exp/preproc.py#L14-L27).
-Examples showing how to integrate CGE into existing adversarial evasion attacks are [here](https://github.com/aucad/cge/blob/main/exp/hopskip.py#L26-L28) and [here](https://github.com/aucad/cge/blob/main/exp/pgd.py#L44) and [here](https://github.com/aucad/cge/blob/main/exp/zoo.py#L44).
 
 | Directory    | Description                                   |
 |:-------------|:----------------------------------------------|
@@ -73,6 +76,7 @@ Examples showing how to integrate CGE into existing adversarial evasion attacks 
 - The `data/feature_*.csv` files are exclusively for use with C-PGD attack.
 - All software dependencies are listed in `requirements.txt`.
 
+---
 
 ## ✴️ Reproducing paper experiments
 
@@ -125,11 +129,13 @@ make plots
 make plots DIR=ref_result
 ```
 
-## Extended usage
+---
 
-The default experiment options are defined statically in `config` files.
+## Extended use
+
+The default experiment options are defined statically.
 An experiment run can be customized further with command line arguments, to override the static options.
-To run such custom experiments, call the `exp` module directly.
+To run custom experiments, call the `exp` module directly.
 
 ```
 python3 -m exp [PATH] {ARGS}
