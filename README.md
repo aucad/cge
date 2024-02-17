@@ -64,8 +64,8 @@ A constraint-validation approach can be enabled or disabled during the attack, i
 ├─ comparison/        C-PGD attack implementation and its license
 ├─ config/            Experiment configuration files 
 ├─ data/              
-   ├─ feature_*.csv   C-PGD feature files
-   └─ *               Preprocessed input data 
+│  ├─ feature_*.csv   C-PGD feature files
+│  └─ *               Preprocessed input data 
 ├─ exp/               Source code for running experiments
 ├─ plot/              Plotting of experiment results
 ├─ ref_result/        Referential result for comparison
